@@ -7,6 +7,10 @@
 ### 개발선정 배경
 * TODO
 
+1. UI 구현 및 Line   & Pen & Clear 기능 구현 완료  ( 2명 ) - 김대성
+2. Oval & Rectangle & Select & Erase  ( 2명 )
+3. Fill & 색상 ( 미정 )
+
 ### 일정
 - 6월 13일 Lab4 사전회의 예정(9시~10시)
   - 논의사항
