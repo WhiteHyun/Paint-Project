@@ -524,7 +524,7 @@ void DrawUI(TLCD tlcdInfo)
     } //30 * 7 + 5 * 6 = 240, 딱맞음
 
     rectSpace = 0; //처음부터 출력해야하므로 초기화
-    startSpace = 0;
+    startSpace = 0; //좌측 7개 버튼의 범위 - 폭 0 ~ 50, 높이 0 ~ 240
 
     for (k = 0; k < 7; k++) //좌측 7개 버튼의 글자 출력
     {
@@ -586,7 +586,7 @@ void DrawUI(TLCD tlcdInfo)
     }
 
     rectSpace = 240 - buttonHeight * 2 - 5; //우측 버튼은 두개이므로, 버튼 높이의 두배를 빼주고, 버튼 사이의 간격이 5px이므로 5를 한번 더 빼줌
-    startSpace = 320 - buttonWidth; //320 - buttonWidth
+    startSpace = 320 - buttonWidth; //우측 2개 버튼의 범위 - 폭 270 ~ 320, 높이 175 ~ 240
 
     for (k = 0; k < 2; k++) //우측 2개의 버튼, 흰색 칸 생성
     {
@@ -640,9 +640,9 @@ void DrawUI(TLCD tlcdInfo)
     }
 
     rectSpace = 0;
-    startSpace = 320 - buttonWidth; //320 - buttonWidth
+    startSpace = 320 - buttonWidth; //우측 8개 버튼의 범위 - 폭 272 ~ 320, 높이 0 ~ 174
 
-    for (k = 0; k < 8; k++) //좌측 8개의 색 출력
+    for (k = 0; k < 8; k++) //우측 8개의 색 출력
     {
         if (k == 0)
         {
@@ -684,9 +684,9 @@ void DrawUI(TLCD tlcdInfo)
             color = 0;
         }
 
-        for (i = 0; i < 42; i++)
+        for (i = 0; i < 42; i++) //색 버튼 한개의 높이 42
         {
-            for (j = 0; j < 23; j++)
+            for (j = 0; j < 23; j++) //색 버튼 한개의 폭 23
             {
                 offset = (i + rectSpace) * 320 + (j + startSpace);
                 *(tlcdInfo.pfbdata + offset) = color;
@@ -695,13 +695,25 @@ void DrawUI(TLCD tlcdInfo)
         
         if (k % 2 == 1)
         {
-            rectSpace += 44; //38 + 6 = 44
+            rectSpace += 44; //42 + 2
             startSpace -= 25;
         }
 
         else
         {
             startSpace += 25; //23 + 2 = 23
+        }
+    }
+
+    startSpace = 60; //가운데 흰 사각형 출력
+    rectSpace = 10; //흰 사각형의 범위 - 폭 60 ~ 260, 높이 10 ~ 230
+
+    for (i = 0; i < 220; i++) //색 버튼 한개의 높이 42
+    {
+        for (j = 0; j < 200; j++) //색 버튼 한개의 폭 23
+        {
+            offset = (i + rectSpace) * 320 + (j + startSpace);
+            *(tlcdInfo.pfbdata + offset) = 65535;
         }
     }
 }
