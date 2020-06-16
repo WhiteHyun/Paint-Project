@@ -309,7 +309,6 @@ int FILL[] = {
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, //30
 };
 
-
 /* 
  * TLCD infomation struct.
  * LCD에 출력될시 필요한 정보들을 가지고있는 구조체
@@ -345,7 +344,6 @@ typedef struct _Shape
     // int matrix
 } Shape;
 
-
 typedef unsigned char ubyte;
 
 unsigned short MakePixel(ubyte r, ubyte g, ubyte b)
@@ -370,23 +368,22 @@ void ClearLcd(TLCD tlcdInfo);
 int GetBtn(TLCD tlcdInfo, int xpos, int ypos);
 
 // TLCD의 정보들을 초기화
-int Init_TLCD(TLCD* tlcdInfo);
+int Init_TLCD(TLCD *tlcdInfo);
 
 //기본 UI 출력
 void DrawUI(TLCD tlcdInfo);
 
 // TouchPos Get
-int SensingTouch(TLCD tlcdInfo);
+void SensingTouch(TLCD tlcdInfo);
 
 // make Rectangle Base Code
 void MakeLineBox(TLCD tlcdInfo, Shape shape);
 
 void SetCalibration(TLCD tlcdInfo);
 
-
 int main(void)
 {
-    int fd , flag;
+    int fd, flag;
     struct input_event ie;
     int pressure;
     pressure = -1;
@@ -404,8 +401,9 @@ int main(void)
     DrawUI(tlcdInfo);
 
     // main code part
-    for (;;) {
-        flag = SensingTouch(tlcdInfo);
+    for (;;)
+    {
+        SensingTouch(tlcdInfo);
     }
 
     close(tlcdInfo.fd);
@@ -427,85 +425,103 @@ void ClearLcd(TLCD tlcdInfo)
     }
 }
 
-int GetBtn(TLCD tlcdInfo , int xpos , int ypos)
+int GetBtn(TLCD tlcdInfo, int xpos, int ypos)
 {
     int inputBtnFlag = 0x00000;
 
     // line flag Up
-    if ((xpos >= 270 && xpos <= 320) && (ypos >= 175 && ypos <= 205)) {
-        inputBtnFlag = 1;                                   // 00 0000 0000 0000 0001 Pen
+    if ((xpos >= 270 && xpos <= 320) && (ypos >= 175 && ypos <= 205))
+    {
+        inputBtnFlag = 1; // 00 0000 0000 0000 0001 Pen
     }
-    else if ((xpos >= 270 && xpos <= 320) && (ypos >= 210 && ypos <= 240)) {
-        inputBtnFlag = (1 << 1);                            // 00 0000 0000 0000 0010 Fill
+    else if ((xpos >= 270 && xpos <= 320) && (ypos >= 210 && ypos <= 240))
+    {
+        inputBtnFlag = (1 << 1); // 00 0000 0000 0000 0010 Fill
     }
-    else if ((xpos >= 0 && xpos <= 50) && (ypos >= 0 && ypos <= 30)) {
-        inputBtnFlag = (1 << 2);                            // 00 0000 0000 0000 0100 Line
-    }
-
-    else if ((xpos >= 0 && xpos <= 50) && (ypos >= 35 && ypos <= 65)) {
-        inputBtnFlag = (1 << 3);                            // 00 0000 0000 0000 1000 Rectangle
-    }
-
-    else if ((xpos >= 0 && xpos <= 50) && (ypos >= 70 && ypos <= 100)) {
-        inputBtnFlag = (1 << 4);                            // 00 0000 0000 0001 0000 Oval
+    else if ((xpos >= 0 && xpos <= 50) && (ypos >= 0 && ypos <= 30))
+    {
+        inputBtnFlag = (1 << 2); // 00 0000 0000 0000 0100 Line
     }
 
-    else if ((xpos >= 0 && xpos <= 50) && (ypos >= 105 && ypos <= 135)) {
-        inputBtnFlag = (1 << 5);                            // 00 0000 0000 0010 0000 Free Draw
+    else if ((xpos >= 0 && xpos <= 50) && (ypos >= 35 && ypos <= 65))
+    {
+        inputBtnFlag = (1 << 3); // 00 0000 0000 0000 1000 Rectangle
     }
 
-    else if ((xpos >= 0 && xpos <= 50) && (ypos >= 140 && ypos <= 170)) {
-        inputBtnFlag = (1 << 6);                            // 00 0000 0000 0100 0000 Select
+    else if ((xpos >= 0 && xpos <= 50) && (ypos >= 70 && ypos <= 100))
+    {
+        inputBtnFlag = (1 << 4); // 00 0000 0000 0001 0000 Oval
     }
 
-    else if ((xpos >= 0 && xpos <= 50) && (ypos >= 175 && ypos <= 205)) {
-        inputBtnFlag = (1 << 7);                            // 00 0000 0000 1000 0000 Erase
+    else if ((xpos >= 0 && xpos <= 50) && (ypos >= 105 && ypos <= 135))
+    {
+        inputBtnFlag = (1 << 5); // 00 0000 0000 0010 0000 Free Draw
     }
 
-    else if ((xpos >= 0 && xpos <= 50) && (ypos >= 210 && ypos <= 240)) {
-        inputBtnFlag = (1 << 8);                            // 00 0000 0001 0000 0000 Clear
+    else if ((xpos >= 0 && xpos <= 50) && (ypos >= 140 && ypos <= 170))
+    {
+        inputBtnFlag = (1 << 6); // 00 0000 0000 0100 0000 Select
     }
 
-    else if ((xpos >= 272 && xpos <= 295) && (ypos >= 0 && ypos <= 42)) {
-        inputBtnFlag = (1 << 9);                            // 00 0000 0010 0000 0000 WhiteColor
+    else if ((xpos >= 0 && xpos <= 50) && (ypos >= 175 && ypos <= 205))
+    {
+        inputBtnFlag = (1 << 7); // 00 0000 0000 1000 0000 Erase
     }
 
-    else if ((xpos >= 297 && xpos <= 320) && (ypos >= 0 && ypos <= 42)) {
-        inputBtnFlag = (1 << 10);                            // 00 0000 0100 0000 0000 OrangeColor
+    else if ((xpos >= 0 && xpos <= 50) && (ypos >= 210 && ypos <= 240))
+    {
+        inputBtnFlag = (1 << 8); // 00 0000 0001 0000 0000 Clear
     }
 
-    else if ((xpos >= 272 && xpos <= 295) && (ypos >= 44 && ypos <= 86)) {
-        inputBtnFlag = (1 << 11);                            // 00 0000 1000 0000 0000 RedColor
+    else if ((xpos >= 272 && xpos <= 295) && (ypos >= 0 && ypos <= 42))
+    {
+        inputBtnFlag = (1 << 9); // 00 0000 0010 0000 0000 WhiteColor
     }
 
-    else if ((xpos >= 297 && xpos <= 320) && (ypos >= 44 && ypos <= 86)) {
-        inputBtnFlag = (1 << 12);                            // 00 0001 0000 0000 0000 GreenColor
+    else if ((xpos >= 297 && xpos <= 320) && (ypos >= 0 && ypos <= 42))
+    {
+        inputBtnFlag = (1 << 10); // 00 0000 0100 0000 0000 OrangeColor
     }
 
-    else if ((xpos >= 272 && xpos <= 295) && (ypos >= 88 && ypos <= 130)) {
-        inputBtnFlag = (1 << 13);                            // 00 0010 0000 0000 0000 YellowColor
+    else if ((xpos >= 272 && xpos <= 295) && (ypos >= 44 && ypos <= 86))
+    {
+        inputBtnFlag = (1 << 11); // 00 0000 1000 0000 0000 RedColor
     }
 
-    else if ((xpos >= 297 && xpos <= 320) && (ypos >= 88 && ypos <= 130)) {
-        inputBtnFlag = (1 << 14);                            // 00 0100 0000 0000 0000 NavyColor
+    else if ((xpos >= 297 && xpos <= 320) && (ypos >= 44 && ypos <= 86))
+    {
+        inputBtnFlag = (1 << 12); // 00 0001 0000 0000 0000 GreenColor
     }
 
-    else if ((xpos >= 272 && xpos <= 295) && (ypos >= 132 && ypos <= 174)) {
-        inputBtnFlag = (1 << 15);                            // 00 1000 0000 0000 0000 BlueColor
+    else if ((xpos >= 272 && xpos <= 295) && (ypos >= 88 && ypos <= 130))
+    {
+        inputBtnFlag = (1 << 13); // 00 0010 0000 0000 0000 YellowColor
     }
 
-    else if ((xpos >= 297 && xpos <= 320) && (ypos >= 132 && ypos <= 174)) {
-        inputBtnFlag = (1 << 16);                            // 00 0000 0100 0000 0000 BlackColor
+    else if ((xpos >= 297 && xpos <= 320) && (ypos >= 88 && ypos <= 130))
+    {
+        inputBtnFlag = (1 << 14); // 00 0100 0000 0000 0000 NavyColor
     }
 
-    else if ((xpos >= 60 && xpos <= 260) && (ypos >= 10 && ypos <= 230)) {
-        inputBtnFlag = (1 << 17);                            // 10 0000 0000 0000 0000 DrawScreen
+    else if ((xpos >= 272 && xpos <= 295) && (ypos >= 132 && ypos <= 174))
+    {
+        inputBtnFlag = (1 << 15); // 00 1000 0000 0000 0000 BlueColor
+    }
+
+    else if ((xpos >= 297 && xpos <= 320) && (ypos >= 132 && ypos <= 174))
+    {
+        inputBtnFlag = (1 << 16); // 00 0000 0100 0000 0000 BlackColor
+    }
+
+    else if ((xpos >= 60 && xpos <= 260) && (ypos >= 10 && ypos <= 230))
+    {
+        inputBtnFlag = (1 << 17); // 10 0000 0000 0000 0000 DrawScreen
     }
 
     return inputBtnFlag;
 }
 
-int Init_TLCD(TLCD* tlcdInfo)
+int Init_TLCD(TLCD *tlcdInfo)
 {
     int ret = -1;
 
@@ -532,7 +548,7 @@ int Init_TLCD(TLCD* tlcdInfo)
     }
 
     //mmap 사용
-    tlcdInfo->pfbdata = (unsigned short*)mmap(0, tlcdInfo->fbvar.xres * tlcdInfo->fbvar.yres * 16 / 8, PROT_READ | PROT_WRITE, MAP_SHARED, tlcdInfo->fbfd, 0);
+    tlcdInfo->pfbdata = (unsigned short *)mmap(0, tlcdInfo->fbvar.xres * tlcdInfo->fbvar.yres * 16 / 8, PROT_READ | PROT_WRITE, MAP_SHARED, tlcdInfo->fbfd, 0);
 
     if ((unsigned)tlcdInfo->pfbdata == (unsigned)-1)
     {
@@ -561,7 +577,7 @@ void DrawUI(TLCD tlcdInfo)
     int buttonHeight = 30; //버튼의 높이
     int buttonWidth = 50;  //버튼의 폭
     int buttonCount = 0;   //글자 배열내 요소들을 하나씩 카운트함
-    int* buttonAlphabet;   //포인터 배열, 버튼들을 하나씩 받아와 출력
+    int *buttonAlphabet;   //포인터 배열, 버튼들을 하나씩 받아와 출력
     int color = 0;         //좌측 8개의 색을 저장할 변수
 
     for (k = 0; k < 7; k++) //좌측 7개의 버튼, 흰색 칸 생성
@@ -773,32 +789,55 @@ void DrawUI(TLCD tlcdInfo)
     }
 }
 
-int SensingTouch(TLCD tlcdInfo) {
+void SensingTouch(TLCD tlcdInfo)
+{
     int x, y, pressure;
     int xpos, ypos, ret;
     struct input_event ie;
 
     read(tlcdInfo.fd, &ie, sizeof(struct input_event));
 
-    if (ie.type == 3) {
-        if (ie.code == 0) {
+    if (ie.type == 3)
+    {
+        if (ie.code == 0)
+        {
             x = ie.value;
         }
-        else if (ie.code == 1) {
+        else if (ie.code == 1)
+        {
             y = ie.value;
         }
-        else if (ie.code == 24) {
+        else if (ie.code == 24)
+        {
             pressure = ie.value;
         }
     }
+
+    // 보정을 넣은 lcd상의 x , y의 포지션
     xpos = a * x + b * y + c;
     ypos = d * x + e * y + f;
 
+    // 터치가 된곳의 위치에 따라달라짐
     ret = GetBtn(tlcdInfo, xpos, ypos);
-    
+
     printf("%d\n", ret);
 
-    return ret;
+    switch (ret)
+    {
+    case 1:
+        printf("todo Pen\n");
+        break;
+    case (1 << 1):
+        printf("todo Fill\n");
+        break;
+    case (1 << 2):
+        printf("todo Line\n");
+        break;
+    case (1 << 3):
+        printf("todo Rectangle\n");
+    default:
+        break;
+    }
 }
 
 void MakeLineBox(TLCD tlcdInfo, Shape shape)
@@ -839,7 +878,7 @@ void MakeLineBox(TLCD tlcdInfo, Shape shape)
 void SetCalibration(TLCD tlcdInfo)
 {
     int i, j, tt, pressure;
-    int x[3], y[3], xd[3] = { 50, 150, 300 }, yd[3] = { 100, 50, 200 }; //점 세 개 미리 지정
+    int x[3], y[3], xd[3] = {50, 150, 300}, yd[3] = {100, 50, 200}; //점 세 개 미리 지정
     unsigned short red = MakePixel(255, 0, 0);
 
     for (tt = 0; tt < 3; tt++)
@@ -890,5 +929,4 @@ void SetCalibration(TLCD tlcdInfo)
     d = d / k;
     e = e / k;
     f = f / k;
-
 }
