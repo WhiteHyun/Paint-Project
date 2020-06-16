@@ -309,9 +309,6 @@ int FILL[] = {
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, //30
 };
 
-float a, b, c, d, e, f, k;
-int offset;
-struct input_event ie;
 
 /* 
  * TLCD infomation struct.
@@ -356,63 +353,65 @@ unsigned short MakePixel(ubyte r, ubyte g, ubyte b)
     return (unsigned short)(((r >> 3) << 11) | ((g >> 2) << 5) | (b >> 3));
 }
 
-void SetCalibration(TLCD tlcdInfo)
-{
-    int i, j, tt, pressure;
-    int x[3], y[3], xd[3] = {50, 150, 300}, yd[3] = {100, 50, 200}; //점 세 개 미리 지정
-    unsigned short red = MakePixel(255, 0, 0);
-
-    for (tt = 0; tt < 3; tt++)
-    {
-        for (i = -5; i < 5; i++)
-        {
-            offset = (yd[tt] + i) * tlcdInfo.fbvar.xres + xd[tt];
-            *(tlcdInfo.pfbdata + offset) = red;
-
-            offset = yd[tt] * tlcdInfo.fbvar.xres + xd[tt] + i;
-            *(tlcdInfo.pfbdata + offset) = red;
-        }
-        while (1)
-        {
-            read(tlcdInfo.fd, &ie, sizeof(struct input_event));
-
-            if (ie.type == 3)
-            {
-                if (ie.code == 0)
-                    x[tt] = ie.value;
-
-                else if (ie.code == 1)
-                    y[tt] = ie.value;
-
-                else if (ie.code == 24)
-                    pressure = ie.value;
-
-                if (pressure == 0)
-                    break;
-            }
-        }
-
-        //printf("%d %d\n%d %d\n", xd[tt], yd[tt], x[tt], y[tt]);
-        pressure = -1;
-    }
-
-    k = ((x[0] - x[2]) * (y[1] - y[2])) - ((x[1] - x[2]) * (y[0] - y[2]));
-    a = ((xd[0] - xd[2]) * (y[1] - y[2])) - ((xd[1] - xd[2]) * (y[0] - y[2]));
-    b = ((x[0] - x[2]) * (xd[1] - xd[2])) - ((xd[0] - xd[2]) * (x[1] - x[2]));
-    c = (y[0] * ((x[2] * xd[1]) - (x[1] * xd[2]))) + (y[1] * ((x[0] * xd[2]) - (x[2] * xd[0]))) + (y[2] * ((x[1] * xd[0]) - (x[0] * xd[1])));
-    d = ((yd[0] - yd[2]) * (y[1] - y[2])) - ((yd[1] - yd[2]) * (y[0] - y[2]));
-    e = ((x[0] - x[2]) * (yd[1] - yd[2])) - ((yd[0] - yd[2]) * (x[1] - x[2]));
-    f = (y[0] * ((x[2] * yd[1]) - (x[1] * yd[2]))) + (y[1] * ((x[0] * yd[2]) - (x[2] * yd[0]))) + (y[2] * ((x[1] * yd[0]) - (x[0] * yd[1])));
-
-    a = a / k;
-    b = b / k;
-    c = c / k;
-    d = d / k;
-    e = e / k;
-    f = f / k;
-}
+float a, b, c, d, e, f, k;
+struct input_event ie;
+int offset;
 
 /* 화면 클리어 */
+void ClearLcd(TLCD tlcdInfo);
+
+/*
+ * inputBtnFlag 0 -> touch to drawing paper /
+ *              1 -> pen / 2 -> Fill / 3 -> Line / 4 -> Rectangle / 5 -> Oval 
+ *              6 -> FreeDraw / 7 -> Select / 8 -> Erase / 9 -> Clear 
+ *              10 ~ 17 -> each color
+ */
+int GetBtn(TLCD tlcdInfo);
+
+// TLCD의 정보들을 초기화
+int Init_TLCD(TLCD* tlcdInfo);
+
+//기본 UI 출력
+void DrawUI(TLCD tlcdInfo);
+
+// TouchPos Get
+void SensingTouch(TLCD tlcdInfo);
+
+// make Rectangle Base Code
+void MakeLineBox(TLCD tlcdInfo, Shape shape);
+
+void SetCalibration(TLCD tlcdInfo);
+
+int main(void)
+{
+    int fd;
+    struct input_event ie;
+    int pressure;
+    pressure = -1;
+
+    Point get, start, end;
+    TLCD tlcdInfo;
+    Shape shape;
+
+    //TLCD초기화
+    Init_TLCD(&tlcdInfo);
+    ClearLcd(tlcdInfo);
+    SetCalibration(tlcdInfo);
+    ClearLcd(tlcdInfo);
+
+    DrawUI(tlcdInfo);
+
+    // main code part
+    for (;;) {
+        SensingTouch(tlcdInfo);
+    }
+
+    close(tlcdInfo.fd);
+    close(tlcdInfo.fbfd);
+    return 0;
+
+} // end of main
+
 void ClearLcd(TLCD tlcdInfo)
 {
     int i, j;
@@ -426,56 +425,12 @@ void ClearLcd(TLCD tlcdInfo)
     }
 }
 
-void MakeLineBox(TLCD tlcdInfo, Shape shape)
-{
-    int i, j, tmp;
-
-    if (shape.start.x > shape.end.x)
-    {
-        tmp = shape.start.x;
-        shape.start.x = shape.end.x;
-        shape.end.x = tmp;
-    }
-
-    if (shape.start.y > shape.end.y)
-    {
-        tmp = shape.start.y;
-        shape.start.y = shape.end.y;
-        shape.end.y = tmp;
-    }
-
-    for (j = shape.start.x; j < shape.end.x; j++)
-    {
-        offset = shape.start.y * 320 + j;
-        *(tlcdInfo.pfbdata + offset) = shape.outColor;
-        offset = shape.end.y * 320 + j;
-        *(tlcdInfo.pfbdata + offset) = shape.outColor;
-    }
-
-    for (i = shape.start.y; i < shape.end.y; i++)
-    {
-        offset = i * 320 + shape.start.x;
-        *(tlcdInfo.pfbdata + offset) = shape.outColor;
-        offset = i * 320 + shape.end.x;
-        *(tlcdInfo.pfbdata + offset) = shape.outColor;
-    }
-}
-
-/*
- * inputBtnFlag 0 -> touch to drawing paper /
- *              1 -> pen / 2 -> Fill / 3 -> Line / 4 -> Rectangle / 5 -> Oval 
- *              6 -> FreeDraw / 7 -> Select / 8 -> Erase / 9 -> Clear 
- *              10 ~ 17 -> each color
- */
 int GetBtn(TLCD tlcdInfo)
 {
     int inputBtnFlag = 0x00000;
 }
 
-/*
- * TLCD의 정보들을 초기화
- */
-int Init_TLCD(TLCD *tlcdInfo)
+int Init_TLCD(TLCD* tlcdInfo)
 {
     int ret = -1;
 
@@ -502,7 +457,7 @@ int Init_TLCD(TLCD *tlcdInfo)
     }
 
     //mmap 사용
-    tlcdInfo->pfbdata = (unsigned short *)mmap(0, tlcdInfo->fbvar.xres * tlcdInfo->fbvar.yres * 16 / 8, PROT_READ | PROT_WRITE, MAP_SHARED, tlcdInfo->fbfd, 0);
+    tlcdInfo->pfbdata = (unsigned short*)mmap(0, tlcdInfo->fbvar.xres * tlcdInfo->fbvar.yres * 16 / 8, PROT_READ | PROT_WRITE, MAP_SHARED, tlcdInfo->fbfd, 0);
 
     if ((unsigned)tlcdInfo->pfbdata == (unsigned)-1)
     {
@@ -523,7 +478,6 @@ done:
     return ret;
 }
 
-//기본 UI 출력
 void DrawUI(TLCD tlcdInfo)
 {
     int i, j, k;
@@ -532,7 +486,7 @@ void DrawUI(TLCD tlcdInfo)
     int buttonHeight = 30; //버튼의 높이
     int buttonWidth = 50;  //버튼의 폭
     int buttonCount = 0;   //글자 배열내 요소들을 하나씩 카운트함
-    int *buttonAlphabet;   //포인터 배열, 버튼들을 하나씩 받아와 출력
+    int* buttonAlphabet;   //포인터 배열, 버튼들을 하나씩 받아와 출력
     int color = 0;         //좌측 8개의 색을 저장할 변수
 
     for (k = 0; k < 7; k++) //좌측 7개의 버튼, 흰색 칸 생성
@@ -744,29 +698,117 @@ void DrawUI(TLCD tlcdInfo)
     }
 }
 
-int main(void)
+void SensingTouch(TLCD tlcdInfo) {
+    int x, y, pressure;
+    int xpos, ypos;
+    struct input_event ie;
+
+    read(tlcdInfo.fd, &ie, sizeof(struct input_event));
+
+    if (ie.type == 3) {
+        if (ie.code == 0) {
+            x = ie.value;
+        }
+        else if (ie.code == 1) {
+            y = ie.value;
+        }
+        else if (ie.code == 24) {
+            pressure = ie.value;
+        }
+    }
+    xpos = a * x + b * y + c;
+    ypos = d * x + e * y + f;
+
+    printf("x = %d, y = %d, pressure = %d\n", xpos, ypos, pressure);
+}
+
+void MakeLineBox(TLCD tlcdInfo, Shape shape)
 {
-    int pressure = -1;
-    Point get, start, end;
-    TLCD tlcdInfo;
-    Shape shape;
+    int i, j, tmp;
 
-    //TLCD초기화
-    Init_TLCD(&tlcdInfo);
-    ClearLcd(tlcdInfo);
-    
-    /*SetCalibration(tlcdInfo);
-    ClearLcd(tlcdInfo);*/
-
-    DrawUI(tlcdInfo);
-
-    // main code part
-    for (;;) {
-
+    if (shape.start.x > shape.end.x)
+    {
+        tmp = shape.start.x;
+        shape.start.x = shape.end.x;
+        shape.end.x = tmp;
     }
 
-    close(tlcdInfo.fd);
-    close(tlcdInfo.fbfd);
-    return 0;
+    if (shape.start.y > shape.end.y)
+    {
+        tmp = shape.start.y;
+        shape.start.y = shape.end.y;
+        shape.end.y = tmp;
+    }
 
-} // end of main
+    for (j = shape.start.x; j < shape.end.x; j++)
+    {
+        offset = shape.start.y * 320 + j;
+        *(tlcdInfo.pfbdata + offset) = shape.outColor;
+        offset = shape.end.y * 320 + j;
+        *(tlcdInfo.pfbdata + offset) = shape.outColor;
+    }
+
+    for (i = shape.start.y; i < shape.end.y; i++)
+    {
+        offset = i * 320 + shape.start.x;
+        *(tlcdInfo.pfbdata + offset) = shape.outColor;
+        offset = i * 320 + shape.end.x;
+        *(tlcdInfo.pfbdata + offset) = shape.outColor;
+    }
+}
+
+void SetCalibration(TLCD tlcdInfo)
+{
+    int i, j, tt, pressure;
+    int x[3], y[3], xd[3] = { 50, 150, 300 }, yd[3] = { 100, 50, 200 }; //점 세 개 미리 지정
+    unsigned short red = MakePixel(255, 0, 0);
+
+    for (tt = 0; tt < 3; tt++)
+    {
+        for (i = -5; i < 5; i++)
+        {
+            offset = (yd[tt] + i) * tlcdInfo.fbvar.xres + xd[tt];
+            *(tlcdInfo.pfbdata + offset) = red;
+
+            offset = yd[tt] * tlcdInfo.fbvar.xres + xd[tt] + i;
+            *(tlcdInfo.pfbdata + offset) = red;
+        }
+        while (1)
+        {
+            read(tlcdInfo.fd, &ie, sizeof(struct input_event));
+
+            if (ie.type == 3)
+            {
+                if (ie.code == 0)
+                    x[tt] = ie.value;
+
+                else if (ie.code == 1)
+                    y[tt] = ie.value;
+
+                else if (ie.code == 24)
+                    pressure = ie.value;
+
+                if (pressure == 0)
+                    break;
+            }
+        }
+
+        //printf("%d %d\n%d %d\n", xd[tt], yd[tt], x[tt], y[tt]);
+        pressure = -1;
+    }
+
+    k = ((x[0] - x[2]) * (y[1] - y[2])) - ((x[1] - x[2]) * (y[0] - y[2]));
+    a = ((xd[0] - xd[2]) * (y[1] - y[2])) - ((xd[1] - xd[2]) * (y[0] - y[2]));
+    b = ((x[0] - x[2]) * (xd[1] - xd[2])) - ((xd[0] - xd[2]) * (x[1] - x[2]));
+    c = (y[0] * ((x[2] * xd[1]) - (x[1] * xd[2]))) + (y[1] * ((x[0] * xd[2]) - (x[2] * xd[0]))) + (y[2] * ((x[1] * xd[0]) - (x[0] * xd[1])));
+    d = ((yd[0] - yd[2]) * (y[1] - y[2])) - ((yd[1] - yd[2]) * (y[0] - y[2]));
+    e = ((x[0] - x[2]) * (yd[1] - yd[2])) - ((yd[0] - yd[2]) * (x[1] - x[2]));
+    f = (y[0] * ((x[2] * yd[1]) - (x[1] * yd[2]))) + (y[1] * ((x[0] * yd[2]) - (x[2] * yd[0]))) + (y[2] * ((x[1] * yd[0]) - (x[0] * yd[1])));
+
+    a = a / k;
+    b = b / k;
+    c = c / k;
+    d = d / k;
+    e = e / k;
+    f = f / k;
+}
