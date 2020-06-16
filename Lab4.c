@@ -10,6 +10,8 @@
 
 #define FBDEVFILE "/dev/fb2"
 
+#define MAXSHAPENUM 50
+
 int LINE[] = {
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -346,6 +348,7 @@ typedef struct _Shape
     // int matrix
 } Shape;
 
+
 typedef unsigned char ubyte;
 
 unsigned short MakePixel(ubyte r, ubyte g, ubyte b)
@@ -444,17 +447,17 @@ void MakeLineBox(TLCD tlcdInfo, Shape shape)
     for (j = shape.start.x; j < shape.end.x; j++)
     {
         offset = shape.start.y * 320 + j;
-        *(tlcdInfo.pfbdata + offset) = shape.color;
+        *(tlcdInfo.pfbdata + offset) = shape.outColor;
         offset = shape.end.y * 320 + j;
-        *(tlcdInfo.pfbdata + offset) = shape.color;
+        *(tlcdInfo.pfbdata + offset) = shape.outColor;
     }
 
     for (i = shape.start.y; i < shape.end.y; i++)
     {
         offset = i * 320 + shape.start.x;
-        *(tlcdInfo.pfbdata + offset) = shape.color;
+        *(tlcdInfo.pfbdata + offset) = shape.outColor;
         offset = i * 320 + shape.end.x;
-        *(tlcdInfo.pfbdata + offset) = shape.color;
+        *(tlcdInfo.pfbdata + offset) = shape.outColor;
     }
 }
 
@@ -464,7 +467,7 @@ void MakeLineBox(TLCD tlcdInfo, Shape shape)
  *              6 -> FreeDraw / 7 -> Select / 8 -> Erase / 9 -> Clear 
  *              10 ~ 17 -> each color
  */
-int GetBtn()
+int GetBtn(TLCD tlcdInfo)
 {
     int inputBtnFlag = 0x00000;
 }
@@ -751,76 +754,16 @@ int main(void)
     //TLCD초기화
     Init_TLCD(&tlcdInfo);
     ClearLcd(tlcdInfo);
-    SetCalibration(tlcdInfo);
-    ClearLcd(tlcdInfo);
-
-    shape.color = MakePixel(255, 0, 0);
-
-    while (1)
-    {
-        read(tlcdInfo.fd, &ie, sizeof(struct input_event));
-
-        if (ie.type == 3)
-        {
-            if (ie.code == 0)
-            {
-                get.x = ie.value;
-            }
-
-            else if (ie.code == 1)
-            {
-                get.y = ie.value;
-            }
-
-            else if (ie.code == 24)
-            {
-                pressure = ie.value;
-
-                if (pressure == 0)
-                {
-                    //printf("start\n");
-                    shape.start.x = a * get.x + b * get.y + c;
-                    shape.start.y = d * get.x + e * get.y + f;
-                    break;
-                }
-            }
-        }
-    }
-
-    while (1)
-    {
-        read(tlcdInfo.fd, &ie, sizeof(struct input_event));
-
-        if (ie.type == 3)
-        {
-            if (ie.code == 0)
-            {
-                get.x = ie.value;
-            }
-
-            else if (ie.code == 1)
-            {
-                get.y = ie.value;
-            }
-
-            else if (ie.code == 24)
-            {
-                pressure = ie.value;
-
-                if (pressure == 0)
-                {
-                    //printf("start\n");
-                    shape.end.x = a * get.x + b * get.y + c;
-                    shape.end.y = d * get.x + e * get.y + f;
-                    break;
-                }
-            }
-        }
-    }
-
-    MakeLineBox(tlcdInfo, shape);
+    
+    /*SetCalibration(tlcdInfo);
+    ClearLcd(tlcdInfo);*/
 
     DrawUI(tlcdInfo);
+
+    // main code part
+    for (;;) {
+
+    }
 
     close(tlcdInfo.fd);
     close(tlcdInfo.fbfd);
