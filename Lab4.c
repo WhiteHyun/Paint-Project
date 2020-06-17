@@ -354,7 +354,12 @@ unsigned short MakePixel(ubyte r, ubyte g, ubyte b)
 float a, b, c, d, e, f, k;
 struct input_event ie;
 int offset;
-int inputBtnFlag = 0x00000;
+
+/*
+ *              1 -> pen / 2 -> Fill / 3 -> Line / 4 -> Rectangle / 5 -> Oval 
+ *              6 -> FreeDraw / 7 -> Select / 8 -> Erase 
+ */
+int state;
 
 /* 화면 클리어 */
 void ClearLcd(TLCD tlcdInfo);
@@ -828,28 +833,28 @@ void SensingTouch(TLCD tlcdInfo)
     switch (ret)
     {
     case 1:
-        printf("todo Pen\n");
+        state = 1;
         break;
     case (1 << 1):
-        printf("todo Fill\n");
+        state = 2;
         break;
     case (1 << 2):
-        printf("todo Line\n");
+        state = 3;
         break;
     case (1 << 3):
-        printf("todo Rectangle\n");
+        state = 4;
         break;
     case (1 << 4):
-        printf("todo Oval\n");
+        state = 5;
         break;
     case (1 << 5):
-        printf("todo FreeDraw\n");
+        state = 6;
         break;
     case (1 << 6):
-        printf("todo Select\n");
+        state = 7;
         break;
     case (1 << 7):
-        printf("todo Erase\n");
+        state = 8;
         break;
     case (1 << 8):
         printf("todo Clear\n");
@@ -880,6 +885,45 @@ void SensingTouch(TLCD tlcdInfo)
         break;
     case (1 << 17):
         printf("touching screen %d %d\n", xpos, ypos);
+
+        switch (state)
+        {
+        // TODO PEN
+        case 1:
+            printf("dot screen %d %d\n", xpos, ypos);
+            break;
+        // TODO Fill
+        case 2:
+            printf("TODO Fill\n");
+            break;
+        // TODO LINE
+        case 3:
+            printf("TODO LINE\n");
+            break;
+        // TODO RECTANGLE
+        case 4:
+            printf("TODO RECTANGLE\n");
+            break;
+        // TODO Oval
+        case 5:
+            printf("TODO Oval\n");
+            break;
+        // TODO Oval
+        case 6:
+            printf("TODO FreeDraw\n");
+            break;
+        // TODO Select
+        case 7:
+            printf("TODO Select\n");
+            break;
+        // TODO Erase
+        case 8:
+            printf("TODO Erase\n");
+            break;
+        default:
+            break;
+        }
+
         break;
     default:
         break;
