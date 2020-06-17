@@ -1,5 +1,8 @@
-Lab4 : set.o btn.o draw.o ui.o
-	gcc -o Lab4 set.o btn.o draw.o ui.o
+Lab4 : main.o set.o btn.o draw.o ui.o
+	gcc -o Lab4 main.o set.o btn.o draw.o ui.o
+
+main.o : main.c
+	gcc -c -o main.o main.c
 
 set.o : set.c
 	gcc -c -o set.o set.c
