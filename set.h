@@ -31,7 +31,7 @@ void ClearLcd(TLCD tlcdInfo);
 // TLCD의 정보들을 초기화
 int Init_TLCD(TLCD *tlcdInfo);
 
-void SetCalibration(TLCD tlcdInfo);
+void SetCalibration(TLCD *tlcdInfo);
 
 void Run();
 #endif

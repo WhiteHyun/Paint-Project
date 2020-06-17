@@ -119,8 +119,8 @@ void SensingTouch(TLCD tlcdInfo)
     }
 
     // 보정을 넣은 lcd상의 x , y의 포지션
-    xpos = a * x + b * y + c;
-    ypos = d * x + e * y + f;
+    xpos = tlcdInfo.a * x + tlcdInfo.b * y + tlcdInfo.c;
+    ypos = tlcdInfo.d * x + tlcdInfo.e * y + tlcdInfo.f;
 
     // 터치가 된곳의 위치에 따라달라짐
     if (pressure >= 180)
