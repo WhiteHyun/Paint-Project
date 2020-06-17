@@ -10,7 +10,7 @@ void ClearLcd(TLCD tlcdInfo)
         for (j = 0; j < 320; j++)
         {
             offset = i * 320 + j;
-            *(tlcdInfo.pfbdata + offset) = MakePixel(0, 204, 135);
+            *(tlcdInfo.pfbdata + offset) = MINT;
         }
     }
 }
@@ -67,17 +67,17 @@ void SetCalibration(TLCD *tlcdInfo)
 {
     int i, j, pressure, offset;
     int x[3], y[3], xd[3] = {50, 150, 300}, yd[3] = {100, 50, 200}; //점 세 개 미리 지정
-    unsigned short red = MakePixel(255, 0, 0);
+    unsigned short color = RED;                                     //빨간색 지정
 
     for (j = 0; j < 3; j++)
     {
         for (i = -5; i < 5; i++)
         {
             offset = (yd[j] + i) * tlcdInfo->fbvar.xres + xd[j];
-            *(tlcdInfo->pfbdata + offset) = red;
+            *(tlcdInfo->pfbdata + offset) = color;
 
             offset = yd[j] * tlcdInfo->fbvar.xres + xd[j] + i;
-            *(tlcdInfo->pfbdata + offset) = red;
+            *(tlcdInfo->pfbdata + offset) = color;
         }
         while (1)
         {
@@ -98,8 +98,6 @@ void SetCalibration(TLCD *tlcdInfo)
                     break;
             }
         }
-
-        //printf("%d %d\n%d %d\n", xd[j], yd[j], x[j], y[j]);
         pressure = -1;
     }
 
@@ -121,9 +119,8 @@ void SetCalibration(TLCD *tlcdInfo)
 
 void Run()
 {
-    Point get, start, end;
     TLCD tlcdInfo;
-    Shape shape;
+    //TODO: Create LIST SHAPE
 
     //TLCD초기화, 오류 발생시 exit
     if (Init_TLCD(&tlcdInfo))

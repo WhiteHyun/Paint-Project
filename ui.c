@@ -297,21 +297,16 @@ int FILL[] = {
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, //30
 };
 
-inline unsigned short MakePixel(ubyte r, ubyte g, ubyte b)
-{
-    return (unsigned short)(((r >> 3) << 11) | ((g >> 2) << 5) | (b >> 3));
-}
-
 void DrawUI(TLCD tlcdInfo)
 {
     int i, j, k, offset;
-    int rectSpace = 0;     //버튼 사이의 간격
-    int startSpace = 0;    //TFT_LCD의 왼쪽 면과 버튼의 간격, 0으로 초기화했지만, 혹시 모르기때문에 사용
-    int buttonHeight = 30; //버튼의 높이
-    int buttonWidth = 50;  //버튼의 폭
-    int buttonCount = 0;   //글자 배열내 요소들을 하나씩 카운트함
-    int *buttonAlphabet;   //포인터 배열, 버튼들을 하나씩 받아와 출력
-    int color = 0;         //좌측 8개의 색을 저장할 변수
+    int rectSpace = 0;        //버튼 사이의 간격
+    int startSpace = 0;       //TFT_LCD의 왼쪽 면과 버튼의 간격, 0으로 초기화했지만, 혹시 모르기때문에 사용
+    int buttonHeight = 30;    //버튼의 높이
+    int buttonWidth = 50;     //버튼의 폭
+    int buttonCount = 0;      //글자 배열내 요소들을 하나씩 카운트함
+    int *buttonAlphabet;      //포인터 배열, 버튼들을 하나씩 받아와 출력
+    unsigned short color = 0; //좌측 8개의 색을 저장할 변수
 
     for (k = 0; k < 7; k++) //좌측 7개의 버튼, 흰색 칸 생성
     {
@@ -320,7 +315,7 @@ void DrawUI(TLCD tlcdInfo)
             for (j = 0; j < buttonWidth; j++) //각 버튼의 폭
             {
                 offset = (i + rectSpace) * 320 + (j + startSpace);
-                *(tlcdInfo.pfbdata + offset) = 65535; //흰색
+                *(tlcdInfo.pfbdata + offset) = WHITE; //흰색
             }
         }
 
@@ -382,7 +377,7 @@ void DrawUI(TLCD tlcdInfo)
                 j = buttonCount / buttonWidth; //j는 버튼의 폭으로 계속 나누어서 0 ~ buttonWidth까지 반복
 
                 offset = (j + rectSpace) * 320 + (i + startSpace);
-                *(tlcdInfo.pfbdata + offset) = 0;
+                *(tlcdInfo.pfbdata + offset) = BLACK;
             }
         }
 
@@ -399,7 +394,7 @@ void DrawUI(TLCD tlcdInfo)
             for (j = 0; j < buttonWidth; j++) //각 버튼의 폭
             {
                 offset = (i + rectSpace) * 320 + (j + startSpace);
-                *(tlcdInfo.pfbdata + offset) = 65535; //흰색
+                *(tlcdInfo.pfbdata + offset) = WHITE; //흰색
             }
         }
 
@@ -436,7 +431,7 @@ void DrawUI(TLCD tlcdInfo)
                 j = buttonCount / buttonWidth; //j는 버튼의 폭으로 계속 나누어서 0 ~ buttonWidth까지 반복
 
                 offset = (j + rectSpace) * 320 + (i + startSpace);
-                *(tlcdInfo.pfbdata + offset) = 0;
+                *(tlcdInfo.pfbdata + offset) = BLACK;
             }
         }
 
@@ -450,42 +445,42 @@ void DrawUI(TLCD tlcdInfo)
     {
         if (k == 0)
         {
-            color = 65535; //흰색
+            color = WHITE; //하얀색
         }
 
         else if (k == 1)
         {
-            color = MakePixel(255, 192, 0);
+            color = ORANGE; //주황색
         }
 
         else if (k == 2)
         {
-            color = MakePixel(255, 0, 0);
+            color = RED; //빨간색
         }
 
         else if (k == 3)
         {
-            color = MakePixel(146, 208, 80);
+            color = GREEN; //초록색
         }
 
         else if (k == 4)
         {
-            color = MakePixel(255, 255, 0);
+            color = YELLOW; //노란색
         }
 
         else if (k == 5)
         {
-            color = MakePixel(0, 32, 96);
+            color = NAVY; //네이비색
         }
 
         else if (k == 6)
         {
-            color = MakePixel(0, 112, 192);
+            color = BLUE; //파란색
         }
 
         else
         {
-            color = 0;
+            color = BLACK; //검정색
         }
 
         for (i = 0; i < 42; i++) //색 버튼 한개의 높이 42
@@ -517,7 +512,7 @@ void DrawUI(TLCD tlcdInfo)
         for (j = 0; j < 200; j++) //색 버튼 한개의 폭 23
         {
             offset = (i + rectSpace) * 320 + (j + startSpace);
-            *(tlcdInfo.pfbdata + offset) = 65535;
+            *(tlcdInfo.pfbdata + offset) = WHITE;
         }
     }
 }
