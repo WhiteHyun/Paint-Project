@@ -1,5 +1,5 @@
 #include "set.h"
-
+#include "draw.h"
 void ClearLcd(TLCD tlcdInfo)
 {
     int i, j;
