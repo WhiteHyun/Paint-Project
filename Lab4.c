@@ -97,7 +97,7 @@ int main(void)
     Shape shape;
 
     //TLCD초기화, 오류 발생시 exit
-    if (!Init_TLCD(&tlcdInfo))
+    if (Init_TLCD(&tlcdInfo))
     {
         exit(1);
     }
