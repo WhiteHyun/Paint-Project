@@ -384,7 +384,6 @@ void SetCalibration(TLCD tlcdInfo);
 int main(void)
 {
     int fd, flag;
-    struct input_event ie;
     int pressure;
     pressure = -1;
 
@@ -793,7 +792,6 @@ void SensingTouch(TLCD tlcdInfo)
 {
     int x, y, pressure;
     int xpos, ypos, ret;
-    struct input_event ie;
 
     read(tlcdInfo.fd, &ie, sizeof(struct input_event));
 
@@ -818,9 +816,14 @@ void SensingTouch(TLCD tlcdInfo)
     ypos = d * x + e * y + f;
 
     // 터치가 된곳의 위치에 따라달라짐
-    ret = GetBtn(tlcdInfo, xpos, ypos);
-
-    printf("%d\n", ret);
+    if (pressure >= 180)
+    {
+        ret = GetBtn(tlcdInfo, xpos, ypos);
+    }
+    else
+    {
+        ret = 0;
+    }
 
     switch (ret)
     {
@@ -835,6 +838,49 @@ void SensingTouch(TLCD tlcdInfo)
         break;
     case (1 << 3):
         printf("todo Rectangle\n");
+        break;
+    case (1 << 4):
+        printf("todo Oval\n");
+        break;
+    case (1 << 5):
+        printf("todo FreeDraw\n");
+        break;
+    case (1 << 6):
+        printf("todo Select\n");
+        break;
+    case (1 << 7):
+        printf("todo Erase\n");
+        break;
+    case (1 << 8):
+        printf("todo Clear\n");
+        break;
+    case (1 << 9):
+        printf("todo WhiteColor\n");
+        break;
+    case (1 << 10):
+        printf("todo OrangeColor\n");
+        break;
+    case (1 << 11):
+        printf("todo RedColor\n");
+        break;
+    case (1 << 12):
+        printf("todo GreenColor\n");
+        break;
+    case (1 << 13):
+        printf("todo YellowColor\n");
+        break;
+    case (1 << 14):
+        printf("todo NavyColor\n");
+        break;
+    case (1 << 15):
+        printf("todo BlueColor\n");
+        break;
+    case (1 << 16):
+        printf("todo BlackColor\n");
+        break;
+    case (1 << 17):
+        printf("touching screen %d %d\n", xpos, ypos);
+        break;
     default:
         break;
     }
