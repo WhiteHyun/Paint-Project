@@ -9,3 +9,5 @@ sudo modprobe fbtft_device name=odroidc_tft32 rotate=90 gpios=reset:116,dc:115 s
 
 sudo modprobe -r ads7846
 sudo modprobe ads7846
+
+find . -type f | xargs -n 5 touch   #for warning: Clock skew detected
