@@ -1,95 +1,95 @@
 #include "btn.h"
-
+#include "draw.h"
 int GetBtn(TLCD tlcdInfo, int xpos, int ypos)
 {
     int inputBtnFlag = 0;
 
     if ((xpos >= 270 && xpos <= 320) && (ypos >= 175 && ypos <= 205))
     {
-        inputBtnFlag = TOUCH_PEN; // 00 0000 0000 0000 0001 Pen
+        inputBtnFlag = TOUCH_PEN;
     }
     else if ((xpos >= 270 && xpos <= 320) && (ypos >= 210 && ypos <= 240))
     {
-        inputBtnFlag = TOUCH_FILL; // 00 0000 0000 0000 0010 Fill
+        inputBtnFlag = TOUCH_FILL;
     }
     else if ((xpos >= 0 && xpos <= 50) && (ypos >= 0 && ypos <= 30))
     {
-        inputBtnFlag = TOUCH_LINE; // 00 0000 0000 0000 0100 Line
+        inputBtnFlag = TOUCH_LINE;
     }
 
     else if ((xpos >= 0 && xpos <= 50) && (ypos >= 35 && ypos <= 65))
     {
-        inputBtnFlag = TOUCH_RECT; // 00 0000 0000 0000 1000 Rectangle
+        inputBtnFlag = TOUCH_RECT;
     }
 
     else if ((xpos >= 0 && xpos <= 50) && (ypos >= 70 && ypos <= 100))
     {
-        inputBtnFlag = TOUCH_OVAL; // 00 0000 0000 0001 0000 Oval
+        inputBtnFlag = TOUCH_OVAL;
     }
 
     else if ((xpos >= 0 && xpos <= 50) && (ypos >= 105 && ypos <= 135))
     {
-        inputBtnFlag = TOUCH_FREEDRAW; // 00 0000 0000 0010 0000 Free Draw
+        inputBtnFlag = TOUCH_FREEDRAW;
     }
 
     else if ((xpos >= 0 && xpos <= 50) && (ypos >= 140 && ypos <= 170))
     {
-        inputBtnFlag = TOUCH_SEL; // 00 0000 0000 0100 0000 Select
+        inputBtnFlag = TOUCH_SEL;
     }
 
     else if ((xpos >= 0 && xpos <= 50) && (ypos >= 175 && ypos <= 205))
     {
-        inputBtnFlag = TOUCH_ERASE; // 00 0000 0000 1000 0000 Erase
+        inputBtnFlag = TOUCH_ERASE;
     }
 
     else if ((xpos >= 0 && xpos <= 50) && (ypos >= 210 && ypos <= 240))
     {
-        inputBtnFlag = TOUCH_CLEAR; // 00 0000 0001 0000 0000 Clear
+        inputBtnFlag = TOUCH_CLEAR;
     }
 
     else if ((xpos >= 272 && xpos <= 295) && (ypos >= 0 && ypos <= 42))
     {
-        inputBtnFlag = TOUCH_WHITE; // 00 0000 0010 0000 0000 WhiteColor
+        inputBtnFlag = TOUCH_WHITE;
     }
 
     else if ((xpos >= 297 && xpos <= 320) && (ypos >= 0 && ypos <= 42))
     {
-        inputBtnFlag = TOUCH_ORANGE; // 00 0000 0100 0000 0000 OrangeColor
+        inputBtnFlag = TOUCH_ORANGE;
     }
 
     else if ((xpos >= 272 && xpos <= 295) && (ypos >= 44 && ypos <= 86))
     {
-        inputBtnFlag = TOUCH_RED; // 00 0000 1000 0000 0000 RedColor
+        inputBtnFlag = TOUCH_RED;
     }
 
     else if ((xpos >= 297 && xpos <= 320) && (ypos >= 44 && ypos <= 86))
     {
-        inputBtnFlag = TOUCH_GREEN; // 00 0001 0000 0000 0000 GreenColor
+        inputBtnFlag = TOUCH_GREEN;
     }
 
     else if ((xpos >= 272 && xpos <= 295) && (ypos >= 88 && ypos <= 130))
     {
-        inputBtnFlag = TOUCH_YELLOW; // 00 0010 0000 0000 0000 YellowColor
+        inputBtnFlag = TOUCH_YELLOW;
     }
 
     else if ((xpos >= 297 && xpos <= 320) && (ypos >= 88 && ypos <= 130))
     {
-        inputBtnFlag = TOUCH_NAVY; // 00 0100 0000 0000 0000 NavyColor
+        inputBtnFlag = TOUCH_NAVY;
     }
 
     else if ((xpos >= 272 && xpos <= 295) && (ypos >= 132 && ypos <= 174))
     {
-        inputBtnFlag = TOUCH_BLUE; // 00 1000 0000 0000 0000 BlueColor
+        inputBtnFlag = TOUCH_BLUE;
     }
 
     else if ((xpos >= 297 && xpos <= 320) && (ypos >= 132 && ypos <= 174))
     {
-        inputBtnFlag = TOUCH_BLACK; // 00 0000 0100 0000 0000 BlackColor
+        inputBtnFlag = TOUCH_BLACK;
     }
 
     else if ((xpos >= 60 && xpos <= 260) && (ypos >= 10 && ypos <= 230))
     {
-        inputBtnFlag = TOUCH_CANVAS; // 10 0000 0000 0000 0000 DrawScreen
+        inputBtnFlag = TOUCH_CANVAS;
     }
 
     return inputBtnFlag;
@@ -200,15 +200,15 @@ void SensingTouch(TLCD tlcdInfo)
             break;
         // TODO LINE
         case TOUCH_LINE:
-            printf("TODO LINE\n");
+            //DrawLine(tlcdInfo, /* Shape 구조체 넣어야 함 */);
             break;
         // TODO RECTANGLE
         case TOUCH_RECT:
-            printf("TODO RECTANGLE\n");
+            //DrawRectangle(tlcdInfo, /* Shape 구조체 넣어야 함 */);
             break;
         // TODO Oval
         case TOUCH_OVAL:
-            printf("TODO Oval\n");
+            //DrawOval(tlcdInfo, /* Shape 구조체 넣어야 함 */);
             break;
         // TODO Oval
         case TOUCH_FREEDRAW:
