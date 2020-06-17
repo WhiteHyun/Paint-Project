@@ -136,92 +136,92 @@ void SensingTouch(TLCD tlcdInfo)
 
     switch (ret)
     {
-    case 1:
+    case TOUCH_PEN:
         state = 1;
         break;
-    case (1 << 1):
+    case TOUCH_FILL:
         state = 2;
         break;
-    case (1 << 2):
+    case TOUCH_LINE:
         state = 3;
         break;
-    case (1 << 3):
+    case TOUCH_RECT:
         state = 4;
         break;
-    case (1 << 4):
+    case TOUCH_OVAL:
         state = 5;
         break;
-    case (1 << 5):
+    case TOUCH_FREEDRAW:
         state = 6;
         break;
-    case (1 << 6):
+    case TOUCH_SEL:
         state = 7;
         break;
-    case (1 << 7):
+    case TOUCH_ERASE:
         state = 8;
         break;
-    case (1 << 8):
+    case TOUCH_CLEAR:
         printf("todo Clear\n");
         break;
-    case (1 << 9):
+    case TOUCH_WHITE:
         printf("todo WhiteColor\n");
         break;
-    case (1 << 10):
+    case TOUCH_ORANGE:
         printf("todo OrangeColor\n");
         break;
-    case (1 << 11):
+    case TOUCH_RED:
         printf("todo RedColor\n");
         break;
-    case (1 << 12):
+    case TOUCH_GREEN:
         printf("todo GreenColor\n");
         break;
-    case (1 << 13):
+    case TOUCH_YELLOW:
         printf("todo YellowColor\n");
         break;
-    case (1 << 14):
+    case TOUCH_NAVY:
         printf("todo NavyColor\n");
         break;
-    case (1 << 15):
+    case TOUCH_BLUE:
         printf("todo BlueColor\n");
         break;
-    case (1 << 16):
+    case TOUCH_BLACK:
         printf("todo BlackColor\n");
         break;
-    case (1 << 17):
+    case TOUCH_CANVAS:
         printf("touching screen %d %d\n", xpos, ypos);
 
         switch (state)
         {
         // TODO PEN
-        case 1:
+        case TOUCH_PEN:
             printf("dot screen %d %d\n", xpos, ypos);
             break;
         // TODO Fill
-        case 2:
+        case TOUCH_FILL:
             printf("TODO Fill\n");
             break;
         // TODO LINE
-        case 3:
+        case TOUCH_LINE:
             printf("TODO LINE\n");
             break;
         // TODO RECTANGLE
-        case 4:
+        case TOUCH_RECT:
             printf("TODO RECTANGLE\n");
             break;
         // TODO Oval
-        case 5:
+        case TOUCH_OVAL:
             printf("TODO Oval\n");
             break;
         // TODO Oval
-        case 6:
+        case TOUCH_FREEDRAW:
             printf("TODO FreeDraw\n");
             break;
         // TODO Select
-        case 7:
+        case TOUCH_SEL:
             printf("TODO Select\n");
             break;
         // TODO Erase
-        case 8:
+        case TOUCH_ERASE:
             printf("TODO Erase\n");
             break;
         default:
