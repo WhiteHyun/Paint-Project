@@ -1,8 +1,10 @@
 #include "set.h"
 #include "draw.h"
+#include "btn.h"
+#include "ui.h"
 void ClearLcd(TLCD tlcdInfo)
 {
-    int i, j;
+    int i, j, offset;
     for (i = 0; i < 240; i++)
     {
         for (j = 0; j < 320; j++)
@@ -61,9 +63,9 @@ done:
     return ret;
 }
 
-void SetCalibration(TLCD tlcdInfo)
+void SetCalibration(TLCD *tlcdInfo)
 {
-    int i, j, pressure;
+    int i, j, pressure, offset;
     int x[3], y[3], xd[3] = {50, 150, 300}, yd[3] = {100, 50, 200}; //점 세 개 미리 지정
     unsigned short red = MakePixel(255, 0, 0);
 
@@ -71,26 +73,26 @@ void SetCalibration(TLCD tlcdInfo)
     {
         for (i = -5; i < 5; i++)
         {
-            offset = (yd[j] + i) * tlcdInfo.fbvar.xres + xd[j];
-            *(tlcdInfo.pfbdata + offset) = red;
+            offset = (yd[j] + i) * tlcdInfo->fbvar.xres + xd[j];
+            *(tlcdInfo->pfbdata + offset) = red;
 
-            offset = yd[j] * tlcdInfo.fbvar.xres + xd[j] + i;
-            *(tlcdInfo.pfbdata + offset) = red;
+            offset = yd[j] * tlcdInfo->fbvar.xres + xd[j] + i;
+            *(tlcdInfo->pfbdata + offset) = red;
         }
         while (1)
         {
-            read(tlcdInfo.fd, &ie, sizeof(struct input_event));
+            read(tlcdInfo->fd, &tlcdInfo->ie, sizeof(struct input_event));
 
-            if (ie.type == 3)
+            if (tlcdInfo->ie.type == 3)
             {
-                if (ie.code == 0)
-                    x[j] = ie.value;
+                if (tlcdInfo->ie.code == 0)
+                    x[j] = tlcdInfo->ie.value;
 
-                else if (ie.code == 1)
-                    y[j] = ie.value;
+                else if (tlcdInfo->ie.code == 1)
+                    y[j] = tlcdInfo->ie.value;
 
-                else if (ie.code == 24)
-                    pressure = ie.value;
+                else if (tlcdInfo->ie.code == 24)
+                    pressure = tlcdInfo->ie.value;
 
                 if (pressure == 0)
                     break;
@@ -101,20 +103,20 @@ void SetCalibration(TLCD tlcdInfo)
         pressure = -1;
     }
 
-    k = ((x[0] - x[2]) * (y[1] - y[2])) - ((x[1] - x[2]) * (y[0] - y[2]));
-    a = ((xd[0] - xd[2]) * (y[1] - y[2])) - ((xd[1] - xd[2]) * (y[0] - y[2]));
-    b = ((x[0] - x[2]) * (xd[1] - xd[2])) - ((xd[0] - xd[2]) * (x[1] - x[2]));
-    c = (y[0] * ((x[2] * xd[1]) - (x[1] * xd[2]))) + (y[1] * ((x[0] * xd[2]) - (x[2] * xd[0]))) + (y[2] * ((x[1] * xd[0]) - (x[0] * xd[1])));
-    d = ((yd[0] - yd[2]) * (y[1] - y[2])) - ((yd[1] - yd[2]) * (y[0] - y[2]));
-    e = ((x[0] - x[2]) * (yd[1] - yd[2])) - ((yd[0] - yd[2]) * (x[1] - x[2]));
-    f = (y[0] * ((x[2] * yd[1]) - (x[1] * yd[2]))) + (y[1] * ((x[0] * yd[2]) - (x[2] * yd[0]))) + (y[2] * ((x[1] * yd[0]) - (x[0] * yd[1])));
+    tlcdInfo->k = ((x[0] - x[2]) * (y[1] - y[2])) - ((x[1] - x[2]) * (y[0] - y[2]));
+    tlcdInfo->a = ((xd[0] - xd[2]) * (y[1] - y[2])) - ((xd[1] - xd[2]) * (y[0] - y[2]));
+    tlcdInfo->b = ((x[0] - x[2]) * (xd[1] - xd[2])) - ((xd[0] - xd[2]) * (x[1] - x[2]));
+    tlcdInfo->c = (y[0] * ((x[2] * xd[1]) - (x[1] * xd[2]))) + (y[1] * ((x[0] * xd[2]) - (x[2] * xd[0]))) + (y[2] * ((x[1] * xd[0]) - (x[0] * xd[1])));
+    tlcdInfo->d = ((yd[0] - yd[2]) * (y[1] - y[2])) - ((yd[1] - yd[2]) * (y[0] - y[2]));
+    tlcdInfo->e = ((x[0] - x[2]) * (yd[1] - yd[2])) - ((yd[0] - yd[2]) * (x[1] - x[2]));
+    tlcdInfo->f = (y[0] * ((x[2] * yd[1]) - (x[1] * yd[2]))) + (y[1] * ((x[0] * yd[2]) - (x[2] * yd[0]))) + (y[2] * ((x[1] * yd[0]) - (x[0] * yd[1])));
 
-    a = a / k;
-    b = b / k;
-    c = c / k;
-    d = d / k;
-    e = e / k;
-    f = f / k;
+    tlcdInfo->a = tlcdInfo->a / tlcdInfo->k;
+    tlcdInfo->b = tlcdInfo->b / tlcdInfo->k;
+    tlcdInfo->c = tlcdInfo->c / tlcdInfo->k;
+    tlcdInfo->d = tlcdInfo->d / tlcdInfo->k;
+    tlcdInfo->e = tlcdInfo->e / tlcdInfo->k;
+    tlcdInfo->f = tlcdInfo->f / tlcdInfo->k;
 }
 
 void Run()
@@ -130,7 +132,7 @@ void Run()
     }
 
     ClearLcd(tlcdInfo);
-    SetCalibration(tlcdInfo);
+    SetCalibration(&tlcdInfo);
     ClearLcd(tlcdInfo);
 
     DrawUI(tlcdInfo);

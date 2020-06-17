@@ -11,10 +11,6 @@
 #include <linux/input.h>
 #define FBDEVFILE "/dev/fb2"
 
-float a, b, c, d, e, f, k;
-struct input_event ie;
-int offset;
-
 /* 
  * TLCD infomation struct.
  * LCD에 출력될시 필요한 정보들을 가지고있는 구조체
@@ -25,6 +21,8 @@ typedef struct _TLCD
     int fbfd;                       //파일의 정보를 읽어온 값을 저장할 변수
     unsigned short *pfbdata;        //LCD의 시작주소를 가리킴
     int fd;
+    float a, b, c, d, e, f, k; //터치 하는 위치를 계산하는 값
+    struct input_event ie;     //터치 이벤트
 } TLCD;
 
 /* 화면 클리어 */
@@ -33,7 +31,7 @@ void ClearLcd(TLCD tlcdInfo);
 // TLCD의 정보들을 초기화
 int Init_TLCD(TLCD *tlcdInfo);
 
-void SetCalibration(TLCD tlcdInfo);
+void SetCalibration(TLCD *tlcdInfo);
 
 void Run();
 #endif
