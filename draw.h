@@ -1,6 +1,6 @@
 #ifndef DRAW_H
 #define DRAW_H
-
+#include "set.h"
 typedef struct _Point
 {
     int x;

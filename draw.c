@@ -1,5 +1,5 @@
 #include "draw.h"
-#include "set.h"
+
 void MakeLineBox(TLCD tlcdInfo, Shape shape)
 {
     int i, tmp, offset;

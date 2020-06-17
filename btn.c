@@ -1,5 +1,4 @@
 #include "btn.h"
-#include "set.h"
 
 int GetBtn(TLCD tlcdInfo, int xpos, int ypos)
 {

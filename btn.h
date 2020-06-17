@@ -1,7 +1,7 @@
 #ifndef BTN_H
 #define BTN_H
 #include "draw.h"
-
+#include "set.h"
 enum button_touch_state
 {
     TOUCH_PEN = 1,  //1

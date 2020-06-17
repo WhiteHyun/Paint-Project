@@ -9,7 +9,8 @@
 #include <sys/types.h>
 #include <linux/fb.h> /* for fb_var_screeninfo, FBIOGET_VSCREENINFO */
 #include <linux/input.h>
-
+#include "draw.h"
+#include "ui.h"
 #define FBDEVFILE "/dev/fb2"
 
 float a, b, c, d, e, f, k;
