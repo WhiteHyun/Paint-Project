@@ -16,12 +16,6 @@ float a, b, c, d, e, f, k;
 struct input_event ie;
 int offset;
 
-/*
- *              1 -> pen / 2 -> Fill / 3 -> Line / 4 -> Rectangle / 5 -> Oval 
- *              6 -> FreeDraw / 7 -> Select / 8 -> Erase 
- */
-int state;
-
 /* 
  * TLCD infomation struct.
  * LCD에 출력될시 필요한 정보들을 가지고있는 구조체
