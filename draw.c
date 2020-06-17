@@ -1,6 +1,6 @@
 #include "draw.h"
-
-void MakeLineBox(TLCD tlcdInfo, Shape shape)
+#include "ui.h"
+void DrawRectangle(TLCD tlcdInfo, Shape shape)
 {
     int i, tmp, offset;
 
@@ -33,4 +33,14 @@ void MakeLineBox(TLCD tlcdInfo, Shape shape)
         offset = i * 320 + shape.end.x;
         *(tlcdInfo.pfbdata + offset) = shape.outColor;
     }
+}
+
+void DrawLine(TLCD tlcdInfo, Shape shape)
+{
+    /* TODO: Draw line */
+}
+
+void DrawOval(TLCD tlcdInfo, Shape shape)
+{
+    /* TODO: Draw Oval */
 }

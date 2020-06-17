@@ -24,5 +24,10 @@ typedef struct _Shape
 } Shape;
 
 // make Rectangle Base Code
-void MakeLineBox(TLCD tlcdInfo, Shape shape);
+void DrawRectangle(TLCD tlcdInfo, Shape shape);
+
+void DrawLine(TLCD tlcdInfo, Shape shape);
+
+void DrawOval(TLCD tlcdInfo, Shape shape);
+
 #endif
