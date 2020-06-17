@@ -44,6 +44,10 @@
     3.  Oval & Rectangle & Select & Erase ( 2명 )
     4.  Fill & 색상 ( 미정 )
   - 논의결과
+    1. 파일 분할 (set.c -> main , btn -> touch sense Events, draw -> Draw UI)
+    2. 각 도형 이벤트 분할 ( 김대성 : Line , 김동언 : Oval , 김태현 : Rectangle)
+    3. 위의 내용을 상기하여 19일 3시 회의 진행
+  - 논의결과
     - TODO
 
 * 6월 26일 Zoom 발표 진행 예정
