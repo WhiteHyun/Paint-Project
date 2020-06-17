@@ -92,16 +92,16 @@ void SetCalibration(TLCD tlcdInfo);
 
 int main(void)
 {
-    int fd, flag;
-    int pressure;
-    pressure = -1;
-
     Point get, start, end;
     TLCD tlcdInfo;
     Shape shape;
 
-    //TLCD초기화
-    Init_TLCD(&tlcdInfo);
+    //TLCD초기화, 오류 발생시 exit
+    if (!Init_TLCD(&tlcdInfo))
+    {
+        exit(1);
+    }
+
     ClearLcd(tlcdInfo);
     SetCalibration(tlcdInfo);
     ClearLcd(tlcdInfo);
