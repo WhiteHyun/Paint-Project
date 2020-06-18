@@ -15,13 +15,20 @@ typedef struct _Point
  */
 typedef struct _Shape
 {
-    int shape;
+    int type;
     Point start;
     Point end;
     unsigned short inColor;  // inBound Color
     unsigned short outColor; // outBound Color
-    // int matrix
 } Shape;
+
+typedef void (*drawList)(TLCD, Shape);
+
+const drawList g_drawTable[] = {
+    DrawLine,
+    DrawRectangle,
+    DrawOval,
+    DrawFree};
 
 // make Rectangle Base Code
 void DrawRectangle(TLCD tlcdInfo, Shape shape);
@@ -29,5 +36,7 @@ void DrawRectangle(TLCD tlcdInfo, Shape shape);
 void DrawLine(TLCD tlcdInfo, Shape shape);
 
 void DrawOval(TLCD tlcdInfo, Shape shape);
+
+void DrawFree(TLCD tlcdInfo);
 
 #endif
