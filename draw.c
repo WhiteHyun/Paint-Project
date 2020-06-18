@@ -87,8 +87,19 @@ void DrawFree(TLCD tlcdInfo, Shape *shape)
 
     struct ListNode *node = NULL;
     int pressure, xpos, ypos, x, y, i;
+
+    //도형 크기 동적 할당
+    shape->position = (int **)malloc(sizeof(int *) * SIZEOF_CANVAS_Y); //캔버스의 y크기: 220
+    for (i = 0; i < 220; i++)
+    {
+        shape->position[i] = (int *)malloc(sizeof(int) * SIZEOF_CANVAS_X); //캔버스의 x크기: 200
+    }
+
+    /* 터치 입력을 받음 */
     while (1)
     {
+        read(tlcdInfo.fd, &tlcdInfo.ie, sizeof(struct input_event));
+
         if (tlcdInfo.ie.type == 3)
         {
             if (tlcdInfo.ie.code == 0)
@@ -102,22 +113,18 @@ void DrawFree(TLCD tlcdInfo, Shape *shape)
             else if (tlcdInfo.ie.code == 24)
             {
                 pressure = tlcdInfo.ie.value;
-                if (pressure == 0)
-                {
-                    xpos = tlcdInfo.a * x + tlcdInfo.b * y + tlcdInfo.c;
-                    ypos = tlcdInfo.d * x + tlcdInfo.e * y + tlcdInfo.f;
-                    /*코드 구현*/
-
-                    /* position 동적 할당 */
-                    // shape->position = (int **)malloc(sizeof(int *) * CANVAS_Y); //캔버스의 y크기: 220
-                    // for (i = 0; i < 220; i++)
-                    // {
-                    //     shape->position[i] = (int *)malloc(sizeof(int) * CANVAS_X); //캔버스의 x크기: 200
-                    // }
-                    //Test code
-                    printf("xpos = %d\nypos=%d\n", xpos, ypos);
-                }
             }
+        }
+        /*코드 구현*/
+        xpos = tlcdInfo.a * x + tlcdInfo.b * y + tlcdInfo.c;
+        ypos = tlcdInfo.d * x + tlcdInfo.e * y + tlcdInfo.f;
+        shape->position[ypos - START_CANVAS_Y][xpos - START_CANVAS_X] = 1;
+        if (pressure == 0)
+        {
+            //Test code
+            printf("xpos = %d\nypos=%d\n", xpos, ypos);
+
+            /* position 동적 할당 */
         }
     }
 }
