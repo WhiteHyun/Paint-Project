@@ -160,7 +160,7 @@ void SensingTouch(TLCD tlcdInfo)
         break;
     case TOUCH_CANVAS:
         printf("touching screen %d %d\n", xpos, ypos);
-        if (state > 0 && state < 10)
+        if (state >= 0 && state < 9)
         {
             g_drawTable[state](tlcdInfo, &shape);
         }
