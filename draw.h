@@ -20,9 +20,10 @@ typedef struct _Shape
     Point end;
     unsigned short inColor;  // inBound Color
     unsigned short outColor; // outBound Color
+    int **position;
 } Shape;
 
-typedef void (*drawList)(TLCD, Shape);
+typedef void (*drawList)(TLCD, Shape *);
 
 const drawList g_drawTable[] = {
     DrawLine,

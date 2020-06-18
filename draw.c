@@ -1,13 +1,14 @@
 #include "draw.h"
 #include "ui.h"
+#include "list.h"
 
 /*
  * This is Base Code for Making Rectangle Made by T.H Kim
  * Make start x , y -> end x , y Rectange 
- * ÇÊ¿äÇÑ±â´É  -> ÀÔ·Â¹ÞÀº Á¡ÀÌ Ã³À½ ÂïÈù Á¡ÀÏ°æ¿ì start x, y¿¡ Àû¸³
- *             -> ¾Æ´Ò°æ¿ì endÀÇ x,yÁÂÇ¥¸¦ °è¼ÓÇÏ¿© °»½ÅÇÏ¿©ÁÝ´Ï´Ù.
- *             -> °»½ÅÇßÀ»½Ã ÀÌÀü¿¡ ±×·ÁÁø Box¸¦ Áö¿öÁÝ´Ï´Ù (½ÃÀÛÇÒ‹š Áý¾îÁÖ¸é µÉµí?)
- *             -> ( ÀÌ ±â´ÉÀÌ ÇÙ½ÉÀûÀÓ ) 
+ * ï¿½Ê¿ï¿½ï¿½Ñ±ï¿½ï¿½  -> ï¿½Ô·Â¹ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ã³ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ï°ï¿½ï¿½ start x, yï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+ *             -> ï¿½Æ´Ò°ï¿½ï¿½ endï¿½ï¿½ x,yï¿½ï¿½Ç¥ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ï¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï¿ï¿½ï¿½Ý´Ï´ï¿½.
+ *             -> ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½×·ï¿½ï¿½ï¿½ Boxï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ý´Ï´ï¿½ (ï¿½ï¿½ï¿½ï¿½ï¿½Ò‹ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ ï¿½Éµï¿½?)
+ *             -> ( ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ù½ï¿½ï¿½ï¿½ï¿½ï¿½ ) 
  */
 void DrawRectangle(TLCD tlcdInfo, Shape shape)
 {
@@ -44,16 +45,15 @@ void DrawRectangle(TLCD tlcdInfo, Shape shape)
     }
 }
 
-
 /*
  * This is Base Code for Making LINE Made by D.S Kim
  * Make start x , y -> end x , y Rectange
- * ÇÊ¿äÇÑ±â´É  -> ÀÔ·Â¹ÞÀº Á¡ÀÌ Ã³À½ ÂïÈù Á¡ÀÏ°æ¿ì start x, y¿¡ Àû¸³
- *             -> ¾Æ´Ò°æ¿ì endÀÇ x,yÁÂÇ¥¸¦ °è¼ÓÇÏ¿© °»½ÅÇÏ¿©ÁÝ´Ï´Ù.
- *             -> °»½ÅÇßÀ»½Ã ÀÌÀü¿¡ ±×·ÁÁø LineÀÇ ÁÂÇ¥¸¦ Æ¯Á¤ÇÏ¿© Áö¿öÁÝ´Ï´Ù (½ÃÀÛÇÒ‹š Áý¾îÁÖ¸é µÉµí?)
- *             -> ( ÀÌ ±â´ÉÀÌ ÇÙ½ÉÀûÀÓ )
+ * ï¿½Ê¿ï¿½ï¿½Ñ±ï¿½ï¿½  -> ï¿½Ô·Â¹ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ã³ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ï°ï¿½ï¿½ start x, yï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+ *             -> ï¿½Æ´Ò°ï¿½ï¿½ endï¿½ï¿½ x,yï¿½ï¿½Ç¥ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ï¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï¿ï¿½ï¿½Ý´Ï´ï¿½.
+ *             -> ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½×·ï¿½ï¿½ï¿½ Lineï¿½ï¿½ ï¿½ï¿½Ç¥ï¿½ï¿½ Æ¯ï¿½ï¿½ï¿½Ï¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ý´Ï´ï¿½ (ï¿½ï¿½ï¿½ï¿½ï¿½Ò‹ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ ï¿½Éµï¿½?)
+ *             -> ( ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ù½ï¿½ï¿½ï¿½ï¿½ï¿½ )
  */
-void DrawLine(TLCD tlcdInfo, Shape shape)
+void DrawLine(TLCD tlcdInfo, Shape *shape)
 {
     /* TODO: Draw line */
 }
@@ -61,12 +61,41 @@ void DrawLine(TLCD tlcdInfo, Shape shape)
 /*
  * This is Base Code for Making Oval Made by D.E Kime
  * Make start x , y -> end x , y Rectange
- * ÇÊ¿äÇÑ±â´É  -> ÀÔ·Â¹ÞÀº Á¡ÀÌ Ã³À½ ÂïÈù Á¡ÀÏ°æ¿ì start x, y¿¡ Àû¸³
- *             -> ¾Æ´Ò°æ¿ì endÀÇ x,yÁÂÇ¥¸¦ °è¼ÓÇÏ¿© °»½ÅÇÏ¿©ÁÝ´Ï´Ù.
- *             -> °»½ÅÇßÀ»½Ã ÀÌÀü¿¡ ±×·ÁÁø OvalÀ» Áö¿öÁÝ´Ï´Ù (½ÃÀÛÇÒ‹š Áý¾îÁÖ¸é µÉµí?)
- *             -> ( ÀÌ ±â´ÉÀÌ ÇÙ½ÉÀûÀÓ )
+ * ï¿½Ê¿ï¿½ï¿½Ñ±ï¿½ï¿½  -> ï¿½Ô·Â¹ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ã³ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ï°ï¿½ï¿½ start x, yï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+ *             -> ï¿½Æ´Ò°ï¿½ï¿½ endï¿½ï¿½ x,yï¿½ï¿½Ç¥ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ï¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï¿ï¿½ï¿½Ý´Ï´ï¿½.
+ *             -> ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½×·ï¿½ï¿½ï¿½ Ovalï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ý´Ï´ï¿½ (ï¿½ï¿½ï¿½ï¿½ï¿½Ò‹ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ ï¿½Éµï¿½?)
+ *             -> ( ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ù½ï¿½ï¿½ï¿½ï¿½ï¿½ )
  */
-void DrawOval(TLCD tlcdInfo, Shape shape)
+void DrawOval(TLCD tlcdInfo, Shape *shape)
 {
     /* TODO: Draw Oval */
+}
+
+void DrawFree(TLCD tlcdInfo, Shape *shape)
+{
+    struct ListNode *node = NULL;
+    int pressure;
+    while (1)
+    {
+        if (tlcdInfo.ie.type == 3)
+        {
+            if (tlcdInfo.ie.code == 0)
+            {
+                x = tlcdInfo.ie.value;
+            }
+            else if (tlcdInfo.ie.code == 1)
+            {
+                y = tlcdInfo.ie.value;
+            }
+            else if (tlcdInfo.ie.code == 24)
+            {
+                pressure = tlcdInfo.ie.value;
+                if (pressure == 0)
+                {
+                    xpos = tlcdInfo.a * x + tlcdInfo.b * y + tlcdInfo.c;
+                    ypos = tlcdInfo.d * x + tlcdInfo.e * y + tlcdInfo.f;
+                }
+            }
+        }
+    }
 }
