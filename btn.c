@@ -166,6 +166,8 @@ void SensingTouch(TLCD tlcdInfo)
         printf("touching screen %d %d\n", xpos, ypos);
         if (state >= 0 && state < 9)
         {
+            shape->outColor = 0;
+
             // set Up Start x , y pos
             if (isFirst == 1)
             {
