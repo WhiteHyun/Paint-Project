@@ -46,7 +46,7 @@ void DrawRectangle(TLCD tlcdInfo, Shape shape)
 
 
 /*
- * This is Base Code for Making Rectangle Made by D.S Kim
+ * This is Base Code for Making LINE Made by D.S Kim
  * Make start x , y -> end x , y Rectange
  * 필요한기능  -> 입력받은 점이 처음 찍힌 점일경우 start x, y에 적립
  *             -> 아닐경우 end의 x,y좌표를 계속하여 갱신하여줍니다.
@@ -59,7 +59,7 @@ void DrawLine(TLCD tlcdInfo, Shape shape)
 }
 
 /*
- * This is Base Code for Making Rectangle Made by D.E Kime
+ * This is Base Code for Making Oval Made by D.E Kime
  * Make start x , y -> end x , y Rectange
  * 필요한기능  -> 입력받은 점이 처음 찍힌 점일경우 start x, y에 적립
  *             -> 아닐경우 end의 x,y좌표를 계속하여 갱신하여줍니다.
