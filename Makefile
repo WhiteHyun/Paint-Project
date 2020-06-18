@@ -1,5 +1,5 @@
-Lab4 : main.o set.o btn.o draw.o ui.o
-	gcc -o Lab4 main.o set.o btn.o draw.o ui.o
+Lab4 : main.o set.o btn.o draw.o ui.o list.o
+	gcc -o Lab4 main.o set.o btn.o draw.o ui.o list.o
 
 main.o : main.c
 	gcc -c -o main.o main.c
@@ -15,6 +15,9 @@ draw.o : draw.c
 
 ui.o : ui.c
 	gcc -c -o ui.o ui.c
+
+list.o : list.c
+	gcc -c -o list.o list.c
 
 clean :
 	rm *.o Lab4
