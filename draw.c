@@ -74,7 +74,7 @@ void DrawOval(TLCD tlcdInfo, Shape *shape)
 void DrawFree(TLCD tlcdInfo, Shape *shape)
 {
     struct ListNode *node = NULL;
-    int pressure;
+    int pressure, xpos, ypos, x, y;
     while (1)
     {
         if (tlcdInfo.ie.type == 3)
@@ -102,17 +102,27 @@ void DrawFree(TLCD tlcdInfo, Shape *shape)
 
 void DrawSelect(TLCD tlcdInfo, Shape *shape)
 {
+    printf("DrawSelect Executed\n");
+    return;
 }
 
 void DrawErase(TLCD tlcdInfo, Shape *shape)
 {
+    printf("DrawErase Executed\n");
+    return;
 }
 void DrawClear(TLCD tlcdInfo, Shape *shape)
 {
+    printf("DrawClear Executed\n");
+    return;
 }
 void DrawPen(TLCD tlcdInfo, Shape *shape)
 {
+    printf("DrawPen Executed\n");
+    return;
 }
 void DrawFill(TLCD tlcdInfo, Shape *shape)
 {
+    printf("DrawFill Executed\n");
+    return;
 }
