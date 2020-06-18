@@ -2,6 +2,7 @@
 #include "draw.h"
 #include "btn.h"
 #include "ui.h"
+#include "list.h"
 void ClearLcd(TLCD tlcdInfo)
 {
     int i, j, offset;
@@ -131,7 +132,7 @@ void Run()
     ClearLcd(tlcdInfo);
     SetCalibration(&tlcdInfo);
     ClearLcd(tlcdInfo);
-
+    InitList();
     DrawUI(tlcdInfo);
 
     // main code part
