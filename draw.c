@@ -13,6 +13,7 @@
 void DrawLine(TLCD tlcdInfo, Shape *shape)
 {
     /* TODO: Draw line */
+    printf("DrawLine Executed\n");
 }
 
 /*
@@ -25,6 +26,8 @@ void DrawLine(TLCD tlcdInfo, Shape *shape)
  */
 void DrawRectangle(TLCD tlcdInfo, Shape *shape)
 {
+    printf("DrawRectangle Executed\n");
+
     int i, tmp, offset;
 
     if (shape->start.x > shape->end.x)
@@ -69,6 +72,7 @@ void DrawRectangle(TLCD tlcdInfo, Shape *shape)
 void DrawOval(TLCD tlcdInfo, Shape *shape)
 {
     /* TODO: Draw Oval */
+    printf("DrawOval Executed\n");
 }
 
 /*
@@ -77,6 +81,8 @@ void DrawOval(TLCD tlcdInfo, Shape *shape)
 void DrawFree(TLCD tlcdInfo, Shape *shape)
 {
     /* 아직 미 구현된 상태임 */
+    printf("DrawFree Executed\n");
+
     struct ListNode *node = NULL;
     int pressure, xpos, ypos, x, y;
     while (1)
