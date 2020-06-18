@@ -49,7 +49,7 @@ struct ListNode *Pop();
 struct ListNode *IndexPop(int index);
 
 /*
- * 리스트 내부의 도형들을 전부 없앱니다.
+ * 리스트 내부의 노드(도형)들을 전부 없앱니다.
  */
 void ListClear();
 
