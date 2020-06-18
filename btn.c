@@ -18,21 +18,25 @@ int GetBtn(TLCD tlcdInfo, int xpos, int ypos)
     else if ((xpos >= 0 && xpos <= 50) && (ypos >= 0 && ypos <= 30))
     {
         inputBtnFlag = TOUCH_LINE;
+        isFirst = 1;
     }
 
     else if ((xpos >= 0 && xpos <= 50) && (ypos >= 35 && ypos <= 65))
     {
         inputBtnFlag = TOUCH_RECT;
+        isFirst = 1;
     }
 
     else if ((xpos >= 0 && xpos <= 50) && (ypos >= 70 && ypos <= 100))
     {
         inputBtnFlag = TOUCH_OVAL;
+        isFirst = 1;
     }
 
     else if ((xpos >= 0 && xpos <= 50) && (ypos >= 105 && ypos <= 135))
     {
         inputBtnFlag = TOUCH_FREEDRAW;
+        isFirst = 1;
     }
 
     else if ((xpos >= 0 && xpos <= 50) && (ypos >= 140 && ypos <= 170))
@@ -173,13 +177,18 @@ void SensingTouch(TLCD tlcdInfo)
         printf("touching screen %d %d\n", xpos, ypos);
         if (state >= 0 && state < 9)
         {
+<<<<<<< HEAD
             shape.outColor = 0;
 
             // set Up Start x , y pos
+=======
+            /*set Up start x , y pos*/
+>>>>>>> 75fe046... Oval#1 SetStartPos
             if (isFirst == 1)
             {
                 shape.start.x = xpos;
                 shape.start.y = ypos;
+<<<<<<< HEAD
 
                 isFirst = -1;
             }
@@ -187,6 +196,9 @@ void SensingTouch(TLCD tlcdInfo)
             shape.end.x = xpos;
             shape.end.y = ypos;
 
+=======
+            }
+>>>>>>> 75fe046... Oval#1 SetStartPos
             g_drawTable[state](tlcdInfo, &shape);
             struct ListNode *node = CreateNode(shape);
             Append(node);

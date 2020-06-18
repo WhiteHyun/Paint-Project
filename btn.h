@@ -30,6 +30,9 @@ enum button_touch_state
  */
 int state;
 
+/* if isFirst is 1 -> first touch event , if isFirst is -1 -> it's not first touch
+ */
+int isFirst;
 /*
  * inputBtnFlag 0 -> touch to drawing paper /
  *              1 -> pen / 2 -> Fill / 3 -> Line / 4 -> Rectangle / 5 -> Oval 
