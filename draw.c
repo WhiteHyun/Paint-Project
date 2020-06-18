@@ -3,12 +3,12 @@
 #include "list.h"
 
 /*
- * This is Base Code for Making LINE Made by D.S Kim
- * Make start x , y -> end x , y Rectange
- * �ʿ��ѱ��  -> �Է¹��� ���� ó�� ���� ���ϰ�� start x, y�� ����
- *             -> �ƴҰ�� end�� x,y��ǥ�� ����Ͽ� �����Ͽ��ݴϴ�.
- *             -> ���������� ������ �׷��� Line�� ��ǥ�� Ư���Ͽ� �����ݴϴ� (�����ҋ� �����ָ� �ɵ�?)
- *             -> ( �� ����� �ٽ����� )
+ * This is Base Code for Making Line Made by D.S Kim
+ * Make start x , y -> end x , y Line
+ * 필요한기능  -> 입력받은 점이 처음 찍힌 점일경우 start x, y에 적립
+ *             -> 아닐경우 end의 x,y좌표를 계속하여 갱신하여줍니다.
+ *             -> 갱신했을시 이전에 그려진 Line의 좌표를 특정하여 지워줍니다 (시작할 때 집어주면 될듯?)
+ *             -> ( 이 기능이 핵심적임 )
  */
 void DrawLine(TLCD tlcdInfo, Shape *shape)
 {
@@ -18,10 +18,10 @@ void DrawLine(TLCD tlcdInfo, Shape *shape)
 /*
  * This is Base Code for Making Rectangle Made by T.H Kim
  * Make start x , y -> end x , y Rectange 
- * �ʿ��ѱ��  -> �Է¹��� ���� ó�� ���� ���ϰ�� start x, y�� ����
- *             -> �ƴҰ�� end�� x,y��ǥ�� ����Ͽ� �����Ͽ��ݴϴ�.
- *             -> ���������� ������ �׷��� Box�� �����ݴϴ� (�����ҋ� �����ָ� �ɵ�?)
- *             -> ( �� ����� �ٽ����� ) 
+ * 필요한기능  -> 입력받은 점이 처음 찍힌 점일경우 start x, y에 적립
+ *             -> 아닐경우 end의 x,y좌표를 계속하여 갱신하여줍니다.
+ *             -> 갱신했을시 이전에 그려진 Box를 지워줍니다 (시작할 때 집어주면 될듯?)
+ *             -> ( 이 기능이 핵심적임 ) 
  */
 void DrawRectangle(TLCD tlcdInfo, Shape *shape)
 {
@@ -59,20 +59,24 @@ void DrawRectangle(TLCD tlcdInfo, Shape *shape)
 }
 
 /*
- * This is Base Code for Making Oval Made by D.E Kime
- * Make start x , y -> end x , y Rectange
- * �ʿ��ѱ��  -> �Է¹��� ���� ó�� ���� ���ϰ�� start x, y�� ����
- *             -> �ƴҰ�� end�� x,y��ǥ�� ����Ͽ� �����Ͽ��ݴϴ�.
- *             -> ���������� ������ �׷��� Oval�� �����ݴϴ� (�����ҋ� �����ָ� �ɵ�?)
- *             -> ( �� ����� �ٽ����� )
+ * This is Base Code for Making Oval Made by D.E Kim
+ * Make start x , y -> end x , y Oval
+ * 필요한기능  -> 입력받은 점이 처음 찍힌 점일경우 start x, y에 적립
+ *             -> 아닐경우 end의 x,y좌표를 계속하여 갱신하여줍니다.
+ *             -> 갱신했을시 이전에 그려진 Oval을 지워줍니다 (시작할 때 집어주면 될듯?)
+ *             -> ( 이 기능이 핵심적임 )
  */
 void DrawOval(TLCD tlcdInfo, Shape *shape)
 {
     /* TODO: Draw Oval */
 }
 
+/*
+ * This is Base Code for Making Oval Made by S.H Hong
+ */
 void DrawFree(TLCD tlcdInfo, Shape *shape)
 {
+    /* 아직 미 구현된 상태임 */
     struct ListNode *node = NULL;
     int pressure, xpos, ypos, x, y;
     while (1)
@@ -100,27 +104,41 @@ void DrawFree(TLCD tlcdInfo, Shape *shape)
     }
 }
 
+/*
+ * TODO
+ */
 void DrawSelect(TLCD tlcdInfo, Shape *shape)
 {
     printf("DrawSelect Executed\n");
     return;
 }
-
+/*
+ * TODO
+ */
 void DrawErase(TLCD tlcdInfo, Shape *shape)
 {
     printf("DrawErase Executed\n");
     return;
 }
+/*
+ * TODO
+ */
 void DrawClear(TLCD tlcdInfo, Shape *shape)
 {
     printf("DrawClear Executed\n");
     return;
 }
+/*
+ * TODO
+ */
 void DrawPen(TLCD tlcdInfo, Shape *shape)
 {
     printf("DrawPen Executed\n");
     return;
 }
+/*
+ * TODO
+ */
 void DrawFill(TLCD tlcdInfo, Shape *shape)
 {
     printf("DrawFill Executed\n");
