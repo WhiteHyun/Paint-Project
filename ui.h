@@ -17,10 +17,16 @@ enum Color
 };
 enum Size
 {
-    CANVAS_X = 200,
-    CANVAS_Y = 220
+    SIZEOF_CANVAS_X = 200,
+    SIZEOF_CANVAS_Y = 220,
 };
-
+enum Position
+{
+    START_CANVAS_X = 60,
+    END_CANVAS_X = 260,
+    START_CANVAS_Y = 10,
+    END_CANVAS_Y = 230
+};
 //기본 UI 출력
 void DrawUI(TLCD tlcdInfo);
 
