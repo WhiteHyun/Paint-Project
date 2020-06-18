@@ -2,6 +2,27 @@
 #include "ui.h"
 #include "list.h"
 
+inline void InputTouch(TLCD *tlcdInfo)
+{
+    read(tlcdInfo->fd, &tlcdInfo->ie, sizeof(struct input_event));
+
+    if (tlcdInfo->ie.type == 3)
+    {
+        if (tlcdInfo->ie.code == 0)
+        {
+            tlcdInfo->x = tlcdInfo->ie.value;
+        }
+        else if (tlcdInfo->ie.code == 1)
+        {
+            tlcdInfo->y = tlcdInfo->ie.value;
+        }
+        else if (tlcdInfo->ie.code == 24)
+        {
+            tlcdInfo->pressure = tlcdInfo->ie.value;
+        }
+    }
+}
+
 /*
  * This is Base Code for Making Line Made by D.S Kim
  * Make start x , y -> end x , y Line
@@ -84,28 +105,15 @@ void DrawFree(TLCD tlcdInfo, Shape *shape)
     printf("DrawFree Executed\n");
 
     struct ListNode *node = NULL;
-    int pressure, xpos, ypos, x, y;
+    int xpos, ypos;
     while (1)
     {
-        if (tlcdInfo.ie.type == 3)
+        InputTouch(&tlcdInfo);
+        if (tlcdInfo.pressure == 0)
         {
-            if (tlcdInfo.ie.code == 0)
-            {
-                x = tlcdInfo.ie.value;
-            }
-            else if (tlcdInfo.ie.code == 1)
-            {
-                y = tlcdInfo.ie.value;
-            }
-            else if (tlcdInfo.ie.code == 24)
-            {
-                pressure = tlcdInfo.ie.value;
-                if (pressure == 0)
-                {
-                    xpos = tlcdInfo.a * x + tlcdInfo.b * y + tlcdInfo.c;
-                    ypos = tlcdInfo.d * x + tlcdInfo.e * y + tlcdInfo.f;
-                }
-            }
+            xpos = tlcdInfo.a * tlcdInfo.x + tlcdInfo.b * tlcdInfo.y + tlcdInfo.c;
+            ypos = tlcdInfo.d * tlcdInfo.x + tlcdInfo.e * tlcdInfo.y + tlcdInfo.f;
+            printf("xpos: %d\nypos: %d\n", xpos, ypos);
         }
     }
 }

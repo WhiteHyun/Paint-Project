@@ -23,6 +23,7 @@ typedef struct _TLCD
     int fd;
     float a, b, c, d, e, f, k; //터치 하는 위치를 계산하는 값
     struct input_event ie;     //터치 이벤트
+    int x, y, pressure;        //이벤트에 따라 발생하는 x,y값과 압력값
 } TLCD;
 
 /* 화면 클리어 */
