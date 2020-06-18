@@ -25,8 +25,8 @@ enum button_touch_state
 };
 
 /*
- *              1 -> pen / 2 -> Fill / 3 -> Line / 4 -> Rectangle / 5 -> Oval 
- *              6 -> FreeDraw / 7 -> Select / 8 -> Erase 
+ *              1 -> Line / 2 -> Rectangle / 3 -> Oval / 4 -> FreeDraw / 5 -> Select 
+ *              6 -> Erase / 7 -> Clear / 8 -> Pen / 9 -> Fill
  */
 int state;
 
