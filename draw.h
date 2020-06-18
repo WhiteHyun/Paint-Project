@@ -25,17 +25,6 @@ typedef struct _Shape
 
 typedef void (*drawList)(TLCD, Shape *);
 
-const drawList g_drawTable[] = {
-    DrawLine,
-    DrawRectangle,
-    DrawOval,
-    DrawFree,
-    DrawSelect,
-    DrawErase,
-    DrawClear,
-    DrawPen,
-    DrawFill};
-
 void DrawLine(TLCD tlcdInfo, Shape *shape);
 
 // make Rectangle Base Code
@@ -54,4 +43,15 @@ void DrawClear(TLCD tlcdInfo, Shape *shape);
 void DrawPen(TLCD tlcdInfo, Shape *shape);
 
 void DrawFill(TLCD tlcdInfo, Shape *shape);
+
+static const drawList g_drawTable[] = {
+    DrawLine,
+    DrawRectangle,
+    DrawOval,
+    DrawFree,
+    DrawSelect,
+    DrawErase,
+    DrawClear,
+    DrawPen,
+    DrawFill};
 #endif
