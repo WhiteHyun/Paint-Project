@@ -3,15 +3,15 @@
 #include "draw.h"
 struct ListNode
 {
-    struct ListNode *next;
-    struct ListNode *prev;
-    Shape shape;
+    struct ListNode *next; //다음 노드를 가리키는 포인터
+    struct ListNode *prev; //이전 노드를 가리키는 포인터
+    Shape shape;           //도형의 정보(data)
 };
 struct List
 {
-    struct ListNode *peek;
-    struct ListNode *start;
-    int size;
+    struct ListNode *peek;  //리스트의 가장 끝
+    struct ListNode *start; //리스트의 시작
+    int size;               //리스트의 크기
 };
 
 static struct List *g_List = NULL;
