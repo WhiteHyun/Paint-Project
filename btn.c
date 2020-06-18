@@ -166,12 +166,18 @@ void SensingTouch(TLCD tlcdInfo)
         printf("touching screen %d %d\n", xpos, ypos);
         if (state >= 0 && state < 9)
         {
-            /*set Up start x , y pos*/
+            // set Up Start x , y pos
             if (isFirst == 1)
             {
                 shape.start.x = xpos;
                 shape.start.y = ypos;
+
+                isFirst = -1;
             }
+            // set Up End x , y pos
+            shape.end.x = xpos;
+            shape.end.y = ypos;
+
             g_drawTable[state](tlcdInfo, &shape);
         }
         break;
