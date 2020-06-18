@@ -20,7 +20,7 @@ typedef struct _Shape
     Point end;
     unsigned short inColor;  // inBound Color
     unsigned short outColor; // outBound Color
-    int **position;
+    int **position;          //아직 보류중인 변수입니다. 초기화할 필요는 없습니다.
 } Shape;
 
 typedef void (*drawList)(TLCD, Shape *);
@@ -44,6 +44,9 @@ void DrawPen(TLCD tlcdInfo, Shape *shape);
 
 void DrawFill(TLCD tlcdInfo, Shape *shape);
 
+/*
+ * 도형과 관련된 함수들의 테이블입니다.
+ */
 static const drawList g_drawTable[] = {
     DrawLine,
     DrawRectangle,
