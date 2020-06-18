@@ -130,7 +130,7 @@ void SensingTouch(TLCD tlcdInfo)
     }
     else
     {
-        ret = 0;
+        ret = -1;
     }
     switch (ret)
     {
@@ -162,11 +162,16 @@ void SensingTouch(TLCD tlcdInfo)
         printf("touching screen %d %d\n", xpos, ypos);
         if (state > 0 && state < 10)
         {
-            g_drawTable[state - 1](tlcdInfo, &shape);
+            g_drawTable[state](tlcdInfo, &shape);
         }
         break;
     default:
-        if (ret != 0)
+        /*
+         * 터치를 때면 ret이 0이 되기 때문에
+         * 항상 0이 들어오는 오류를 발견했습니다.
+         * if 문으로 수정했습니다.
+         */
+        if (ret != -1)
         {
             state = ret;
         }
