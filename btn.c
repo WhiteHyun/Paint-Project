@@ -99,6 +99,7 @@ void SensingTouch(TLCD tlcdInfo)
 {
     int x, y, pressure;
     int xpos, ypos, ret;
+    Shape shape;
 
     read(tlcdInfo.fd, &tlcdInfo.ie, sizeof(struct input_event));
 
@@ -134,32 +135,32 @@ void SensingTouch(TLCD tlcdInfo)
 
     switch (ret)
     {
-    case TOUCH_PEN:
+    case TOUCH_LINE:
         state = 1;
         break;
-    case TOUCH_FILL:
+    case TOUCH_RECT:
         state = 2;
         break;
-    case TOUCH_LINE:
+    case TOUCH_OVAL:
         state = 3;
         break;
-    case TOUCH_RECT:
+    case TOUCH_FREEDRAW:
         state = 4;
         break;
-    case TOUCH_OVAL:
+    case TOUCH_SEL:
         state = 5;
         break;
-    case TOUCH_FREEDRAW:
+    case TOUCH_ERASE:
         state = 6;
         break;
-    case TOUCH_SEL:
+    case TOUCH_CLEAR:
         state = 7;
         break;
-    case TOUCH_ERASE:
+    case TOUCH_PEN:
         state = 8;
         break;
-    case TOUCH_CLEAR:
-        printf("todo Clear\n");
+    case TOUCH_FILL:
+        state = 9;
         break;
     case TOUCH_WHITE:
         printf("todo WhiteColor\n");
@@ -187,45 +188,7 @@ void SensingTouch(TLCD tlcdInfo)
         break;
     case TOUCH_CANVAS:
         printf("touching screen %d %d\n", xpos, ypos);
-
-        switch (state)
-        {
-        // TODO PEN
-        case TOUCH_PEN:
-            printf("dot screen %d %d\n", xpos, ypos);
-            break;
-        // TODO Fill
-        case TOUCH_FILL:
-            printf("TODO Fill\n");
-            break;
-        // TODO LINE
-        case TOUCH_LINE:
-            //DrawLine(tlcdInfo, /* Shape 구조체 넣어야 함 */);
-            break;
-        // TODO RECTANGLE
-        case TOUCH_RECT:
-            //DrawRectangle(tlcdInfo, /* Shape 구조체 넣어야 함 */);
-            break;
-        // TODO Oval
-        case TOUCH_OVAL:
-            //DrawOval(tlcdInfo, /* Shape 구조체 넣어야 함 */);
-            break;
-        // TODO Oval
-        case TOUCH_FREEDRAW:
-            printf("TODO FreeDraw\n");
-            break;
-        // TODO Select
-        case TOUCH_SEL:
-            printf("TODO Select\n");
-            break;
-        // TODO Erase
-        case TOUCH_ERASE:
-            printf("TODO Erase\n");
-            break;
-        default:
-            break;
-        }
-
+        g_drawTable[state](tlcdInfo, shape);
         break;
     default:
         break;
