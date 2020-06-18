@@ -132,36 +132,8 @@ void SensingTouch(TLCD tlcdInfo)
     {
         ret = 0;
     }
-
     switch (ret)
     {
-    case TOUCH_LINE:
-        state = 1;
-        break;
-    case TOUCH_RECT:
-        state = 2;
-        break;
-    case TOUCH_OVAL:
-        state = 3;
-        break;
-    case TOUCH_FREEDRAW:
-        state = 4;
-        break;
-    case TOUCH_SEL:
-        state = 5;
-        break;
-    case TOUCH_ERASE:
-        state = 6;
-        break;
-    case TOUCH_CLEAR:
-        state = 7;
-        break;
-    case TOUCH_PEN:
-        state = 8;
-        break;
-    case TOUCH_FILL:
-        state = 9;
-        break;
     case TOUCH_WHITE:
         printf("todo WhiteColor\n");
         break;
@@ -188,9 +160,13 @@ void SensingTouch(TLCD tlcdInfo)
         break;
     case TOUCH_CANVAS:
         printf("touching screen %d %d\n", xpos, ypos);
-        g_drawTable[state](tlcdInfo, shape);
+        if (state > 0 && state < 10)
+        {
+            g_drawTable[state](tlcdInfo, &shape);
+        }
         break;
     default:
+        state = ret;
         break;
     }
 }
