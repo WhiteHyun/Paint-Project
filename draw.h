@@ -29,15 +29,29 @@ const drawList g_drawTable[] = {
     DrawLine,
     DrawRectangle,
     DrawOval,
-    DrawFree};
+    DrawFree,
+    DrawSelect,
+    DrawErase,
+    DrawClear,
+    DrawPen,
+    DrawFill};
+
+void DrawLine(TLCD tlcdInfo, Shape *shape);
 
 // make Rectangle Base Code
-void DrawRectangle(TLCD tlcdInfo, Shape shape);
+void DrawRectangle(TLCD tlcdInfo, Shape *shape);
 
-void DrawLine(TLCD tlcdInfo, Shape shape);
+void DrawOval(TLCD tlcdInfo, Shape *shape);
 
-void DrawOval(TLCD tlcdInfo, Shape shape);
+void DrawFree(TLCD tlcdInfo, Shape *shape);
 
-void DrawFree(TLCD tlcdInfo);
+void DrawSelect(TLCD tlcdInfo, Shape *shape);
 
+void DrawErase(TLCD tlcdInfo, Shape *shape);
+
+void DrawClear(TLCD tlcdInfo, Shape *shape);
+
+void DrawPen(TLCD tlcdInfo, Shape *shape);
+
+void DrawFill(TLCD tlcdInfo, Shape *shape);
 #endif
