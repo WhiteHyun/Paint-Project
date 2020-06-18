@@ -1,6 +1,7 @@
 #include "draw.h"
 #include "ui.h"
 #include "list.h"
+#include <stdio.h>
 #include <stdlib.h>
 
 /*
@@ -106,11 +107,15 @@ void DrawFree(TLCD tlcdInfo, Shape *shape)
                     xpos = tlcdInfo.a * x + tlcdInfo.b * y + tlcdInfo.c;
                     ypos = tlcdInfo.d * x + tlcdInfo.e * y + tlcdInfo.f;
                     /*코드 구현*/
-                    shape->position = (int **)malloc(sizeof(int *) * 220); //캔버스의 y크기: 220
-                    for (i = 0; i < 220; i++)
-                    {
-                        shape->position[i] = (int *)malloc(sizeof(int) * 200); //캔버스의 x크기: 200
-                    }
+
+                    /* position 동적 할당 */
+                    // shape->position = (int **)malloc(sizeof(int *) * CANVAS_Y); //캔버스의 y크기: 220
+                    // for (i = 0; i < 220; i++)
+                    // {
+                    //     shape->position[i] = (int *)malloc(sizeof(int) * CANVAS_X); //캔버스의 x크기: 200
+                    // }
+                    //Test code
+                    printf("xpos = %d\nypos=%d\n", xpos, ypos);
                 }
             }
         }
