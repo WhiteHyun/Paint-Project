@@ -1,5 +1,7 @@
 #include "btn.h"
 #include "draw.h"
+#include "ui.h"
+
 int GetBtn(TLCD tlcdInfo, int xpos, int ypos)
 {
     int inputBtnFlag = 0;
@@ -140,33 +142,41 @@ void SensingTouch(TLCD tlcdInfo)
     {
     case TOUCH_WHITE:
         printf("todo WhiteColor\n");
+        shape.outColor = WHITE; //Set OutBound Color WHITE (why!???)
         break;
     case TOUCH_ORANGE:
         printf("todo OrangeColor\n");
+        shape.outColor = ORANGE; //Set OutBound Color ORANGE
         break;
     case TOUCH_RED:
         printf("todo RedColor\n");
+        shape.outColor = RED; //Set OutBound Color RED
         break;
     case TOUCH_GREEN:
         printf("todo GreenColor\n");
+        shape.outColor = GREEN; //Set OutBound Color GREEN
         break;
     case TOUCH_YELLOW:
         printf("todo YellowColor\n");
+        shape.outColor = YELLOW; //Set OutBound Color YELLOW
         break;
     case TOUCH_NAVY:
         printf("todo NavyColor\n");
+        shape.outColor = NAVY; //Set OutBound Color NAVY
         break;
     case TOUCH_BLUE:
         printf("todo BlueColor\n");
+        shape.outColor = BLUE; //Set OutBound Color BLUE
         break;
     case TOUCH_BLACK:
         printf("todo BlackColor\n");
+        shape.outColor = BLACK; //Set OutBound Color BLACK
         break;
     case TOUCH_CANVAS:
         printf("touching screen %d %d\n", xpos, ypos);
         if (state >= 0 && state < 9)
         {
-            shape->outColor = 0;
+            shape.outColor = 0;
 
             // set Up Start x , y pos
             if (isFirst == 1)
