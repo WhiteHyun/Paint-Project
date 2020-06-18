@@ -1,72 +1,152 @@
 #include "draw.h"
 #include "ui.h"
+#include "list.h"
+
+/*
+ * This is Base Code for Making Line Made by D.S Kim
+ * Make start x , y -> end x , y Line
+ * ÌïÑÏöîÌïúÍ∏∞Îä•  -> ÏûÖÎ†•Î∞õÏùÄ Ï†êÏù¥ Ï≤òÏùå Ï∞çÌûå Ï†êÏùºÍ≤ΩÏö∞ start x, yÏóê Ï†ÅÎ¶Ω
+ *             -> ÏïÑÎãêÍ≤ΩÏö∞ endÏùò x,yÏ¢åÌëúÎ•º Í≥ÑÏÜçÌïòÏó¨ Í∞±Ïã†ÌïòÏó¨Ï§çÎãàÎã§.
+ *             -> Í∞±Ïã†ÌñàÏùÑÏãú Ïù¥Ï†ÑÏóê Í∑∏Î†§ÏßÑ LineÏùò Ï¢åÌëúÎ•º ÌäπÏ†ïÌïòÏó¨ ÏßÄÏõåÏ§çÎãàÎã§ (ÏãúÏûëÌï† Îïå ÏßëÏñ¥Ï£ºÎ©¥ Îê†ÎìØ?)
+ *             -> ( Ïù¥ Í∏∞Îä•Ïù¥ ÌïµÏã¨Ï†ÅÏûÑ )
+ */
+void DrawLine(TLCD tlcdInfo, Shape *shape)
+{
+    /* TODO: Draw line */
+    printf("DrawLine Executed\n");
+}
 
 /*
  * This is Base Code for Making Rectangle Made by T.H Kim
  * Make start x , y -> end x , y Rectange 
- * « ø‰«—±‚¥…  -> ¿‘∑¬πﬁ¿∫ ¡°¿Ã √≥¿Ω ¬Ô»˘ ¡°¿œ∞ÊøÏ start x, yø° ¿˚∏≥
- *             -> æ∆¥“∞ÊøÏ end¿« x,y¡¬«•∏¶ ∞Ëº”«œø© ∞ªΩ≈«œø©¡›¥œ¥Ÿ.
- *             -> ∞ªΩ≈«ﬂ¿ªΩ√ ¿Ã¿¸ø° ±◊∑¡¡¯ Box∏¶ ¡ˆøˆ¡›¥œ¥Ÿ (Ω√¿€«“ãö ¡˝æÓ¡÷∏È µ…µÌ?)
- *             -> ( ¿Ã ±‚¥…¿Ã «ŸΩ…¿˚¿” ) 
+ * ÌïÑÏöîÌïúÍ∏∞Îä•  -> ÏûÖÎ†•Î∞õÏùÄ Ï†êÏù¥ Ï≤òÏùå Ï∞çÌûå Ï†êÏùºÍ≤ΩÏö∞ start x, yÏóê Ï†ÅÎ¶Ω
+ *             -> ÏïÑÎãêÍ≤ΩÏö∞ endÏùò x,yÏ¢åÌëúÎ•º Í≥ÑÏÜçÌïòÏó¨ Í∞±Ïã†ÌïòÏó¨Ï§çÎãàÎã§.
+ *             -> Í∞±Ïã†ÌñàÏùÑÏãú Ïù¥Ï†ÑÏóê Í∑∏Î†§ÏßÑ BoxÎ•º ÏßÄÏõåÏ§çÎãàÎã§ (ÏãúÏûëÌï† Îïå ÏßëÏñ¥Ï£ºÎ©¥ Îê†ÎìØ?)
+ *             -> ( Ïù¥ Í∏∞Îä•Ïù¥ ÌïµÏã¨Ï†ÅÏûÑ ) 
  */
-void DrawRectangle(TLCD tlcdInfo, Shape shape)
+void DrawRectangle(TLCD tlcdInfo, Shape *shape)
 {
+    printf("DrawRectangle Executed\n");
+
     int i, tmp, offset;
 
-    if (shape.start.x > shape.end.x)
+    if (shape->start.x > shape->end.x)
     {
-        tmp = shape.start.x;
-        shape.start.x = shape.end.x;
-        shape.end.x = tmp;
+        tmp = shape->start.x;
+        shape->start.x = shape->end.x;
+        shape->end.x = tmp;
     }
 
-    if (shape.start.y > shape.end.y)
+    if (shape->start.y > shape->end.y)
     {
-        tmp = shape.start.y;
-        shape.start.y = shape.end.y;
-        shape.end.y = tmp;
+        tmp = shape->start.y;
+        shape->start.y = shape->end.y;
+        shape->end.y = tmp;
     }
 
-    for (i = shape.start.x; i < shape.end.x; i++)
+    for (i = shape->start.x; i < shape->end.x; i++)
     {
-        offset = shape.start.y * 320 + i;
-        *(tlcdInfo.pfbdata + offset) = shape.outColor;
-        offset = shape.end.y * 320 + i;
-        *(tlcdInfo.pfbdata + offset) = shape.outColor;
+        offset = shape->start.y * 320 + i;
+        *(tlcdInfo.pfbdata + offset) = shape->outColor;
+        offset = shape->end.y * 320 + i;
+        *(tlcdInfo.pfbdata + offset) = shape->outColor;
     }
 
-    for (i = shape.start.y; i < shape.end.y; i++)
+    for (i = shape->start.y; i < shape->end.y; i++)
     {
-        offset = i * 320 + shape.start.x;
-        *(tlcdInfo.pfbdata + offset) = shape.outColor;
-        offset = i * 320 + shape.end.x;
-        *(tlcdInfo.pfbdata + offset) = shape.outColor;
+        offset = i * 320 + shape->start.x;
+        *(tlcdInfo.pfbdata + offset) = shape->outColor;
+        offset = i * 320 + shape->end.x;
+        *(tlcdInfo.pfbdata + offset) = shape->outColor;
     }
 }
 
-
 /*
- * This is Base Code for Making LINE Made by D.S Kim
- * Make start x , y -> end x , y Rectange
- * « ø‰«—±‚¥…  -> ¿‘∑¬πﬁ¿∫ ¡°¿Ã √≥¿Ω ¬Ô»˘ ¡°¿œ∞ÊøÏ start x, yø° ¿˚∏≥
- *             -> æ∆¥“∞ÊøÏ end¿« x,y¡¬«•∏¶ ∞Ëº”«œø© ∞ªΩ≈«œø©¡›¥œ¥Ÿ.
- *             -> ∞ªΩ≈«ﬂ¿ªΩ√ ¿Ã¿¸ø° ±◊∑¡¡¯ Line¿« ¡¬«•∏¶ ∆Ø¡§«œø© ¡ˆøˆ¡›¥œ¥Ÿ (Ω√¿€«“ãö ¡˝æÓ¡÷∏È µ…µÌ?)
- *             -> ( ¿Ã ±‚¥…¿Ã «ŸΩ…¿˚¿” )
+ * This is Base Code for Making Oval Made by D.E Kim
+ * Make start x , y -> end x , y Oval
+ * ÌïÑÏöîÌïúÍ∏∞Îä•  -> ÏûÖÎ†•Î∞õÏùÄ Ï†êÏù¥ Ï≤òÏùå Ï∞çÌûå Ï†êÏùºÍ≤ΩÏö∞ start x, yÏóê Ï†ÅÎ¶Ω
+ *             -> ÏïÑÎãêÍ≤ΩÏö∞ endÏùò x,yÏ¢åÌëúÎ•º Í≥ÑÏÜçÌïòÏó¨ Í∞±Ïã†ÌïòÏó¨Ï§çÎãàÎã§.
+ *             -> Í∞±Ïã†ÌñàÏùÑÏãú Ïù¥Ï†ÑÏóê Í∑∏Î†§ÏßÑ OvalÏùÑ ÏßÄÏõåÏ§çÎãàÎã§ (ÏãúÏûëÌï† Îïå ÏßëÏñ¥Ï£ºÎ©¥ Îê†ÎìØ?)
+ *             -> ( Ïù¥ Í∏∞Îä•Ïù¥ ÌïµÏã¨Ï†ÅÏûÑ )
  */
-void DrawLine(TLCD tlcdInfo, Shape shape)
-{
-    /* TODO: Draw line */
-}
-
-/*
- * This is Base Code for Making Oval Made by D.E Kime
- * Make start x , y -> end x , y Rectange
- * « ø‰«—±‚¥…  -> ¿‘∑¬πﬁ¿∫ ¡°¿Ã √≥¿Ω ¬Ô»˘ ¡°¿œ∞ÊøÏ start x, yø° ¿˚∏≥
- *             -> æ∆¥“∞ÊøÏ end¿« x,y¡¬«•∏¶ ∞Ëº”«œø© ∞ªΩ≈«œø©¡›¥œ¥Ÿ.
- *             -> ∞ªΩ≈«ﬂ¿ªΩ√ ¿Ã¿¸ø° ±◊∑¡¡¯ Oval¿ª ¡ˆøˆ¡›¥œ¥Ÿ (Ω√¿€«“ãö ¡˝æÓ¡÷∏È µ…µÌ?)
- *             -> ( ¿Ã ±‚¥…¿Ã «ŸΩ…¿˚¿” )
- */
-void DrawOval(TLCD tlcdInfo, Shape shape)
+void DrawOval(TLCD tlcdInfo, Shape *shape)
 {
     /* TODO: Draw Oval */
+    printf("DrawOval Executed\n");
+}
+
+/*
+ * This is Base Code for Making Oval Made by S.H Hong
+ */
+void DrawFree(TLCD tlcdInfo, Shape *shape)
+{
+    /* ÏïÑÏßÅ ÎØ∏ Íµ¨ÌòÑÎêú ÏÉÅÌÉúÏûÑ */
+    printf("DrawFree Executed\n");
+
+    struct ListNode *node = NULL;
+    int pressure, xpos, ypos, x, y;
+    while (1)
+    {
+        if (tlcdInfo.ie.type == 3)
+        {
+            if (tlcdInfo.ie.code == 0)
+            {
+                x = tlcdInfo.ie.value;
+            }
+            else if (tlcdInfo.ie.code == 1)
+            {
+                y = tlcdInfo.ie.value;
+            }
+            else if (tlcdInfo.ie.code == 24)
+            {
+                pressure = tlcdInfo.ie.value;
+                if (pressure == 0)
+                {
+                    xpos = tlcdInfo.a * x + tlcdInfo.b * y + tlcdInfo.c;
+                    ypos = tlcdInfo.d * x + tlcdInfo.e * y + tlcdInfo.f;
+                }
+            }
+        }
+    }
+}
+
+/*
+ * TODO
+ */
+void DrawSelect(TLCD tlcdInfo, Shape *shape)
+{
+    printf("DrawSelect Executed\n");
+    return;
+}
+/*
+ * TODO
+ */
+void DrawErase(TLCD tlcdInfo, Shape *shape)
+{
+    printf("DrawErase Executed\n");
+    return;
+}
+/*
+ * TODO
+ */
+void DrawClear(TLCD tlcdInfo, Shape *shape)
+{
+    printf("DrawClear Executed\n");
+    return;
+}
+/*
+ * TODO
+ */
+void DrawPen(TLCD tlcdInfo, Shape *shape)
+{
+    printf("DrawPen Executed\n");
+    return;
+}
+/*
+ * TODO
+ */
+void DrawFill(TLCD tlcdInfo, Shape *shape)
+{
+    printf("DrawFill Executed\n");
+    return;
 }

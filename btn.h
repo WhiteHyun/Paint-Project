@@ -4,29 +4,29 @@
 #include "set.h"
 enum button_touch_state
 {
-    TOUCH_PEN = 1,  //1
-    TOUCH_FILL,     //2
-    TOUCH_LINE,     //3
-    TOUCH_RECT,     //4
-    TOUCH_OVAL,     //5
-    TOUCH_FREEDRAW, //6
-    TOUCH_SEL,      //7
-    TOUCH_ERASE,    //8
-    TOUCH_CLEAR,    //9
-    TOUCH_WHITE,    //10
-    TOUCH_ORANGE,   //11
-    TOUCH_RED,      //12
-    TOUCH_GREEN,    //13
-    TOUCH_YELLOW,   //14
-    TOUCH_NAVY,     //15
-    TOUCH_BLUE,     //16
-    TOUCH_BLACK,    //17
-    TOUCH_CANVAS    //18
+    TOUCH_LINE,     // 0
+    TOUCH_RECT,     // 1
+    TOUCH_OVAL,     // 2
+    TOUCH_FREEDRAW, // 3
+    TOUCH_SEL,      // 4
+    TOUCH_ERASE,    // 5
+    TOUCH_CLEAR,    // 6
+    TOUCH_PEN,      // 7
+    TOUCH_FILL,     // 8
+    TOUCH_WHITE,    // 9
+    TOUCH_ORANGE,   //10
+    TOUCH_RED,      //11
+    TOUCH_GREEN,    //12
+    TOUCH_YELLOW,   //13
+    TOUCH_NAVY,     //14
+    TOUCH_BLUE,     //15
+    TOUCH_BLACK,    //16
+    TOUCH_CANVAS    //17
 };
 
 /*
- *              1 -> pen / 2 -> Fill / 3 -> Line / 4 -> Rectangle / 5 -> Oval 
- *              6 -> FreeDraw / 7 -> Select / 8 -> Erase 
+ *              1 -> Line / 2 -> Rectangle / 3 -> Oval / 4 -> FreeDraw / 5 -> Select 
+ *              6 -> Erase / 7 -> Clear / 8 -> Pen / 9 -> Fill
  */
 int state;
 
