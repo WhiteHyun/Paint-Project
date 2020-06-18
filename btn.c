@@ -100,7 +100,7 @@ void SensingTouch(TLCD tlcdInfo)
     int x, y, pressure;
     int xpos, ypos, ret;
     Shape shape;
-
+    shape.position = NULL;
     read(tlcdInfo.fd, &tlcdInfo.ie, sizeof(struct input_event));
 
     if (tlcdInfo.ie.type == 3)

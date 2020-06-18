@@ -1,6 +1,7 @@
 #include "draw.h"
 #include "ui.h"
 #include "list.h"
+#include <stdlib.h>
 
 /*
  * This is Base Code for Making Line Made by D.S Kim
@@ -84,7 +85,7 @@ void DrawFree(TLCD tlcdInfo, Shape *shape)
     printf("DrawFree Executed\n");
 
     struct ListNode *node = NULL;
-    int pressure, xpos, ypos, x, y;
+    int pressure, xpos, ypos, x, y, i;
     while (1)
     {
         if (tlcdInfo.ie.type == 3)
@@ -104,6 +105,12 @@ void DrawFree(TLCD tlcdInfo, Shape *shape)
                 {
                     xpos = tlcdInfo.a * x + tlcdInfo.b * y + tlcdInfo.c;
                     ypos = tlcdInfo.d * x + tlcdInfo.e * y + tlcdInfo.f;
+                    /*코드 구현*/
+                    shape->position = (int **)malloc(sizeof(int *) * 220); //캔버스의 y크기: 220
+                    for (i = 0; i < 220; i++)
+                    {
+                        shape->position[i] = (int *)malloc(sizeof(int) * 200); //캔버스의 x크기: 200
+                    }
                 }
             }
         }
