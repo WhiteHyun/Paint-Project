@@ -44,7 +44,7 @@ void DrawRectangle(TLCD tlcdInfo, Shape *shape)
         startX = endX;
         endX = tmp;
     }
-    if (start.y > end.y)
+    if (startY > endY)
     {
         tmp = startY;
         startY = endY;
@@ -81,7 +81,7 @@ void DrawOval(TLCD tlcdInfo, Shape *shape)
     /* TODO: Draw Oval */
     printf("DrawOval Executed\n");
 
-    int i, j, tmp, centerX, centerY, xlen, ylen;
+    int i, j, tmp, centerX, centerY, xlen, ylen, offset;
 
     int startX, startY, endX, endY;
 
@@ -97,7 +97,7 @@ void DrawOval(TLCD tlcdInfo, Shape *shape)
         startX = endX;
         endX = tmp;
     }
-    if (start.y > end.y)
+    if (startY > endY)
     {
         tmp = startY;
         startY = endY;
@@ -115,7 +115,7 @@ void DrawOval(TLCD tlcdInfo, Shape *shape)
             if (((ylen * ylen) * (j * j) + (xlen * xlen) * (i * i)) == ((xlen * xlen) * (ylen * ylen)))
             {
                 offset = i * 320 + j;
-                *(pfbdata + offset) = color;
+                *(tlcdInfo.pfbdata + offset) = shape->outColor;
             }
         }
     }
