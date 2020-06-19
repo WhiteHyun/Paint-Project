@@ -138,7 +138,7 @@ void SensingTouch(TLCD tlcdInfo)
     ypos = tlcdInfo.d * tlcdInfo.x + tlcdInfo.e * tlcdInfo.y + tlcdInfo.f;
 
     // 터치가 된곳의 위치에 따라달라짐
-    if (pressure >= 180)
+    if (tlcdInfo.pressure >= 180)
     {
         ret = GetBtn(tlcdInfo, xpos, ypos);
     }
