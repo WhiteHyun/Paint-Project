@@ -124,6 +124,7 @@ void DrawFree(TLCD tlcdInfo, Shape *shape)
         ypos = tlcdInfo.d * tlcdInfo.x + tlcdInfo.e * tlcdInfo.y + tlcdInfo.f;
         shape->position[ypos - START_CANVAS_Y][xpos - START_CANVAS_X] = 1;
         offset = ypos * 320 + xpos;
+        printf("xpos: %d\nypos: %d\n", xpos, ypos);
         *(tlcdInfo.pfbdata + offset) = BLACK;
         offset = shape->end.y * 320 + i;
         if (tlcdInfo.pressure == 0)
