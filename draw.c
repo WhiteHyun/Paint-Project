@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-inline void InputTouch(TLCD *tlcdInfo)
+inline void InputTouch(TLCD* tlcdInfo)
 {
     read(tlcdInfo->fd, &tlcdInfo->ie, sizeof(struct input_event));
 
@@ -14,10 +14,12 @@ inline void InputTouch(TLCD *tlcdInfo)
         {
             tlcdInfo->x = tlcdInfo->ie.value;
         }
+
         else if (tlcdInfo->ie.code == 1)
         {
             tlcdInfo->y = tlcdInfo->ie.value;
         }
+
         else if (tlcdInfo->ie.code == 24)
         {
             tlcdInfo->pressure = tlcdInfo->ie.value;
@@ -28,26 +30,81 @@ inline void InputTouch(TLCD *tlcdInfo)
 /*
  * This is Base Code for Making Line Made by D.S Kim
  * Make start x , y -> end x , y Line
- * ÌïÑÏöîÌïúÍ∏∞Îä•  -> ÏûÖÎ†•Î∞õÏùÄ Ï†êÏù¥ Ï≤òÏùå Ï∞çÌûå Ï†êÏùºÍ≤ΩÏö∞ start x, yÏóê Ï†ÅÎ¶Ω
- *             -> ÏïÑÎãêÍ≤ΩÏö∞ endÏùò x,yÏ¢åÌëúÎ•º Í≥ÑÏÜçÌïòÏó¨ Í∞±Ïã†ÌïòÏó¨Ï§çÎãàÎã§.
- *             -> Í∞±Ïã†ÌñàÏùÑÏãú Ïù¥Ï†ÑÏóê Í∑∏Î†§ÏßÑ LineÏùò Ï¢åÌëúÎ•º ÌäπÏ†ïÌïòÏó¨ ÏßÄÏõåÏ§çÎãàÎã§ (ÏãúÏûëÌï† Îïå ÏßëÏñ¥Ï£ºÎ©¥ Îê†ÎìØ?)
- *             -> ( Ïù¥ Í∏∞Îä•Ïù¥ ÌïµÏã¨Ï†ÅÏûÑ )
+ * « ø‰«—±‚¥…  -> ¿‘∑¬πﬁ¿∫ ¡°¿Ã √≥¿Ω ¬Ô»˘ ¡°¿œ∞ÊøÏ start x, yø° ¿˚∏≥
+ *             -> æ∆¥“∞ÊøÏ end¿« x,y¡¬«•∏¶ ∞Ëº”«œø© ∞ªΩ≈«œø©¡›¥œ¥Ÿ.
+ *             -> ∞ªΩ≈«ﬂ¿ªΩ√ ¿Ã¿¸ø° ±◊∑¡¡¯ Line¿« ¡¬«•∏¶ ∆Ø¡§«œø© ¡ˆøˆ¡›¥œ¥Ÿ (Ω√¿€«“ ∂ß ¡˝æÓ¡÷∏È µ…µÌ?)
+ *             -> ( ¿Ã ±‚¥…¿Ã «ŸΩ…¿˚¿” )
  */
-void DrawLine(TLCD tlcdInfo, Shape *shape)
+void DrawLine(TLCD tlcdInfo, Shape* shape)
 {
-    /* TODO: Draw line */
-    printf("DrawLine Executed\n");
+    int i, tmp, offset;
+    int startXpos, startYpos;
+    int endXpos, endYpos;
+    double incline; //±‚øÔ±‚
+    double yIntercept; //y¿˝∆Ì
+
+    while (1) //Ω√¿€¡ˆ¡°¿« x, y¡¬«• ¿‘∑¬
+    {
+        InputTouch(&tlcdInfo);
+
+        if (tlcdInfo.pressure == 0)
+        {
+            startXpos = tlcdInfo.a * tlcdInfo.x + tlcdInfo.b * tlcdInfo.y + tlcdInfo.c;
+            startYpos = tlcdInfo.d * tlcdInfo.x + tlcdInfo.e * tlcdInfo.y + tlcdInfo.f;
+
+            break;
+        }
+    }
+
+    tlcdInfo.pressure = -1;
+
+    while (1) //¡æ∑·¡ˆ¡°¿« x, y¡¬«• ¿‘∑¬
+    {
+        InputTouch(&tlcdInfo);
+
+        if (tlcdInfo.pressure == 0)
+        {
+            endXpos = tlcdInfo.a * tlcdInfo.x + tlcdInfo.b * tlcdInfo.y + tlcdInfo.c;
+            endYpos = tlcdInfo.d * tlcdInfo.x + tlcdInfo.e * tlcdInfo.y + tlcdInfo.f;
+
+            break;
+        }
+    }
+
+    if (startXpos < endXpos) //1, 4 ªÁ∫–∏È
+    {
+        incline = (double)((double)(endYpos - startYpos) / (double)(endXpos - startXpos)); //±‚øÔ±‚ = y¡ı∞°∑Æ / x¡ı∞°∑Æ
+        yIntercept = (double)(endYpos - incline * endXpos); //y¿˝∆Ì = y - ±‚øÔ±‚ * x
+
+        for (i = startXpos; i <= endXpos; i++)
+        {
+            offset = (int)(incline * i + yIntercept) * 320 + (i);
+            *(tlcdInfo.pfbdata + offset) = 0;
+        }
+    }
+
+    else //2, 3 ªÁ∫–∏È
+    {
+        incline = (double)((double)(endYpos - startYpos) / (double)(endXpos - startXpos));
+        yIntercept = (double)(endYpos - incline * endXpos);
+
+        for (i = startXpos; i >= endXpos; i--)
+        {
+            offset = (int)(incline * i + yIntercept) * 320 + (i);
+            *(tlcdInfo.pfbdata + offset) = 0;
+        }
+    }
 }
 
 /*
  * This is Base Code for Making Rectangle Made by T.H Kim
- * Make start x , y -> end x , y Rectange 
- * ÌïÑÏöîÌïúÍ∏∞Îä•  -> ÏûÖÎ†•Î∞õÏùÄ Ï†êÏù¥ Ï≤òÏùå Ï∞çÌûå Ï†êÏùºÍ≤ΩÏö∞ start x, yÏóê Ï†ÅÎ¶Ω
- *             -> ÏïÑÎãêÍ≤ΩÏö∞ endÏùò x,yÏ¢åÌëúÎ•º Í≥ÑÏÜçÌïòÏó¨ Í∞±Ïã†ÌïòÏó¨Ï§çÎãàÎã§.
- *             -> Í∞±Ïã†ÌñàÏùÑÏãú Ïù¥Ï†ÑÏóê Í∑∏Î†§ÏßÑ BoxÎ•º ÏßÄÏõåÏ§çÎãàÎã§ (ÏãúÏûëÌï† Îïå ÏßëÏñ¥Ï£ºÎ©¥ Îê†ÎìØ?)
- *             -> ( Ïù¥ Í∏∞Îä•Ïù¥ ÌïµÏã¨Ï†ÅÏûÑ ) 
+ * Make start x , y -> end x , y Rectange
+ * « ø‰«—±‚¥…  -> ¿‘∑¬πﬁ¿∫ ¡°¿Ã √≥¿Ω ¬Ô»˘ ¡°¿œ∞ÊøÏ start x, yø° ¿˚∏≥
+ *             -> æ∆¥“∞ÊøÏ end¿« x,y¡¬«•∏¶ ∞Ëº”«œø© ∞ªΩ≈«œø©¡›¥œ¥Ÿ.
+ *             -> ∞ªΩ≈«ﬂ¿ªΩ√ ¿Ã¿¸ø° ±◊∑¡¡¯ Box∏¶ ¡ˆøˆ¡›¥œ¥Ÿ (Ω√¿€«“ ∂ß ¡˝æÓ¡÷∏È µ…µÌ?)
+ *             -> ( ¿Ã ±‚¥…¿Ã «ŸΩ…¿˚¿” )
  */
-void DrawRectangle(TLCD tlcdInfo, Shape *shape)
+void DrawRectangle(TLCD tlcdInfo, Shape* shape)
 {
     printf("DrawRectangle Executed\n");
 
@@ -71,6 +128,7 @@ void DrawRectangle(TLCD tlcdInfo, Shape *shape)
     {
         offset = shape->start.y * 320 + i;
         *(tlcdInfo.pfbdata + offset) = shape->outColor;
+
         offset = shape->end.y * 320 + i;
         *(tlcdInfo.pfbdata + offset) = shape->outColor;
     }
@@ -79,6 +137,7 @@ void DrawRectangle(TLCD tlcdInfo, Shape *shape)
     {
         offset = i * 320 + shape->start.x;
         *(tlcdInfo.pfbdata + offset) = shape->outColor;
+
         offset = i * 320 + shape->end.x;
         *(tlcdInfo.pfbdata + offset) = shape->outColor;
     }
@@ -87,12 +146,12 @@ void DrawRectangle(TLCD tlcdInfo, Shape *shape)
 /*
  * This is Base Code for Making Oval Made by D.E Kim
  * Make start x , y -> end x , y Oval
- * ÌïÑÏöîÌïúÍ∏∞Îä•  -> ÏûÖÎ†•Î∞õÏùÄ Ï†êÏù¥ Ï≤òÏùå Ï∞çÌûå Ï†êÏùºÍ≤ΩÏö∞ start x, yÏóê Ï†ÅÎ¶Ω
- *             -> ÏïÑÎãêÍ≤ΩÏö∞ endÏùò x,yÏ¢åÌëúÎ•º Í≥ÑÏÜçÌïòÏó¨ Í∞±Ïã†ÌïòÏó¨Ï§çÎãàÎã§.
- *             -> Í∞±Ïã†ÌñàÏùÑÏãú Ïù¥Ï†ÑÏóê Í∑∏Î†§ÏßÑ OvalÏùÑ ÏßÄÏõåÏ§çÎãàÎã§ (ÏãúÏûëÌï† Îïå ÏßëÏñ¥Ï£ºÎ©¥ Îê†ÎìØ?)
- *             -> ( Ïù¥ Í∏∞Îä•Ïù¥ ÌïµÏã¨Ï†ÅÏûÑ )
+ * « ø‰«—±‚¥…  -> ¿‘∑¬πﬁ¿∫ ¡°¿Ã √≥¿Ω ¬Ô»˘ ¡°¿œ∞ÊøÏ start x, yø° ¿˚∏≥
+ *             -> æ∆¥“∞ÊøÏ end¿« x,y¡¬«•∏¶ ∞Ëº”«œø© ∞ªΩ≈«œø©¡›¥œ¥Ÿ.
+ *             -> ∞ªΩ≈«ﬂ¿ªΩ√ ¿Ã¿¸ø° ±◊∑¡¡¯ Oval¿ª ¡ˆøˆ¡›¥œ¥Ÿ (Ω√¿€«“ ∂ß ¡˝æÓ¡÷∏È µ…µÌ?)
+ *             -> ( ¿Ã ±‚¥…¿Ã «ŸΩ…¿˚¿” )
  */
-void DrawOval(TLCD tlcdInfo, Shape *shape)
+void DrawOval(TLCD tlcdInfo, Shape* shape)
 {
     /* TODO: Draw Oval */
     printf("DrawOval Executed\n");
@@ -101,11 +160,12 @@ void DrawOval(TLCD tlcdInfo, Shape *shape)
 /*
  * This is Base Code for Making DrawFree Made by S.H Hong
  */
-void DrawFree(TLCD tlcdInfo, Shape *shape)
+void DrawFree(TLCD tlcdInfo, Shape* shape)
 {
-    /* ÏïÑÏßÅ ÎØ∏ Íµ¨ÌòÑÎêú ÏÉÅÌÉúÏûÑ */
+    /* æ∆¡˜ πÃ ±∏«ˆµ» ªÛ≈¬¿” */
     printf("DrawFree Executed\n");
 
+<<<<<<< HEAD
     struct ListNode *node = NULL;
     int xpos, ypos, i, offset;
     //ÎèÑÌòï ÌÅ¨Í∏∞ ÎèôÏ†Å Ìï†Îãπ
@@ -127,6 +187,15 @@ void DrawFree(TLCD tlcdInfo, Shape *shape)
         printf("xpos: %d\nypos: %d\n", xpos, ypos);
         *(tlcdInfo.pfbdata + offset) = BLACK;
         offset = shape->end.y * 320 + i;
+=======
+    struct ListNode* node = NULL;
+    int xpos, ypos;
+
+    while (1)
+    {
+        InputTouch(&tlcdInfo);
+
+>>>>>>> 814c3c0... Make DrawLine
         if (tlcdInfo.pressure == 0)
         {
             //Test code
@@ -140,40 +209,49 @@ void DrawFree(TLCD tlcdInfo, Shape *shape)
 /*
  * TODO
  */
-void DrawSelect(TLCD tlcdInfo, Shape *shape)
+void DrawSelect(TLCD tlcdInfo, Shape* shape)
 {
     printf("DrawSelect Executed\n");
+
     return;
 }
+
 /*
  * TODO
  */
-void DrawErase(TLCD tlcdInfo, Shape *shape)
+void DrawErase(TLCD tlcdInfo, Shape* shape)
 {
     printf("DrawErase Executed\n");
+
     return;
 }
+
 /*
  * TODO
  */
-void DrawClear(TLCD tlcdInfo, Shape *shape)
+void DrawClear(TLCD tlcdInfo, Shape* shape)
 {
     printf("DrawClear Executed\n");
+
     return;
 }
+
 /*
  * TODO
  */
-void DrawPen(TLCD tlcdInfo, Shape *shape)
+void DrawPen(TLCD tlcdInfo, Shape* shape)
 {
     printf("DrawPen Executed\n");
+
     return;
 }
+
 /*
  * TODO
  */
-void DrawFill(TLCD tlcdInfo, Shape *shape)
+void DrawFill(TLCD tlcdInfo, Shape* shape)
 {
     printf("DrawFill Executed\n");
+
     return;
 }
