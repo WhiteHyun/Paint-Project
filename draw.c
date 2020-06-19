@@ -175,8 +175,10 @@ void DrawFree(TLCD tlcdInfo, Shape *shape)
     }
 
     /* 터치 입력을 받음 */
+    InputTouch(&tlcdInfo);
     while (1)
     {
+        /* 초기 값은 trash값이 나오므로 */
         InputTouch(&tlcdInfo);
         /*코드 구현*/
         xpos = tlcdInfo.a * tlcdInfo.x + tlcdInfo.b * tlcdInfo.y + tlcdInfo.c;
