@@ -108,6 +108,7 @@ void SensingTouch(TLCD tlcdInfo)
     int xpos, ypos, ret;
     Shape shape;
     shape.position = NULL;
+    //따로 나눌수는 없을까?
     read(tlcdInfo.fd, &tlcdInfo.ie, sizeof(struct input_event));
 
     if (tlcdInfo.ie.type == 3)
