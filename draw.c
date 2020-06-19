@@ -30,21 +30,28 @@ void DrawRectangle(TLCD tlcdInfo, Shape *shape)
 
     int i, tmp, offset;
 
-    if (shape->start.x > shape->end.x)
+    int startX, startY, endX, endY;
+
+    startX = shape->start.x;
+    startY = shape->start.y;
+
+    endX = shape->end.x;
+    endY = shape->end.y;
+
+    if (startX > endX)
     {
-        tmp = shape->start.x;
-        shape->start.x = shape->end.x;
-        shape->end.x = tmp;
+        tmp = startX;
+        startX = endX;
+        endX = tmp;
+    }
+    if (start.y > end.y)
+    {
+        tmp = startY;
+        startY = endY;
+        endY = tmp;
     }
 
-    if (shape->start.y > shape->end.y)
-    {
-        tmp = shape->start.y;
-        shape->start.y = shape->end.y;
-        shape->end.y = tmp;
-    }
-
-    for (i = shape->start.x; i < shape->end.x; i++)
+    for (i = startX; i < endX; i++)
     {
         offset = shape->start.y * 320 + i;
         *(tlcdInfo.pfbdata + offset) = shape->outColor;
@@ -52,11 +59,11 @@ void DrawRectangle(TLCD tlcdInfo, Shape *shape)
         *(tlcdInfo.pfbdata + offset) = shape->outColor;
     }
 
-    for (i = shape->start.y; i < shape->end.y; i++)
+    for (i = startY; i < endY; i++)
     {
-        offset = i * 320 + shape->start.x;
+        offset = i * 320 + startX;
         *(tlcdInfo.pfbdata + offset) = shape->outColor;
-        offset = i * 320 + shape->end.x;
+        offset = i * 320 + endX;
         *(tlcdInfo.pfbdata + offset) = shape->outColor;
     }
 }
@@ -73,6 +80,45 @@ void DrawOval(TLCD tlcdInfo, Shape *shape)
 {
     /* TODO: Draw Oval */
     printf("DrawOval Executed\n");
+
+    int i, j, tmp, centerX, centerY, xlen, ylen;
+
+    int startX, startY, endX, endY;
+
+    startX = shape->start.x;
+    startY = shape->start.y;
+
+    endX = shape->end.x;
+    endY = shape->end.y;
+
+    if (startX > endX)
+    {
+        tmp = startX;
+        startX = endX;
+        endX = tmp;
+    }
+    if (start.y > end.y)
+    {
+        tmp = startY;
+        startY = endY;
+        endY = tmp;
+    }
+
+    xlen = (endX - startX) / 2; // 선 a의 길이
+    ylen = (endY - startY) / 2; // 선 b의 길이
+
+    for (i = startY; i < endY; i++)
+    {
+        for (j = startX; j < endX; j++)
+        {
+
+            if (((ylen * ylen) * (j * j) + (xlen * xlen) * (i * i)) == ((xlen * xlen) * (ylen * ylen)))
+            {
+                offset = i * 320 + j;
+                *(pfbdata + offset) = color;
+            }
+        }
+    }
 }
 
 /*
