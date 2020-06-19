@@ -3,6 +3,29 @@
 #include "list.h"
 #include "ui.h"
 
+inline void InputTouch(TLCD *tlcdInfo)
+{
+    read(tlcdInfo->fd, &tlcdInfo->ie, sizeof(struct input_event));
+
+    if (tlcdInfo->ie.type == 3)
+    {
+        if (tlcdInfo->ie.code == 0)
+        {
+            tlcdInfo->x = tlcdInfo->ie.value;
+        }
+
+        else if (tlcdInfo->ie.code == 1)
+        {
+            tlcdInfo->y = tlcdInfo->ie.value;
+        }
+
+        else if (tlcdInfo->ie.code == 24)
+        {
+            tlcdInfo->pressure = tlcdInfo->ie.value;
+        }
+    }
+}
+
 int GetBtn(TLCD tlcdInfo, int xpos, int ypos)
 {
     int inputBtnFlag = 0;
@@ -104,31 +127,15 @@ int GetBtn(TLCD tlcdInfo, int xpos, int ypos)
 
 void SensingTouch(TLCD tlcdInfo)
 {
-    int x, y, pressure;
     int xpos, ypos, ret;
     Shape shape;
     shape.position = NULL;
-    read(tlcdInfo.fd, &tlcdInfo.ie, sizeof(struct input_event));
 
-    if (tlcdInfo.ie.type == 3)
-    {
-        if (tlcdInfo.ie.code == 0)
-        {
-            x = tlcdInfo.ie.value;
-        }
-        else if (tlcdInfo.ie.code == 1)
-        {
-            y = tlcdInfo.ie.value;
-        }
-        else if (tlcdInfo.ie.code == 24)
-        {
-            pressure = tlcdInfo.ie.value;
-        }
-    }
+    InputTouch(&tlcdInfo);
 
     // 보정을 넣은 lcd상의 x , y의 포지션
-    xpos = tlcdInfo.a * x + tlcdInfo.b * y + tlcdInfo.c;
-    ypos = tlcdInfo.d * x + tlcdInfo.e * y + tlcdInfo.f;
+    xpos = tlcdInfo.a * tlcdInfo.x + tlcdInfo.b * tlcdInfo.y + tlcdInfo.c;
+    ypos = tlcdInfo.d * tlcdInfo.x + tlcdInfo.e * tlcdInfo.y + tlcdInfo.f;
 
     // 터치가 된곳의 위치에 따라달라짐
     if (pressure >= 180)
@@ -137,6 +144,7 @@ void SensingTouch(TLCD tlcdInfo)
     }
     else
     {
+        printf("shape.start: x(%d) y(%d)\nshape.end: x(%d) y(%d)\n", shape.start.x, shape.start.y, shape.end.x, shape.end.y);
         ret = -1;
     }
     switch (ret)

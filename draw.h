@@ -25,8 +25,6 @@ typedef struct _Shape
 
 typedef void (*drawList)(TLCD, Shape *);
 
-inline void InputTouch(TLCD *tlcdInfo);
-
 void DrawLine(TLCD tlcdInfo, Shape *shape);
 
 // make Rectangle Base Code
