@@ -99,7 +99,7 @@ void DrawOval(TLCD tlcdInfo, Shape *shape)
 }
 
 /*
- * This is Base Code for Making Oval Made by S.H Hong
+ * This is Base Code for Making DrawFree Made by S.H Hong
  */
 void DrawFree(TLCD tlcdInfo, Shape *shape)
 {
@@ -107,8 +107,7 @@ void DrawFree(TLCD tlcdInfo, Shape *shape)
     printf("DrawFree Executed\n");
 
     struct ListNode *node = NULL;
-    int pressure, xpos, ypos, x, y, i;
-
+    int xpos, ypos, i, offset;
     //도형 크기 동적 할당
     shape->position = (int **)malloc(sizeof(int *) * SIZEOF_CANVAS_Y); //캔버스의 y크기: 220
     for (i = 0; i < 220; i++)
@@ -119,32 +118,19 @@ void DrawFree(TLCD tlcdInfo, Shape *shape)
     /* 터치 입력을 받음 */
     while (1)
     {
-        read(tlcdInfo.fd, &tlcdInfo.ie, sizeof(struct input_event));
-
-        if (tlcdInfo.ie.type == 3)
-        {
-            if (tlcdInfo.ie.code == 0)
-            {
-                x = tlcdInfo.ie.value;
-            }
-            else if (tlcdInfo.ie.code == 1)
-            {
-                y = tlcdInfo.ie.value;
-            }
-            else if (tlcdInfo.ie.code == 24)
-            {
-                pressure = tlcdInfo.ie.value;
-            }
-        }
+        InputTouch(&tlcdInfo);
         /*코드 구현*/
-        xpos = tlcdInfo.a * x + tlcdInfo.b * y + tlcdInfo.c;
-        ypos = tlcdInfo.d * x + tlcdInfo.e * y + tlcdInfo.f;
+        xpos = tlcdInfo.a * tlcdInfo.x + tlcdInfo.b * tlcdInfo.y + tlcdInfo.c;
+        ypos = tlcdInfo.d * tlcdInfo.x + tlcdInfo.e * tlcdInfo.y + tlcdInfo.f;
         shape->position[ypos - START_CANVAS_Y][xpos - START_CANVAS_X] = 1;
-        if (pressure == 0)
+        offset = ypos * 320 + xpos;
+        *(tlcdInfo.pfbdata + offset) = BLACK;
+        offset = shape->end.y * 320 + i;
+        if (tlcdInfo.pressure == 0)
         {
             //Test code
             printf("xpos = %d\nypos=%d\n", xpos, ypos);
-
+            break;
             /* position 동적 할당 */
         }
     }

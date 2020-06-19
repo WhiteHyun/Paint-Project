@@ -1,5 +1,7 @@
 #include "btn.h"
 #include "draw.h"
+#include "list.h"
+
 int GetBtn(TLCD tlcdInfo, int xpos, int ypos)
 {
     int inputBtnFlag = 0;
@@ -163,6 +165,8 @@ void SensingTouch(TLCD tlcdInfo)
         if (state >= 0 && state < 9)
         {
             g_drawTable[state](tlcdInfo, &shape);
+            struct ListNode *node = CreateNode(shape);
+            Append(node);
         }
         break;
     default:
