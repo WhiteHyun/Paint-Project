@@ -117,16 +117,17 @@ void DrawOval(TLCD tlcdInfo, Shape *shape)
         printf("error\n");
     }
 
+    // 왜 5 만큼 더하고 빼지않으면 깔끔한 그림이 나오지 않는지 이해가 되지않음 . + 스무스한 모양이아닌 각진모양이나와서 매우마음에 들지않음. 추후 해결예정
     else
     {
-        for (i = startY; i < endY; i++)
+        for (i = startY - 5; i < endY + 5; i++)
         {
-            for (j = startX; j < endX; j++)
+            for (j = startX - 5; j < endX + 5; j++)
             {
                 x = (j - centerX);
                 y = (i - centerY);
 
-                if ((x * x) / xlen + (y * y) / ylen == 1)
+                if ((x * x) / xlen + (y * y) / ylen <= 1.2 && (x * x) / xlen + (y * y) / ylen >= 0.8)
                 {
                     offset = i * 320 + j;
                     *(tlcdInfo.pfbdata + offset) = shape->outColor;
