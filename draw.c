@@ -109,22 +109,28 @@ void DrawOval(TLCD tlcdInfo, Shape *shape)
     centerX = (startX + endX) / 2;
     centerY = (startY + endY) / 2;
 
+    xlen = (startX - centerX) * (startX - centerX); // 선 a의 길이
+    ylen = (startY - centerY) * (startY - centerY); // 선 b의 길이
 
-    xlen = (endX - startX) / 2; // 선 a의 길이
-    ylen = (endY - startY) / 2; // 선 b의 길이
-
-    for (i = startY; i < endY; i++)
+    if (xlen == 0 || ylen == 0)
     {
-        y = (i - centerY);
+        printf("error\n");
+    }
 
-        for (j = startX; j < endX; j++)
+    else
+    {
+        for (i = startY; i < endY; i++)
         {
-            x = (j - centerX);
-
-            if ( (ylen * ylen) * (x * x) + (xlen  * xlen) * (y * y) == (xlen * xlen * ylen * ylen))
+            for (j = startX; j < endX; j++)
             {
-                offset = i * 320 + j;
-                *(tlcdInfo.pfbdata + offset) = shape->outColor;
+                x = (j - centerX);
+                y = (i - centerY);
+
+                if ((x * x) / xlen + (y * y) / ylen == 1)
+                {
+                    offset = i * 320 + j;
+                    *(tlcdInfo.pfbdata + offset) = shape->outColor;
+                }
             }
         }
     }
