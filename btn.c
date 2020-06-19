@@ -177,18 +177,13 @@ void SensingTouch(TLCD tlcdInfo)
         printf("touching screen %d %d\n", xpos, ypos);
         if (state >= 0 && state < 9)
         {
-<<<<<<< HEAD
             shape.outColor = 0;
 
             // set Up Start x , y pos
-=======
-            /*set Up start x , y pos*/
->>>>>>> 75fe046... Oval#1 SetStartPos
             if (isFirst == 1)
             {
                 shape.start.x = xpos;
                 shape.start.y = ypos;
-<<<<<<< HEAD
 
                 isFirst = -1;
             }
@@ -196,9 +191,6 @@ void SensingTouch(TLCD tlcdInfo)
             shape.end.x = xpos;
             shape.end.y = ypos;
 
-=======
-            }
->>>>>>> 75fe046... Oval#1 SetStartPos
             g_drawTable[state](tlcdInfo, &shape);
             struct ListNode *node = CreateNode(shape);
             Append(node);
