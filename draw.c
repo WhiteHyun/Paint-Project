@@ -30,20 +30,20 @@ inline void InputTouch(TLCD *tlcdInfo)
 /*
  * This is Base Code for Making Line Made by D.S Kim
  * Make start x , y -> end x , y Line
- * �ʿ��ѱ��  -> �Է¹��� ���� ó�� ���� ���ϰ�� start x, y�� ����
- *             -> �ƴҰ�� end�� x,y��ǥ�� ����Ͽ� �����Ͽ��ݴϴ�.
- *             -> ���������� ������ �׷��� Line�� ��ǥ�� Ư���Ͽ� �����ݴϴ� (������ �� �����ָ� �ɵ�?)
- *             -> ( �� ����� �ٽ����� )
+ * 필요한기능  -> 입력받은 점이 처음 찍힌 점일경우 start x, y에 적립
+ *             -> 아닐경우 end의 x,y좌표를 계속하여 갱신하여줍니다.
+ *             -> 갱신했을시 이전에 그려진 Line의 좌표를 특정하여 지워줍니다 (시작할 때 집어주면 될듯?)
+ *             -> ( 이 기능이 핵심적임 )
  */
 void DrawLine(TLCD tlcdInfo, Shape *shape)
 {
     int i, tmp, offset;
     int startXpos, startYpos;
     int endXpos, endYpos;
-    double incline;    //����
-    double yIntercept; //y����
+    double incline;    //기울기
+    double yIntercept; //y절편
 
-    while (1) //���������� x, y��ǥ �Է�
+    while (1) //시작지점의 x, y좌표 입력
     {
         InputTouch(&tlcdInfo);
 
@@ -58,7 +58,7 @@ void DrawLine(TLCD tlcdInfo, Shape *shape)
 
     tlcdInfo.pressure = -1;
 
-    while (1) //���������� x, y��ǥ �Է�
+    while (1) //종료지점의 x, y좌표 입력
     {
         InputTouch(&tlcdInfo);
 
@@ -71,10 +71,10 @@ void DrawLine(TLCD tlcdInfo, Shape *shape)
         }
     }
 
-    if (startXpos < endXpos) //1, 4 ��и�
+    if (startXpos < endXpos) //1, 4 사분면
     {
-        incline = (double)((double)(endYpos - startYpos) / (double)(endXpos - startXpos)); //���� = y������ / x������
-        yIntercept = (double)(endYpos - incline * endXpos);                                //y���� = y - ���� * x
+        incline = (double)((double)(endYpos - startYpos) / (double)(endXpos - startXpos)); //기울기 = y증가량 / x증가량
+        yIntercept = (double)(endYpos - incline * endXpos);                                //y절편 = y - 기울기 * x
 
         for (i = startXpos; i <= endXpos; i++)
         {
@@ -83,7 +83,7 @@ void DrawLine(TLCD tlcdInfo, Shape *shape)
         }
     }
 
-    else //2, 3 ��и�
+    else //2, 3 사분면
     {
         incline = (double)((double)(endYpos - startYpos) / (double)(endXpos - startXpos));
         yIntercept = (double)(endYpos - incline * endXpos);
@@ -99,10 +99,10 @@ void DrawLine(TLCD tlcdInfo, Shape *shape)
 /*
  * This is Base Code for Making Rectangle Made by T.H Kim
  * Make start x , y -> end x , y Rectange
- * �ʿ��ѱ��  -> �Է¹��� ���� ó�� ���� ���ϰ�� start x, y�� ����
- *             -> �ƴҰ�� end�� x,y��ǥ�� ����Ͽ� �����Ͽ��ݴϴ�.
- *             -> ���������� ������ �׷��� Box�� �����ݴϴ� (������ �� �����ָ� �ɵ�?)
- *             -> ( �� ����� �ٽ����� )
+ * 필요한기능  -> 입력받은 점이 처음 찍힌 점일경우 start x, y에 적립
+ *             -> 아닐경우 end의 x,y좌표를 계속하여 갱신하여줍니다.
+ *             -> 갱신했을시 이전에 그려진 Box를 지워줍니다 (시작할 때 집어주면 될듯?)
+ *             -> ( 이 기능이 핵심적임 ) 
  */
 void DrawRectangle(TLCD tlcdInfo, Shape *shape)
 {
@@ -146,10 +146,10 @@ void DrawRectangle(TLCD tlcdInfo, Shape *shape)
 /*
  * This is Base Code for Making Oval Made by D.E Kim
  * Make start x , y -> end x , y Oval
- * �ʿ��ѱ��  -> �Է¹��� ���� ó�� ���� ���ϰ�� start x, y�� ����
- *             -> �ƴҰ�� end�� x,y��ǥ�� ����Ͽ� �����Ͽ��ݴϴ�.
- *             -> ���������� ������ �׷��� Oval�� �����ݴϴ� (������ �� �����ָ� �ɵ�?)
- *             -> ( �� ����� �ٽ����� )
+ * 필요한기능  -> 입력받은 점이 처음 찍힌 점일경우 start x, y에 적립
+ *             -> 아닐경우 end의 x,y좌표를 계속하여 갱신하여줍니다.
+ *             -> 갱신했을시 이전에 그려진 Oval을 지워줍니다 (시작할 때 집어주면 될듯?)
+ *             -> ( 이 기능이 핵심적임 )
  */
 void DrawOval(TLCD tlcdInfo, Shape *shape)
 {
@@ -162,7 +162,7 @@ void DrawOval(TLCD tlcdInfo, Shape *shape)
  */
 void DrawFree(TLCD tlcdInfo, Shape *shape)
 {
-    /* ���� �� ������ ������ */
+    /* 아직 미 구현된 상태임 */
     printf("DrawFree Executed\n");
 
     struct ListNode *node = NULL;
@@ -175,6 +175,7 @@ void DrawFree(TLCD tlcdInfo, Shape *shape)
     }
 
     /* 터치 입력을 받음 */
+    InputTouch(&tlcdInfo);
     InputTouch(&tlcdInfo);
     while (1)
     {
