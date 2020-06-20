@@ -3,6 +3,9 @@
 #include "btn.h"
 #include "ui.h"
 #include "list.h"
+
+extern struct List *g_List;
+
 void ClearLcd(TLCD tlcdInfo)
 {
     int i, j, offset;
@@ -11,7 +14,7 @@ void ClearLcd(TLCD tlcdInfo)
         for (j = 0; j < 320; j++)
         {
             offset = i * 320 + j;
-            *(tlcdInfo.pfbdata + offset) = MINT;
+            *(tlcdInfo.pfbdata + offset) = CYAN;
         }
     }
 }
@@ -138,7 +141,7 @@ void Run()
     // main code part
     for (;;)
     {
-        SensingTouch(tlcdInfo);
+        SensingTouch(&tlcdInfo);
     }
 
     close(tlcdInfo.fd);

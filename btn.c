@@ -1,6 +1,34 @@
 #include "btn.h"
 #include "draw.h"
-int GetBtn(TLCD tlcdInfo, int xpos, int ypos)
+#include "list.h"
+#include "ui.h"
+
+extern struct List *g_List;
+
+inline void InputTouch(TLCD *tlcdInfo)
+{
+    read(tlcdInfo->fd, &tlcdInfo->ie, sizeof(struct input_event));
+
+    if (tlcdInfo->ie.type == 3)
+    {
+        if (tlcdInfo->ie.code == 0)
+        {
+            tlcdInfo->x = tlcdInfo->ie.value;
+        }
+
+        else if (tlcdInfo->ie.code == 1)
+        {
+            tlcdInfo->y = tlcdInfo->ie.value;
+        }
+
+        else if (tlcdInfo->ie.code == 24)
+        {
+            tlcdInfo->pressure = tlcdInfo->ie.value;
+        }
+    }
+}
+
+int GetBtn(int xpos, int ypos)
 {
     int inputBtnFlag = 0;
 
@@ -95,38 +123,20 @@ int GetBtn(TLCD tlcdInfo, int xpos, int ypos)
     return inputBtnFlag;
 }
 
-void SensingTouch(TLCD tlcdInfo)
+void SensingTouch(TLCD *tlcdInfo)
 {
-    int x, y, pressure;
     int xpos, ypos, ret;
     Shape shape;
-
-    read(tlcdInfo.fd, &tlcdInfo.ie, sizeof(struct input_event));
-
-    if (tlcdInfo.ie.type == 3)
-    {
-        if (tlcdInfo.ie.code == 0)
-        {
-            x = tlcdInfo.ie.value;
-        }
-        else if (tlcdInfo.ie.code == 1)
-        {
-            y = tlcdInfo.ie.value;
-        }
-        else if (tlcdInfo.ie.code == 24)
-        {
-            pressure = tlcdInfo.ie.value;
-        }
-    }
-
+    shape.position = NULL;
+    InputTouch(tlcdInfo);
     // 보정을 넣은 lcd상의 x , y의 포지션
-    xpos = tlcdInfo.a * x + tlcdInfo.b * y + tlcdInfo.c;
-    ypos = tlcdInfo.d * x + tlcdInfo.e * y + tlcdInfo.f;
+    xpos = tlcdInfo->a * tlcdInfo->x + tlcdInfo->b * tlcdInfo->y + tlcdInfo->c;
+    ypos = tlcdInfo->d * tlcdInfo->x + tlcdInfo->e * tlcdInfo->y + tlcdInfo->f;
 
     // 터치가 된곳의 위치에 따라달라짐
-    if (pressure >= 180)
+    if (tlcdInfo->pressure >= 180)
     {
-        ret = GetBtn(tlcdInfo, xpos, ypos);
+        ret = GetBtn(xpos, ypos);
     }
     else
     {
@@ -135,45 +145,83 @@ void SensingTouch(TLCD tlcdInfo)
     switch (ret)
     {
     case TOUCH_WHITE:
-        printf("todo WhiteColor\n");
+        printf("COLOR WHITE\n");
+        selectedColor = TOUCH_WHITE;
         break;
     case TOUCH_ORANGE:
-        printf("todo OrangeColor\n");
+        printf("COLOR ORANGE\n");
+        selectedColor = TOUCH_ORANGE;
         break;
     case TOUCH_RED:
-        printf("todo RedColor\n");
+        printf("COLOR RED\n");
+        selectedColor = TOUCH_RED;
         break;
     case TOUCH_GREEN:
-        printf("todo GreenColor\n");
+        printf("COLOR GREEN\n");
+        selectedColor = TOUCH_GREEN;
         break;
     case TOUCH_YELLOW:
-        printf("todo YellowColor\n");
+        printf("COLOR YELLOW\n");
+        selectedColor = TOUCH_YELLOW;
         break;
     case TOUCH_NAVY:
-        printf("todo NavyColor\n");
+        printf("COLOR NAVY\n");
+        selectedColor = TOUCH_NAVY;
         break;
     case TOUCH_BLUE:
-        printf("todo BlueColor\n");
+        printf("COLOR BLUE\n");
+        selectedColor = TOUCH_BLUE;
         break;
     case TOUCH_BLACK:
-        printf("todo BlackColor\n");
+        printf("COLOR BLACK\n");
+        selectedColor = TOUCH_BLACK;
+        break;
+    case TOUCH_CLEAR: //클리어 모드
+        state = ret;
+        g_drawTable[state](tlcdInfo, &shape);
         break;
     case TOUCH_CANVAS:
-        printf("touching screen %d %d\n", xpos, ypos);
-        if (state >= 0 && state < 9)
+        //펜모드이면서 그림유형도 선택되어있는 경우 정상적인 그림 그리기
+        if (mode == TOUCH_PEN && state >= 0 && state < 4)
         {
-            g_drawTable[state](tlcdInfo, &shape);
+            //Set color
+            shape.inColor = WHITE;
+            shape.outColor = selectedColor;
+            // set Up Start x , y pos
+            shape.start.x = xpos;
+            shape.start.y = ypos;
+            g_drawTable[state](tlcdInfo, &shape);      //함수 불러짐
+            struct ListNode *node = CreateNode(shape); //도형에 대한 노드를 만들어서
+            Append(node);                              //리스트에 노드 저장
+        }
+        //설정모드: 채우기 모드거나 선택 모드거나 지우기모드일 때
+        else if (mode == TOUCH_FILL || mode == TOUCH_SEL || mode == TOUCH_ERASE)
+        {
+            /* 여기서 shape를 파라미터로 넘기는데 사용되는 것은 Fill모드일 때 inColor를 사용하는 것 외에는 없음.
+             * 그럼 SEL모드랑 ERASE모드는 shape를 왜 파라미터로 전달하느냐?
+             * 각 함수의 테이블을 만드는데 파라미터도 똑같이 정의해줘야 했기 때문에 만든 것. 사용할 필요는 없어보임!
+             * 혹시 몰라서 사용하게 될 수도..?
+             */
+            shape.inColor = selectedColor; //FILL모드일 경우 inColor 속성을 가지고 파라미터로 전달함
+            g_drawTable[mode](tlcdInfo, &shape);
         }
         break;
     default:
         /*
-         * 터치를 때면 ret이 0이 되기 때문에
-         * 항상 0이 들어오는 오류를 발견했습니다.
-         * if 문으로 수정했습니다.
+         * 터치를 때면 ret이 -1이 되기 때문에
+         * 항상 -1이 들어오는 오류 방지
          */
         if (ret != -1)
         {
-            state = ret;
+            if (ret >= 4 && ret <= 8) //모드 설정
+            {
+                mode = ret;
+            }
+            else //그리기 설정
+            {
+                state = ret;
+                mode = TOUCH_PEN; //그리기 설정을 했을 경우 모드는 펜으로 자동설정
+            }
         }
         break;
     }

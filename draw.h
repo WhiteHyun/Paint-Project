@@ -20,31 +20,29 @@ typedef struct _Shape
     Point end;
     unsigned short inColor;  // inBound Color
     unsigned short outColor; // outBound Color
-    int **position;          //아직 보류중인 변수입니다. 초기화할 필요는 없습니다.
+    int **position;          //FreeDraw array
 } Shape;
 
-typedef void (*drawList)(TLCD, Shape *);
+typedef void (*drawList)(TLCD *, Shape *);
 
-inline void InputTouch(TLCD *tlcdInfo);
-
-void DrawLine(TLCD tlcdInfo, Shape *shape);
+void DrawLine(TLCD *tlcdInfo, Shape *shape);
 
 // make Rectangle Base Code
-void DrawRectangle(TLCD tlcdInfo, Shape *shape);
+void DrawRectangle(TLCD *tlcdInfo, Shape *shape);
 
-void DrawOval(TLCD tlcdInfo, Shape *shape);
+void DrawOval(TLCD *tlcdInfo, Shape *shape);
 
-void DrawFree(TLCD tlcdInfo, Shape *shape);
+void DrawFree(TLCD *tlcdInfo, Shape *shape);
 
-void DrawSelect(TLCD tlcdInfo, Shape *shape);
+void DrawSelect(TLCD *tlcdInfo, Shape *shape);
 
-void DrawErase(TLCD tlcdInfo, Shape *shape);
+void DrawErase(TLCD *tlcdInfo, Shape *shape);
 
-void DrawClear(TLCD tlcdInfo, Shape *shape);
+void DrawClear(TLCD *tlcdInfo, Shape *shape);
 
-void DrawPen(TLCD tlcdInfo, Shape *shape);
+void DrawPen(TLCD *tlcdInfo, Shape *shape);
 
-void DrawFill(TLCD tlcdInfo, Shape *shape);
+void DrawFill(TLCD *tlcdInfo, Shape *shape);
 
 /*
  * 도형과 관련된 함수들의 테이블입니다.
