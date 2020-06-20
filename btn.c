@@ -3,6 +3,8 @@
 #include "list.h"
 #include "ui.h"
 
+extern struct List *g_List;
+
 inline void InputTouch(TLCD *tlcdInfo)
 {
     read(tlcdInfo->fd, &tlcdInfo->ie, sizeof(struct input_event));
@@ -203,10 +205,11 @@ void SensingTouch(TLCD *tlcdInfo)
             // set Up End x , y pos
             shape.end.x = xpos;
             shape.end.y = ypos;
-
+            printf("g_List.size = %d\n", g_List->size);
             g_drawTable[state](tlcdInfo, &shape);
             struct ListNode *node = CreateNode(shape);
             Append(node);
+            printf("node[0] shape(if 3, freedraw): %d\n", g_List->start->shape.type);
         }
         break;
     default:

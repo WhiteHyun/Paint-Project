@@ -3,6 +3,9 @@
 #include "btn.h"
 #include "ui.h"
 #include "list.h"
+
+extern struct List *g_List;
+
 void ClearLcd(TLCD tlcdInfo)
 {
     int i, j, offset;

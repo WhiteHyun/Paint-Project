@@ -14,7 +14,7 @@ struct List
     int size;               //리스트의 크기
 };
 
-static struct List *g_List = NULL;
+struct List *g_List;
 
 /*
  * 리스트 노드를 할당해주는 함수입니다.
