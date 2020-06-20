@@ -99,11 +99,11 @@ void DrawRectangle(TLCD *tlcdInfo, Shape *shape)
 
         if (tlcdInfo->pressure == 0)
         {
-            endX = tlcdInfo->a * tlcdInfo->x + tlcdInfo->b * tlcdInfo->y + tlcdInfo->c;
-            endY = tlcdInfo->d * tlcdInfo->x + tlcdInfo->e * tlcdInfo->y + tlcdInfo->f;
-
+            tlcdInfo->pressure = -1;
             break;
         }
+        shape->end.x = tlcdInfo->a * tlcdInfo->x + tlcdInfo->b * tlcdInfo->y + tlcdInfo->c;
+        shape->end.y = tlcdInfo->d * tlcdInfo->x + tlcdInfo->e * tlcdInfo->y + tlcdInfo->f;
 
         endX = shape->end.x;
         endY = shape->end.y;
@@ -247,11 +247,11 @@ void DrawFree(TLCD *tlcdInfo, Shape *shape)
         for (i = 0; i < 2; i++)
         {
             offset = (ypos + 1) * tlcdInfo->fbvar.xres + xpos + i;
-            *(tlcdInfo->pfbdata + offset) = BLACK;
+            *(tlcdInfo->pfbdata + offset) = shape->outColor;
             shape->position[ypos - START_CANVAS_Y + 1][xpos - START_CANVAS_X + i] = 1;
 
             offset = ypos * tlcdInfo->fbvar.xres + xpos + i;
-            *(tlcdInfo->pfbdata + offset) = BLACK;
+            *(tlcdInfo->pfbdata + offset) = shape->outColor;
             shape->position[ypos - START_CANVAS_Y][xpos - START_CANVAS_X + i] = 1;
         }
     }
@@ -298,7 +298,7 @@ void DrawClear(TLCD *tlcdInfo, Shape *shape)
 }
 
 /*
- * TODO
+ * 구현할 필요 없음. 단순 테이블 설정을 위한 함수
  */
 void DrawPen(TLCD *tlcdInfo, Shape *shape)
 {
