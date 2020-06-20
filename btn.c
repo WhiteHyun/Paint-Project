@@ -14,19 +14,16 @@ inline void InputTouch(TLCD *tlcdInfo)
         if (tlcdInfo->ie.code == 0)
         {
             tlcdInfo->x = tlcdInfo->ie.value;
-            // printf("[Before]tlcdInfo->x = %d\n", tlcdInfo->x);
         }
 
         else if (tlcdInfo->ie.code == 1)
         {
             tlcdInfo->y = tlcdInfo->ie.value;
-            // printf("[Before]tlcdInfo->y = %d\n", tlcdInfo->y);
         }
 
         else if (tlcdInfo->ie.code == 24)
         {
             tlcdInfo->pressure = tlcdInfo->ie.value;
-            // printf("[Before]tlcdInfo->pressure = %d\n", tlcdInfo->pressure);
         }
     }
 }
@@ -148,55 +145,57 @@ void SensingTouch(TLCD *tlcdInfo)
     switch (ret)
     {
     case TOUCH_WHITE:
-        shape.outColor = WHITE; //Set OutBound Color WHITE (why!???)
-        shape.inColor = WHITE;  //Set InBound Color WHITE
+        selectedColor = TOUCH_WHITE;
         break;
     case TOUCH_ORANGE:
-        shape.outColor = ORANGE; //Set OutBound Color ORANGE
-        shape.inColor = ORANGE;  //Set InBound Color ORANGE
+        selectedColor = TOUCH_ORANGE;
         break;
     case TOUCH_RED:
-        shape.outColor = RED; //Set OutBound Color RED
-        shape.inColor = RED;  //Set InBound Color RED
+        selectedColor = TOUCH_RED;
         break;
     case TOUCH_GREEN:
-        shape.outColor = GREEN; //Set OutBound Color GREEN
-        shape.inColor = GREEN;  //Set InBound Color GREEN
+        selectedColor = TOUCH_GREEN;
         break;
     case TOUCH_YELLOW:
-        shape.outColor = YELLOW; //Set OutBound Color YELLOW
-        shape.inColor = YELLOW;  //Set InBound Color YELLOW
+        selectedColor = TOUCH_YELLOW;
         break;
     case TOUCH_NAVY:
-        shape.outColor = NAVY; //Set OutBound Color NAVY
-        shape.inColor = NAVY;  //Set InBound Color NAVY
+        selectedColor = TOUCH_NAVY;
         break;
     case TOUCH_BLUE:
-        shape.outColor = BLUE; //Set OutBound Color BLUE
-        shape.inColor = BLUE;  //Set InBound Color BLUE
+        selectedColor = TOUCH_BLUE;
         break;
     case TOUCH_BLACK:
-        shape.outColor = BLACK; //Set OutBound Color BLACK
-        shape.inColor = BLACK;  //Set InBound Color BLACK
+        selectedColor = TOUCH_BLACK;
         break;
-    case TOUCH_SEL:
-        break;
-    case TOUCH_ERASE:
-        break;
-    case TOUCH_CLEAR:
+    case TOUCH_CLEAR: //클리어 모드
         state = ret;
         g_drawTable[state](tlcdInfo, &shape);
         break;
     case TOUCH_CANVAS:
-        if (state >= 0 && state < 4)
+        //펜모드이면서 그림유형도 선택되어있는 경우 정상적인 그림 그리기
+        if (mode == TOUCH_PEN && state >= 0 && state < 4)
         {
+            //Set color
+            shape.inColor = WHITE;
+            shape.outColor = selectedColor;
             // set Up Start x , y pos
             shape.start.x = xpos;
             shape.start.y = ypos;
-            // set Up End x , y pos
             g_drawTable[state](tlcdInfo, &shape);      //함수 불러짐
             struct ListNode *node = CreateNode(shape); //도형에 대한 노드를 만들어서
             Append(node);                              //리스트에 노드 저장
+        }
+        //설정모드: 채우기 모드거나 선택 모드거나 지우기모드일 때
+        else if (mode == TOUCH_FILL || mode == TOUCH_SEL || mode == TOUCH_ERASE)
+        {
+            /* 여기서 shape를 파라미터로 넘기는데 사용되는 것은 Fill모드일 때 inColor를 사용하는 것 외에는 없음.
+             * 그럼 SEL모드랑 ERASE모드는 shape를 왜 파라미터로 전달하느냐?
+             * 각 함수의 테이블을 만드는데 파라미터도 똑같이 정의해줘야 했기 때문에 만든 것. 사용할 필요는 없어보임!
+             * 혹시 몰라서 사용하게 될 수도..?
+             */
+            shape.inColor = selectedColor; //FILL모드일 경우 inColor 속성을 가지고 파라미터로 전달함
+            g_drawTable[mode](tlcdInfo, &shape);
         }
         break;
     default:
@@ -206,7 +205,15 @@ void SensingTouch(TLCD *tlcdInfo)
          */
         if (ret != -1)
         {
-            state = ret;
+            if (ret >= 4 && ret <= 8) //모드 설정
+            {
+                mode = ret;
+            }
+            else //그리기 설정
+            {
+                state = ret;
+                mode = TOUCH_PEN; //그리기 설정을 했을 경우 모드는 펜으로 자동설정
+            }
         }
         break;
     }
