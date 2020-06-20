@@ -165,7 +165,7 @@ void DrawRectangle(TLCD *tlcdInfo, Shape *shape)
 void DrawOval(TLCD *tlcdInfo, Shape *shape)
 {
     shape->type = TOUCH_OVAL;
-    int i, j, tmp, centerX, centerY, xlen, ylen, offset, x, y;
+    int i, j, tmp, centerX, centerY, a, b, offset, x, y;
     int startX, startY, endX, endY;
 
     while (1) //시작지점의 x, y좌표 입력
@@ -215,62 +215,80 @@ void DrawOval(TLCD *tlcdInfo, Shape *shape)
     shape->end.x = endX;
     shape->end.y = endY;
 
-    int matX, matY;
-    matX = endX - startX + 1;
-    matY = endY - startY + 1;
-
-    int Matrix[matY][matX];
-
     /* set Start and end X , Y */
     centerX = (startX + endX) / 2;
     centerY = (startY + endY) / 2;
 
-    xlen = (startX - centerX) * (startX - centerX); // 선 a의 길이
-    ylen = (startY - centerY) * (startY - centerY); // 선 b의 길이
+    a = (endX - centerX); // 선 a의 길이
+    b = (endY - centerY); // 선 b의 길이
 
-    if (xlen == 0 || ylen == 0)
+    int aa = a * a;
+    int bb = b * b;
+
+    x = 0;
+    y = b;
+
+    int dx = 2 * bb * x;
+    int dy = 2 * aa * y;
+
+    int d1 = bb - (b * aa) + (0.25 * aa);
+
+    while (dx < dy)
     {
-        printf("error\n");
+        offset = (y + centerY) * 320 + (x + centerX);
+        *(tlcdInfo->pfbdata + offset) = shape->outColor;
+        offset = (y + centerY) * 320 + (-x + centerX);
+        *(tlcdInfo->pfbdata + offset) = shape->outColor;
+        offset = (-y + centerY) * 320 + (x + centerX);
+        *(tlcdInfo->pfbdata + offset) = shape->outColor;
+        offset = (-y + centerY) * 320 + (-x + centerX);
+        *(tlcdInfo->pfbdata + offset) = shape->outColor;
+
+        ++x;
+        dx += (2 * bb);
+        if (d1 < 0)
+        {
+            d1 += (dx + bb);
+        }
+        else
+        {
+            --y;
+            dy -= (2 * aa);
+            d1 += (dx - dy + bb);
+        }
     }
 
-    // todo -> 현재 타원에 해당되는 부분을 전부 outBound 색상으로 처리해줌.맨끝부분의 컬러만 남기는 방안을 고려합시다. 해당부분을 matrix에 넣어봅시다.
-    else
+    x = a;
+    y = 0;
+
+    dx = 2 * bb * x;
+    dy = 2 * aa * y;
+
+    int d2 = aa - (a * bb) + (0.25 * bb);
+    while (dx > dy)
     {
-        for (i = startY; i <= endY; i++)
-        {
-            for (j = startX; j <= endX; j++)
-            {
-                x = (j - centerX);
-                y = (i - centerY);
 
-                if ((x * x) * ylen + (y * y) * xlen <= (xlen * ylen))
-                {
-                    Matrix[i - startY][j - startX] = 1;
-                    offset = i * 320 + j;
-                    *(tlcdInfo->pfbdata + offset) = shape->outColor;
-                }
-                else
-                {
-                    Matrix[i - startY][j - startX] = 0;
-                }
-            }
+        offset = (y + centerY) * 320 + (x + centerX);
+        *(tlcdInfo->pfbdata + offset) = shape->outColor;
+        offset = (y + centerY) * 320 + (-x + centerX);
+        *(tlcdInfo->pfbdata + offset) = shape->outColor;
+        offset = (-y + centerY) * 320 + (x + centerX);
+        *(tlcdInfo->pfbdata + offset) = shape->outColor;
+        offset = (-y + centerY) * 320 + (-x + centerX);
+        *(tlcdInfo->pfbdata + offset) = shape->outColor;
+
+        ++y;
+        dy += (2 * aa);
+
+        if (d2 < 0)
+        {
+            d2 += (dy + aa);
         }
-
-        /* 1사분면
-        for (i = centerY; i < endY; i++)
+        else
         {
-            for (j = centerX; j > startX; i--)
-            {
-            }
-        }*/
-
-        for (i = 0; i < matY; i++)
-        {
-            for (j = 0; j < matX; j++)
-            {
-                printf("%d ", Matrix[i][j]);
-            }
-            printf("\n");
+            --x;
+            dx -= (2 * bb);
+            d2 += (dy - dx + aa);
         }
     }
 }
