@@ -1,5 +1,5 @@
 #include "list.h"
-#include <stdio.h>
+#include "btn.h"
 #include <stdlib.h>
 
 struct ListNode *CreateNode(Shape shape)
@@ -21,6 +21,15 @@ void DeleteNode(struct ListNode *removeNode)
     //노드에 메모리가 할당되어있는 경우 해제해줍니다.
     if (removeNode != NULL)
     {
+        //만약 자유그리기 도형이면 메모리 할당을 해제해주는 절차를 걸칩니다.
+        if (removeNode->shape.type == TOUCH_FREEDRAW)
+        {
+            for (i = 0; i < 220; i++)
+            {
+                free(shape->position[i]);
+            }
+            free(shape->position)
+        }
         free(removeNode);
     }
 }
@@ -87,7 +96,7 @@ struct ListNode *IndexPop(int index)
     //when List is Empty
     if (g_List->size == 0)
     {
-        printf("Pop(%d), Stack is Empty\n", index);
+        printf("Error, Pop(%d), Stack is Empty\n", index);
     }
     //when stack is not empty
     else
@@ -95,7 +104,7 @@ struct ListNode *IndexPop(int index)
         //out of index 에러 사전방지
         if (index >= g_List->size)
         {
-            printf("IndexPop(%d), Out of Index.\n", index);
+            printf("Error, IndexPop(%d), Out of Index.\n", index);
         }
 
         //리스트의 하나의 노드밖에 없거나 맨 뒤의 값을 꺼내오는 경우 일반 Pop 함수를 불러 처리합니다
