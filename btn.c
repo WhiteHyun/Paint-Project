@@ -146,35 +146,35 @@ void SensingTouch(TLCD *tlcdInfo)
     {
     case TOUCH_WHITE:
         printf("COLOR WHITE\n");
-        selectedColor = TOUCH_WHITE;
+        selectedColor = WHITE;
         break;
     case TOUCH_ORANGE:
         printf("COLOR ORANGE\n");
-        selectedColor = TOUCH_ORANGE;
+        selectedColor = ORANGE;
         break;
     case TOUCH_RED:
         printf("COLOR RED\n");
-        selectedColor = TOUCH_RED;
+        selectedColor = RED;
         break;
     case TOUCH_GREEN:
         printf("COLOR GREEN\n");
-        selectedColor = TOUCH_GREEN;
+        selectedColor = GREEN;
         break;
     case TOUCH_YELLOW:
         printf("COLOR YELLOW\n");
-        selectedColor = TOUCH_YELLOW;
+        selectedColor = YELLOW;
         break;
     case TOUCH_NAVY:
         printf("COLOR NAVY\n");
-        selectedColor = TOUCH_NAVY;
+        selectedColor = NAVY;
         break;
     case TOUCH_BLUE:
         printf("COLOR BLUE\n");
-        selectedColor = TOUCH_BLUE;
+        selectedColor = BLUE;
         break;
     case TOUCH_BLACK:
         printf("COLOR BLACK\n");
-        selectedColor = TOUCH_BLACK;
+        selectedColor = BLACK;
         break;
     case TOUCH_CLEAR: //클리어 모드
         state = ret;
