@@ -25,19 +25,25 @@ enum button_touch_state
 };
 
 /*
- *              1 -> Line / 2 -> Rectangle / 3 -> Oval / 4 -> FreeDraw / 5 -> Select 
- *              6 -> Erase / 7 -> Clear / 8 -> Pen / 9 -> Fill
+ *              0 -> Line / 1 -> Rectangle / 2 -> Oval / 3 -> FreeDraw
  */
-int state;
+static int state = 3;
+
+/*
+ * 4 -> Select / 5 -> Erase / 6 -> Clear / 7 -> Pen / 8 -> Fill
+ */
+static int mode = 7;
+
+//Selected Color
+static unsigned short selectedColor = BLACK;
 
 //Detected when lcd touched, and then set tlcd's x, y info.
 inline void InputTouch(TLCD *tlcdInfo);
 
 /*
- * inputBtnFlag 0 -> touch to drawing paper /
- *              1 -> pen / 2 -> Fill / 3 -> Line / 4 -> Rectangle / 5 -> Oval 
- *              6 -> FreeDraw / 7 -> Select / 8 -> Erase / 9 -> Clear 
- *              10 ~ 17 -> each color , 18 -> 중앙흰색
+ * inputBtnFlag 0 -> Line / 1 -> Rectangle / 2 -> Oval 3 -> FreeDraw / 4 -> Select /
+ *              5 -> Erase / 6 -> Clear / 7 -> pen / 8 -> Fill / 
+ *              9 ~ 16 -> each color / 17 -> touch to drawing paper
  */
 int GetBtn(int xpos, int ypos);
 
