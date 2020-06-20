@@ -20,7 +20,7 @@ typedef struct _Shape
     Point end;
     unsigned short inColor;  // inBound Color
     unsigned short outColor; // outBound Color
-    int **position;          //아직 보류중인 변수입니다. 초기화할 필요는 없습니다.
+    int **position;          //FreeDraw array
 } Shape;
 
 typedef void (*drawList)(TLCD *, Shape *);
