@@ -23,7 +23,7 @@ void DrawLine(TLCD *tlcdInfo, Shape *shape)
 
     while (1) //시작지점의 x, y좌표 입력
     {
-        InputTouch(&tlcdInfo);
+        InputTouch(tlcdInfo);
 
         if (tlcdInfo->pressure == 0)
         {
@@ -38,7 +38,7 @@ void DrawLine(TLCD *tlcdInfo, Shape *shape)
 
     while (1) //종료지점의 x, y좌표 입력
     {
-        InputTouch(&tlcdInfo);
+        InputTouch(tlcdInfo);
 
         if (tlcdInfo->pressure == 0)
         {
@@ -152,29 +152,27 @@ void DrawFree(TLCD *tlcdInfo, Shape *shape)
         shape->position[i] = (int *)malloc(sizeof(int) * SIZEOF_CANVAS_X); //캔버스의 x크기: 200
     }
 
-    /* 터치 입력을 받음 */
-    InputTouch(tlcdInfo);
-    InputTouch(tlcdInfo);
     while (1)
     {
-        /* 초기 값은 trash값이 나오므로 */
+        /* 터치 입력을 받음 */
         InputTouch(tlcdInfo);
+
         /*코드 구현*/
         xpos = tlcdInfo->a * tlcdInfo->x + tlcdInfo->b * tlcdInfo->y + tlcdInfo->c;
         ypos = tlcdInfo->d * tlcdInfo->x + tlcdInfo->e * tlcdInfo->y + tlcdInfo->f;
-        shape->position[ypos - START_CANVAS_Y][xpos - START_CANVAS_X] = 1;
         offset = ypos * 320 + xpos;
-        printf("xpos: %d\nypos: %d\n", xpos, ypos);
+        // printf("xpos: %d\nypos: %d\n", xpos, ypos);
         //*(tlcdInfo->pfbdata + offset) = BLACK;
         for (i = -3; i < 3; i++)
         {
             offset = (ypos + i) * tlcdInfo->fbvar.xres + xpos;
             *(tlcdInfo->pfbdata + offset) = BLACK;
+            shape->position[ypos - START_CANVAS_Y + i][xpos - START_CANVAS_X] = 1;
 
             offset = ypos * tlcdInfo->fbvar.xres + xpos + i;
             *(tlcdInfo->pfbdata + offset) = BLACK;
+            shape->position[ypos - START_CANVAS_Y][xpos - START_CANVAS_X + i] = 1;
         }
-        offset = shape->end.y * 320 + i;
     }
 }
 

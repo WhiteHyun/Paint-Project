@@ -23,7 +23,7 @@ typedef struct _Shape
     int **position;          //아직 보류중인 변수입니다. 초기화할 필요는 없습니다.
 } Shape;
 
-typedef void (*drawList)(TLCD, Shape *);
+typedef void (*drawList)(TLCD *, Shape *);
 
 void DrawLine(TLCD *tlcdInfo, Shape *shape);
 
