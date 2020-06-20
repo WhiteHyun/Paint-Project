@@ -227,7 +227,7 @@ void DrawOval(TLCD *tlcdInfo, Shape *shape)
         printf("error\n");
     }
 
-    // 왜 5 만큼 더하고 빼지않으면 깔끔한 그림이 나오지 않는지 이해가 되지않음 . + 스무스한 모양이아닌 각진모양이나와서 매우마음에 들지않음. 추후 해결예정
+    // todo -> 현재 타원에 해당되는 부분을 전부 outBound 색상으로 처리해줌.맨끝부분의 컬러만 남기는 방안을 고려합시다.
     else
     {
         for (i = startY; i < endY; i++)
