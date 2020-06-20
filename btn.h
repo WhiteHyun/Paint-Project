@@ -30,10 +30,7 @@ enum button_touch_state
  */
 int state;
 
-/* if isFirst is 1 -> first touch event , if isFirst is -1 -> it's not first touch
- */
-int isFirst;
-
+//Detected when lcd touched, and then set tlcd's x, y info.
 inline void InputTouch(TLCD *tlcdInfo);
 
 /*

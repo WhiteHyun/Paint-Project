@@ -16,20 +16,20 @@ extern struct List *g_List;
  */
 void DrawLine(TLCD *tlcdInfo, Shape *shape)
 {
-    int i, tmp, offset;
-    int startXpos, startYpos;
-    int endXpos, endYpos;
+    shape->type = TOUCH_LINE;
+    int i, offset;
+    int startX, startY;
+    int endX, endY;
     double incline;    //기울기
     double yIntercept; //y절편
-
-    while (1) //시작지점의 x, y좌표 입력
+    while (1)          //시작지점의 x, y좌표 입력
     {
         InputTouch(tlcdInfo);
 
         if (tlcdInfo->pressure == 0)
         {
-            startXpos = tlcdInfo->a * tlcdInfo->x + tlcdInfo->b * tlcdInfo->y + tlcdInfo->c;
-            startYpos = tlcdInfo->d * tlcdInfo->x + tlcdInfo->e * tlcdInfo->y + tlcdInfo->f;
+            startX = tlcdInfo->a * tlcdInfo->x + tlcdInfo->b * tlcdInfo->y + tlcdInfo->c;
+            startY = tlcdInfo->d * tlcdInfo->x + tlcdInfo->e * tlcdInfo->y + tlcdInfo->f;
 
             break;
         }
@@ -43,19 +43,19 @@ void DrawLine(TLCD *tlcdInfo, Shape *shape)
 
         if (tlcdInfo->pressure == 0)
         {
-            endXpos = tlcdInfo->a * tlcdInfo->x + tlcdInfo->b * tlcdInfo->y + tlcdInfo->c;
-            endYpos = tlcdInfo->d * tlcdInfo->x + tlcdInfo->e * tlcdInfo->y + tlcdInfo->f;
+            endX = tlcdInfo->a * tlcdInfo->x + tlcdInfo->b * tlcdInfo->y + tlcdInfo->c;
+            endY = tlcdInfo->d * tlcdInfo->x + tlcdInfo->e * tlcdInfo->y + tlcdInfo->f;
 
             break;
         }
     }
 
-    if (startXpos < endXpos) //1, 4 사분면
+    if (startX < endX) //1, 4 사분면
     {
-        incline = (double)((double)(endYpos - startYpos) / (double)(endXpos - startXpos)); //기울기 = y증가량 / x증가량
-        yIntercept = (double)(endYpos - incline * endXpos);                                //y절편 = y - 기울기 * x
+        incline = (double)((double)(endY - startY) / (double)(endX - startX)); //기울기 = y증가량 / x증가량
+        yIntercept = (double)(endY - incline * endX);                          //y절편 = y - 기울기 * x
 
-        for (i = startXpos; i <= endXpos; i++)
+        for (i = startX; i <= endX; i++)
         {
             offset = (int)(incline * i + yIntercept) * 320 + (i);
             *(tlcdInfo->pfbdata + offset) = 0;
@@ -64,10 +64,10 @@ void DrawLine(TLCD *tlcdInfo, Shape *shape)
 
     else //2, 3 사분면
     {
-        incline = (double)((double)(endYpos - startYpos) / (double)(endXpos - startXpos));
-        yIntercept = (double)(endYpos - incline * endXpos);
+        incline = (double)((double)(endY - startY) / (double)(endX - startX));
+        yIntercept = (double)(endY - incline * endX);
 
-        for (i = startXpos; i >= endXpos; i--)
+        for (i = startX; i >= endX; i--)
         {
             offset = (int)(incline * i + yIntercept) * 320 + (i);
             *(tlcdInfo->pfbdata + offset) = 0;
@@ -85,8 +85,7 @@ void DrawLine(TLCD *tlcdInfo, Shape *shape)
  */
 void DrawRectangle(TLCD *tlcdInfo, Shape *shape)
 {
-    printf("DrawRectangle Executed\n");
-
+    shape->type = TOUCH_RECT;
     int i, tmp, offset;
 
     int startX, startY, endX, endY;
@@ -94,40 +93,52 @@ void DrawRectangle(TLCD *tlcdInfo, Shape *shape)
     startX = shape->start.x;
     startY = shape->start.y;
 
-    endX = shape->end.x;
-    endY = shape->end.y;
-
-    if (startX > endX)
+    while (1) //종료지점의 x, y좌표 입력
     {
-        tmp = startX;
-        startX = endX;
-        endX = tmp;
-    }
-    if (startY > endY)
-    {
-        tmp = startY;
-        startY = endY;
-        endY = tmp;
-    }
+        InputTouch(tlcdInfo);
 
-    for (i = startX; i < endX; i++)
-    {
-        offset = shape->start.y * 320 + i;
-        *(tlcdInfo->pfbdata + offset) = shape->outColor;
+        if (tlcdInfo->pressure == 0)
+        {
+            endX = tlcdInfo->a * tlcdInfo->x + tlcdInfo->b * tlcdInfo->y + tlcdInfo->c;
+            endY = tlcdInfo->d * tlcdInfo->x + tlcdInfo->e * tlcdInfo->y + tlcdInfo->f;
 
-        offset = shape->end.y * 320 + i;
-        *(tlcdInfo->pfbdata + offset) = shape->outColor;
-    }
+            break;
+        }
 
-    for (i = startY; i < endY; i++)
-    {
-        offset = i * 320 + startX;
-        *(tlcdInfo->pfbdata + offset) = shape->outColor;
-        offset = i * 320 + endX;
-        *(tlcdInfo->pfbdata + offset) = shape->outColor;
+        endX = shape->end.x;
+        endY = shape->end.y;
+
+        if (startX > endX)
+        {
+            tmp = startX;
+            startX = endX;
+            endX = tmp;
+        }
+        if (startY > endY)
+        {
+            tmp = startY;
+            startY = endY;
+            endY = tmp;
+        }
+
+        for (i = startX; i < endX; i++)
+        {
+            offset = shape->start.y * 320 + i;
+            *(tlcdInfo->pfbdata + offset) = shape->outColor;
+
+            offset = shape->end.y * 320 + i;
+            *(tlcdInfo->pfbdata + offset) = shape->outColor;
+        }
+
+        for (i = startY; i < endY; i++)
+        {
+            offset = i * 320 + startX;
+            *(tlcdInfo->pfbdata + offset) = shape->outColor;
+            offset = i * 320 + endX;
+            *(tlcdInfo->pfbdata + offset) = shape->outColor;
+        }
     }
 }
-
 /*
  * This is Base Code for Making Oval Made by D.E Kim
  * Make start x , y -> end x , y Oval
@@ -138,59 +149,69 @@ void DrawRectangle(TLCD *tlcdInfo, Shape *shape)
  */
 void DrawOval(TLCD *tlcdInfo, Shape *shape)
 {
-    /* TODO: Draw Oval */
-    printf("DrawOval Executed\n");
-
+    shape->type = TOUCH_OVAL;
     int i, j, tmp, centerX, centerY, xlen, ylen, offset, x, y;
-
     int startX, startY, endX, endY;
 
     startX = shape->start.x;
     startY = shape->start.y;
 
-    endX = shape->end.x;
-    endY = shape->end.y;
-
-    if (startX > endX)
+    while (1)
     {
-        tmp = startX;
-        startX = endX;
-        endX = tmp;
-    }
-    if (startY > endY)
-    {
-        tmp = startY;
-        startY = endY;
-        endY = tmp;
-    }
-
-    /* set Start and end X , Y */
-
-    centerX = (startX + endX) / 2;
-    centerY = (startY + endY) / 2;
-
-    xlen = (startX - centerX) * (startX - centerX); // 선 a의 길이
-    ylen = (startY - centerY) * (startY - centerY); // 선 b의 길이
-
-    if (xlen == 0 || ylen == 0)
-    {
-        printf("error\n");
-    }
-
-    // 왜 5 만큼 더하고 빼지않으면 깔끔한 그림이 나오지 않는지 이해가 되지않음 . + 스무스한 모양이아닌 각진모양이나와서 매우마음에 들지않음. 추후 해결예정
-    else
-    {
-        for (i = startY - 5; i < endY + 5; i++)
+        /* 터치 입력을 받음 */
+        InputTouch(tlcdInfo);
+        if (tlcdInfo->pressure == 0)
         {
-            for (j = startX - 5; j < endX + 5; j++)
-            {
-                x = (j - centerX);
-                y = (i - centerY);
+            tlcdInfo->pressure = -1;
+            break;
+        }
+        /*코드 구현*/
+        shape->end.x = tlcdInfo->a * tlcdInfo->x + tlcdInfo->b * tlcdInfo->y + tlcdInfo->c;
+        shape->end.y = tlcdInfo->d * tlcdInfo->x + tlcdInfo->e * tlcdInfo->y + tlcdInfo->f;
+        endX = shape->end.x;
+        endY = shape->end.y;
 
-                if ((x * x) * ylen + (y * y) * xlen <= (xlen * ylen * 1.1) && (x * x) * ylen + (y * y) * xlen >= (xlen * ylen * 0.9))
+        if (startX > endX)
+        {
+            tmp = startX;
+            startX = endX;
+            endX = tmp;
+        }
+        if (startY > endY)
+        {
+            tmp = startY;
+            startY = endY;
+            endY = tmp;
+        }
+
+        /* set Start and end X , Y */
+
+        centerX = (startX + endX) / 2;
+        centerY = (startY + endY) / 2;
+
+        xlen = (startX - centerX) * (startX - centerX); // 선 a의 길이
+        ylen = (startY - centerY) * (startY - centerY); // 선 b의 길이
+
+        if (xlen == 0 || ylen == 0)
+        {
+            printf("error\n");
+        }
+
+        // 왜 5 만큼 더하고 빼지않으면 깔끔한 그림이 나오지 않는지 이해가 되지않음 . + 스무스한 모양이아닌 각진모양이나와서 매우마음에 들지않음. 추후 해결예정
+        else
+        {
+            for (i = startY - 5; i < endY + 5; i++)
+            {
+                for (j = startX - 5; j < endX + 5; j++)
                 {
-                    offset = i * 320 + j;
-                    *(tlcdInfo.pfbdata + offset) = shape->outColor;
+                    x = (j - centerX);
+                    y = (i - centerY);
+
+                    if ((x * x) * ylen + (y * y) * xlen <= (xlen * ylen * 1.1) && (x * x) * ylen + (y * y) * xlen >= (xlen * ylen * 0.9))
+                    {
+                        offset = i * 320 + j;
+                        *(tlcdInfo->pfbdata + offset) = shape->outColor;
+                    }
                 }
             }
         }
@@ -202,8 +223,6 @@ void DrawOval(TLCD *tlcdInfo, Shape *shape)
  */
 void DrawFree(TLCD *tlcdInfo, Shape *shape)
 {
-    /* 아직 미 구현된 상태임 */
-    printf("DrawFree Executed\n");
     shape->type = TOUCH_FREEDRAW;
     int xpos, ypos, i, offset;
     //도형 크기 동적 할당
@@ -225,8 +244,6 @@ void DrawFree(TLCD *tlcdInfo, Shape *shape)
         /*코드 구현*/
         xpos = tlcdInfo->a * tlcdInfo->x + tlcdInfo->b * tlcdInfo->y + tlcdInfo->c;
         ypos = tlcdInfo->d * tlcdInfo->x + tlcdInfo->e * tlcdInfo->y + tlcdInfo->f;
-        // printf("xpos: %d\nypos: %d\n", xpos, ypos);
-        //*(tlcdInfo->pfbdata + offset) = BLACK;
         for (i = 0; i < 2; i++)
         {
             offset = (ypos + 1) * tlcdInfo->fbvar.xres + xpos + i;
@@ -265,8 +282,10 @@ void DrawErase(TLCD *tlcdInfo, Shape *shape)
  */
 void DrawClear(TLCD *tlcdInfo, Shape *shape)
 {
-    ListClear();
+    ListClear(); //리스트에 있는 노드들을 전부 제거
     int i, j, offset;
+
+    //캔버스의 존재하는 도형들을 전부 제거
     for (i = START_CANVAS_Y; i < END_CANVAS_Y; i++)
     {
         for (j = START_CANVAS_X; j < END_CANVAS_X; j++)

@@ -46,25 +46,21 @@ int GetBtn(int xpos, int ypos)
     else if ((xpos >= 0 && xpos <= 50) && (ypos >= 0 && ypos <= 30))
     {
         inputBtnFlag = TOUCH_LINE;
-        isFirst = 1;
     }
 
     else if ((xpos >= 0 && xpos <= 50) && (ypos >= 35 && ypos <= 65))
     {
         inputBtnFlag = TOUCH_RECT;
-        isFirst = 1;
     }
 
     else if ((xpos >= 0 && xpos <= 50) && (ypos >= 70 && ypos <= 100))
     {
         inputBtnFlag = TOUCH_OVAL;
-        isFirst = 1;
     }
 
     else if ((xpos >= 0 && xpos <= 50) && (ypos >= 105 && ypos <= 135))
     {
         inputBtnFlag = TOUCH_FREEDRAW;
-        isFirst = 1;
     }
 
     else if ((xpos >= 0 && xpos <= 50) && (ypos >= 140 && ypos <= 170))
@@ -147,42 +143,41 @@ void SensingTouch(TLCD *tlcdInfo)
     }
     else
     {
-        //printf("shape.start: x(%d) y(%d)\nshape.end: x(%d) y(%d)\n", shape.start.x, shape.start.y, shape.end.x, shape.end.y);
         ret = -1;
     }
     switch (ret)
     {
     case TOUCH_WHITE:
-        printf("todo WhiteColor\n");
         shape.outColor = WHITE; //Set OutBound Color WHITE (why!???)
+        shape.inColor = WHITE;  //Set InBound Color WHITE
         break;
     case TOUCH_ORANGE:
-        printf("todo OrangeColor\n");
         shape.outColor = ORANGE; //Set OutBound Color ORANGE
+        shape.inColor = ORANGE;  //Set InBound Color ORANGE
         break;
     case TOUCH_RED:
-        printf("todo RedColor\n");
         shape.outColor = RED; //Set OutBound Color RED
+        shape.inColor = RED;  //Set InBound Color RED
         break;
     case TOUCH_GREEN:
-        printf("todo GreenColor\n");
         shape.outColor = GREEN; //Set OutBound Color GREEN
+        shape.inColor = GREEN;  //Set InBound Color GREEN
         break;
     case TOUCH_YELLOW:
-        printf("todo YellowColor\n");
         shape.outColor = YELLOW; //Set OutBound Color YELLOW
+        shape.inColor = YELLOW;  //Set InBound Color YELLOW
         break;
     case TOUCH_NAVY:
-        printf("todo NavyColor\n");
         shape.outColor = NAVY; //Set OutBound Color NAVY
+        shape.inColor = NAVY;  //Set InBound Color NAVY
         break;
     case TOUCH_BLUE:
-        printf("todo BlueColor\n");
         shape.outColor = BLUE; //Set OutBound Color BLUE
+        shape.inColor = BLUE;  //Set InBound Color BLUE
         break;
     case TOUCH_BLACK:
-        printf("todo BlackColor\n");
         shape.outColor = BLACK; //Set OutBound Color BLACK
+        shape.inColor = BLACK;  //Set InBound Color BLACK
         break;
     case TOUCH_SEL:
         break;
@@ -193,31 +188,21 @@ void SensingTouch(TLCD *tlcdInfo)
         g_drawTable[state](tlcdInfo, &shape);
         break;
     case TOUCH_CANVAS:
-        if (state >= 0 && state < 9)
+        if (state >= 0 && state < 4)
         {
-            shape.outColor = 0;
-
             // set Up Start x , y pos
-            if (isFirst == 1)
-            {
-                shape.start.x = xpos;
-                shape.start.y = ypos;
-
-                isFirst = -1;
-            }
+            shape.start.x = xpos;
+            shape.start.y = ypos;
             // set Up End x , y pos
-            shape.end.x = xpos;
-            shape.end.y = ypos;
-            g_drawTable[state](tlcdInfo, &shape);
-            struct ListNode *node = CreateNode(shape);
-            Append(node);
+            g_drawTable[state](tlcdInfo, &shape);      //함수 불러짐
+            struct ListNode *node = CreateNode(shape); //도형에 대한 노드를 만들어서
+            Append(node);                              //리스트에 노드 저장
         }
         break;
     default:
         /*
-         * 터치를 때면 ret이 0이 되기 때문에
-         * 항상 0이 들어오는 오류를 발견했습니다.
-         * if 문으로 수정했습니다.
+         * 터치를 때면 ret이 -1이 되기 때문에
+         * 항상 -1이 들어오는 오류 방지
          */
         if (ret != -1)
         {
