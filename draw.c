@@ -1,6 +1,7 @@
 #include "draw.h"
 #include "ui.h"
 #include "list.h"
+#include "btn.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -196,16 +197,17 @@ void DrawFree(TLCD tlcdInfo, Shape *shape)
         shape->position[ypos - START_CANVAS_Y][xpos - START_CANVAS_X] = 1;
         offset = ypos * 320 + xpos;
         printf("xpos: %d\nypos: %d\n", xpos, ypos);
-        *(tlcdInfo.pfbdata + offset) = BLACK;
-        offset = shape->end.y * 320 + i;
-        if (tlcdInfo.pressure == 0)
+        //*(tlcdInfo.pfbdata + offset) = BLACK;
+        for (i = -5; i < 5; i++)
         {
-            //Test code
-            printf("xpos = %d\nypos=%d\n", xpos, ypos);
-            break;
-            /* position 동적 할당 */
+            offset = (ypos + i) * tlcdInfo->fbvar.xres + xpos;
+            *(tlcdInfo->pfbdata + offset) = BLACK;
+
+            offset = ypos * tlcdInfo->fbvar.xres + xpos + i;
+            *(tlcdInfo->pfbdata + offset) = BLACK;
         }
-    }
+        offset = shape->end.y * 320 + i;
+        }
 }
 
 /*
