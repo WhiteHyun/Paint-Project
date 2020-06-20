@@ -127,7 +127,7 @@ void DrawOval(TLCD tlcdInfo, Shape *shape)
                 x = (j - centerX);
                 y = (i - centerY);
 
-                if ((x * x) / xlen + (y * y) / ylen <= 1.2 && (x * x) / xlen + (y * y) / ylen >= 0.8)
+                if ((x * x) * ylen + (y * y) * xlen <= (xlen * ylen * 1.1) && (x * x) * ylen + (y * y) * xlen >= (xlen * ylen * 0.9))
                 {
                     offset = i * 320 + j;
                     *(tlcdInfo.pfbdata + offset) = shape->outColor;
