@@ -132,14 +132,10 @@ int GetBtn(int xpos, int ypos)
 
 void SensingTouch(TLCD *tlcdInfo)
 {
-    int x, y, pressure;
     int xpos, ypos, ret;
     Shape shape;
     shape.position = NULL;
     InputTouch(tlcdInfo);
-    // printf("[After]tlcdInfo->pressure = %d\n", tlcdInfo->pressure);
-    // printf("[After]tlcdInfo->x = %d\n", tlcdInfo->x);
-    // printf("[After]tlcdInfo->y = %d\n", tlcdInfo->y);
     // 보정을 넣은 lcd상의 x , y의 포지션
     xpos = tlcdInfo->a * tlcdInfo->x + tlcdInfo->b * tlcdInfo->y + tlcdInfo->c;
     ypos = tlcdInfo->d * tlcdInfo->x + tlcdInfo->e * tlcdInfo->y + tlcdInfo->f;
@@ -188,8 +184,15 @@ void SensingTouch(TLCD *tlcdInfo)
         printf("todo BlackColor\n");
         shape.outColor = BLACK; //Set OutBound Color BLACK
         break;
+    case TOUCH_SEL:
+        break;
+    case TOUCH_ERASE:
+        break;
+    case TOUCH_CLEAR:
+        state = ret;
+        g_drawTable[state](tlcdInfo, &shape);
+        break;
     case TOUCH_CANVAS:
-        printf("touching screen %d %d\n", xpos, ypos);
         if (state >= 0 && state < 9)
         {
             shape.outColor = 0;
@@ -205,11 +208,9 @@ void SensingTouch(TLCD *tlcdInfo)
             // set Up End x , y pos
             shape.end.x = xpos;
             shape.end.y = ypos;
-            printf("g_List.size = %d\n", g_List->size);
             g_drawTable[state](tlcdInfo, &shape);
             struct ListNode *node = CreateNode(shape);
             Append(node);
-            printf("node[0] shape(if 3, freedraw): %d\n", g_List->start->shape.type);
         }
         break;
     default:
