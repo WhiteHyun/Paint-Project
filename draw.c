@@ -89,21 +89,28 @@ void DrawRectangle(TLCD *tlcdInfo, Shape *shape)
 
     int i, tmp, offset;
 
-    if (shape->start.x > shape->end.x)
+    int startX, startY, endX, endY;
+
+    startX = shape->start.x;
+    startY = shape->start.y;
+
+    endX = shape->end.x;
+    endY = shape->end.y;
+
+    if (startX > endX)
     {
-        tmp = shape->start.x;
-        shape->start.x = shape->end.x;
-        shape->end.x = tmp;
+        tmp = startX;
+        startX = endX;
+        endX = tmp;
+    }
+    if (startY > endY)
+    {
+        tmp = startY;
+        startY = endY;
+        endY = tmp;
     }
 
-    if (shape->start.y > shape->end.y)
-    {
-        tmp = shape->start.y;
-        shape->start.y = shape->end.y;
-        shape->end.y = tmp;
-    }
-
-    for (i = shape->start.x; i < shape->end.x; i++)
+    for (i = startX; i < endX; i++)
     {
         offset = shape->start.y * 320 + i;
         *(tlcdInfo->pfbdata + offset) = shape->outColor;
@@ -112,13 +119,12 @@ void DrawRectangle(TLCD *tlcdInfo, Shape *shape)
         *(tlcdInfo->pfbdata + offset) = shape->outColor;
     }
 
-    for (i = shape->start.y; i < shape->end.y; i++)
+    for (i = startY; i < endY; i++)
     {
-        offset = i * 320 + shape->start.x;
-        *(tlcdInfo->pfbdata + offset) = shape->outColor;
-
-        offset = i * 320 + shape->end.x;
-        *(tlcdInfo->pfbdata + offset) = shape->outColor;
+        offset = i * 320 + startX;
+        *(tlcdInfo.pfbdata + offset) = shape->outColor;
+        offset = i * 320 + endX;
+        *(tlcdInfo.pfbdata + offset) = shape->outColor;
     }
 }
 
@@ -134,6 +140,61 @@ void DrawOval(TLCD *tlcdInfo, Shape *shape)
 {
     /* TODO: Draw Oval */
     printf("DrawOval Executed\n");
+
+    int i, j, tmp, centerX, centerY, xlen, ylen, offset, x, y;
+
+    int startX, startY, endX, endY;
+
+    startX = shape->start.x;
+    startY = shape->start.y;
+
+    endX = shape->end.x;
+    endY = shape->end.y;
+
+    if (startX > endX)
+    {
+        tmp = startX;
+        startX = endX;
+        endX = tmp;
+    }
+    if (startY > endY)
+    {
+        tmp = startY;
+        startY = endY;
+        endY = tmp;
+    }
+
+    /* set Start and end X , Y */
+
+    centerX = (startX + endX) / 2;
+    centerY = (startY + endY) / 2;
+
+    xlen = (startX - centerX) * (startX - centerX); // 선 a의 길이
+    ylen = (startY - centerY) * (startY - centerY); // 선 b의 길이
+
+    if (xlen == 0 || ylen == 0)
+    {
+        printf("error\n");
+    }
+
+    // 왜 5 만큼 더하고 빼지않으면 깔끔한 그림이 나오지 않는지 이해가 되지않음 . + 스무스한 모양이아닌 각진모양이나와서 매우마음에 들지않음. 추후 해결예정
+    else
+    {
+        for (i = startY - 5; i < endY + 5; i++)
+        {
+            for (j = startX - 5; j < endX + 5; j++)
+            {
+                x = (j - centerX);
+                y = (i - centerY);
+
+                if ((x * x) * ylen + (y * y) * xlen <= (xlen * ylen * 1.1) && (x * x) * ylen + (y * y) * xlen >= (xlen * ylen * 0.9))
+                {
+                    offset = i * 320 + j;
+                    *(tlcdInfo.pfbdata + offset) = shape->outColor;
+                }
+            }
+        }
+    }
 }
 
 /*
