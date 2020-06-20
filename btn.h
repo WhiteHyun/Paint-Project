@@ -35,7 +35,7 @@ static int state = 3;
 static int mode = 7;
 
 //Selected Color
-static unsigned short selectedColor = BLACK;
+static unsigned short selectedColor = 0;
 
 //Detected when lcd touched, and then set tlcd's x, y info.
 inline void InputTouch(TLCD *tlcdInfo);

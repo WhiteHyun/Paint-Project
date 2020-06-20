@@ -18,6 +18,7 @@ struct ListNode *CreateNode(Shape shape)
 
 void DeleteNode(struct ListNode *removeNode)
 {
+    int i;
     //노드에 메모리가 할당되어있는 경우 해제해줍니다.
     if (removeNode != NULL)
     {
@@ -26,9 +27,9 @@ void DeleteNode(struct ListNode *removeNode)
         {
             for (i = 0; i < 220; i++)
             {
-                free(shape->position[i]);
+                free(removeNode->shape.position[i]);
             }
-            free(shape->position)
+            free(removeNode->shape.position);
         }
         free(removeNode);
     }
