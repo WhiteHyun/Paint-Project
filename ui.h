@@ -13,7 +13,7 @@ enum Color
     NAVY = 0x10C,
     BLUE = 0x398,
     BLACK = 0x0,
-    MINT = 0x670
+    CYAN = 0x670
 };
 enum Size
 {

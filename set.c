@@ -14,7 +14,7 @@ void ClearLcd(TLCD tlcdInfo)
         for (j = 0; j < 320; j++)
         {
             offset = i * 320 + j;
-            *(tlcdInfo.pfbdata + offset) = MINT;
+            *(tlcdInfo.pfbdata + offset) = CYAN;
         }
     }
 }
