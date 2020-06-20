@@ -58,7 +58,7 @@ void DrawLine(TLCD *tlcdInfo, Shape *shape)
         for (i = startX; i <= endX; i++)
         {
             offset = (int)(incline * i + yIntercept) * 320 + (i);
-            *(tlcdInfo->pfbdata + offset) = 0;
+            *(tlcdInfo->pfbdata + offset) = shape->outColor;
         }
     }
 
@@ -70,7 +70,7 @@ void DrawLine(TLCD *tlcdInfo, Shape *shape)
         for (i = startX; i >= endX; i--)
         {
             offset = (int)(incline * i + yIntercept) * 320 + (i);
-            *(tlcdInfo->pfbdata + offset) = 0;
+            *(tlcdInfo->pfbdata + offset) = shape->outColor;
         }
     }
 }
