@@ -122,9 +122,9 @@ void DrawRectangle(TLCD *tlcdInfo, Shape *shape)
     for (i = startY; i < endY; i++)
     {
         offset = i * 320 + startX;
-        *(tlcdInfo.pfbdata + offset) = shape->outColor;
+        *(tlcdInfo->pfbdata + offset) = shape->outColor;
         offset = i * 320 + endX;
-        *(tlcdInfo.pfbdata + offset) = shape->outColor;
+        *(tlcdInfo->pfbdata + offset) = shape->outColor;
     }
 }
 
