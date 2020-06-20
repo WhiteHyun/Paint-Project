@@ -244,7 +244,7 @@ void DrawFree(TLCD *tlcdInfo, Shape *shape)
         /*코드 구현*/
         xpos = tlcdInfo->a * tlcdInfo->x + tlcdInfo->b * tlcdInfo->y + tlcdInfo->c;
         ypos = tlcdInfo->d * tlcdInfo->x + tlcdInfo->e * tlcdInfo->y + tlcdInfo->f;
-        for (i = 0; i < 2; i++)
+        for (i = -1; i < 2; i++)
         {
             offset = (ypos + 1) * tlcdInfo->fbvar.xres + xpos + i;
             *(tlcdInfo->pfbdata + offset) = shape->outColor;
