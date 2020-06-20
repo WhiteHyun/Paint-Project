@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+extern struct List *g_List;
 /*
  * This is Base Code for Making Line Made by D.S Kim
  * Make start x , y -> end x , y Line
@@ -142,8 +143,7 @@ void DrawFree(TLCD *tlcdInfo, Shape *shape)
 {
     /* 아직 미 구현된 상태임 */
     printf("DrawFree Executed\n");
-
-    struct ListNode *node = NULL;
+    shape->type = TOUCH_FREEDRAW;
     int xpos, ypos, i, offset;
     //도형 크기 동적 할당
     shape->position = (int **)malloc(sizeof(int *) * SIZEOF_CANVAS_Y); //캔버스의 y크기: 220
@@ -166,11 +166,11 @@ void DrawFree(TLCD *tlcdInfo, Shape *shape)
         ypos = tlcdInfo->d * tlcdInfo->x + tlcdInfo->e * tlcdInfo->y + tlcdInfo->f;
         // printf("xpos: %d\nypos: %d\n", xpos, ypos);
         //*(tlcdInfo->pfbdata + offset) = BLACK;
-        for (i = -3; i < 3; i++)
+        for (i = 0; i < 2; i++)
         {
-            offset = (ypos + i) * tlcdInfo->fbvar.xres + xpos;
+            offset = (ypos + 1) * tlcdInfo->fbvar.xres + xpos + i;
             *(tlcdInfo->pfbdata + offset) = BLACK;
-            shape->position[ypos - START_CANVAS_Y + i][xpos - START_CANVAS_X] = 1;
+            shape->position[ypos - START_CANVAS_Y + 1][xpos - START_CANVAS_X + i] = 1;
 
             offset = ypos * tlcdInfo->fbvar.xres + xpos + i;
             *(tlcdInfo->pfbdata + offset) = BLACK;
@@ -204,8 +204,16 @@ void DrawErase(TLCD *tlcdInfo, Shape *shape)
  */
 void DrawClear(TLCD *tlcdInfo, Shape *shape)
 {
-    printf("DrawClear Executed\n");
-
+    ListClear();
+    int i, j, offset;
+    for (i = START_CANVAS_Y; i < END_CANVAS_Y; i++)
+    {
+        for (j = START_CANVAS_X; j < END_CANVAS_X; j++)
+        {
+            offset = i * 320 + j;
+            *(tlcdInfo->pfbdata + offset) = WHITE;
+        }
+    }
     return;
 }
 
