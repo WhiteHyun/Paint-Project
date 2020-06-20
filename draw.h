@@ -25,24 +25,24 @@ typedef struct _Shape
 
 typedef void (*drawList)(TLCD, Shape *);
 
-void DrawLine(TLCD tlcdInfo, Shape *shape);
+void DrawLine(TLCD *tlcdInfo, Shape *shape);
 
 // make Rectangle Base Code
-void DrawRectangle(TLCD tlcdInfo, Shape *shape);
+void DrawRectangle(TLCD *tlcdInfo, Shape *shape);
 
-void DrawOval(TLCD tlcdInfo, Shape *shape);
+void DrawOval(TLCD *tlcdInfo, Shape *shape);
 
-void DrawFree(TLCD tlcdInfo, Shape *shape);
+void DrawFree(TLCD *tlcdInfo, Shape *shape);
 
-void DrawSelect(TLCD tlcdInfo, Shape *shape);
+void DrawSelect(TLCD *tlcdInfo, Shape *shape);
 
-void DrawErase(TLCD tlcdInfo, Shape *shape);
+void DrawErase(TLCD *tlcdInfo, Shape *shape);
 
-void DrawClear(TLCD tlcdInfo, Shape *shape);
+void DrawClear(TLCD *tlcdInfo, Shape *shape);
 
-void DrawPen(TLCD tlcdInfo, Shape *shape);
+void DrawPen(TLCD *tlcdInfo, Shape *shape);
 
-void DrawFill(TLCD tlcdInfo, Shape *shape);
+void DrawFill(TLCD *tlcdInfo, Shape *shape);
 
 /*
  * 도형과 관련된 함수들의 테이블입니다.

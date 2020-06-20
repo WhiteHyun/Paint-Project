@@ -13,7 +13,7 @@
  *             -> 갱신했을시 이전에 그려진 Line의 좌표를 특정하여 지워줍니다 (시작할 때 집어주면 될듯?)
  *             -> ( 이 기능이 핵심적임 )
  */
-void DrawLine(TLCD tlcdInfo, Shape *shape)
+void DrawLine(TLCD *tlcdInfo, Shape *shape)
 {
     int i, tmp, offset;
     int startXpos, startYpos;
@@ -25,25 +25,25 @@ void DrawLine(TLCD tlcdInfo, Shape *shape)
     {
         InputTouch(&tlcdInfo);
 
-        if (tlcdInfo.pressure == 0)
+        if (tlcdInfo->pressure == 0)
         {
-            startXpos = tlcdInfo.a * tlcdInfo.x + tlcdInfo.b * tlcdInfo.y + tlcdInfo.c;
-            startYpos = tlcdInfo.d * tlcdInfo.x + tlcdInfo.e * tlcdInfo.y + tlcdInfo.f;
+            startXpos = tlcdInfo->a * tlcdInfo->x + tlcdInfo->b * tlcdInfo->y + tlcdInfo->c;
+            startYpos = tlcdInfo->d * tlcdInfo->x + tlcdInfo->e * tlcdInfo->y + tlcdInfo->f;
 
             break;
         }
     }
 
-    tlcdInfo.pressure = -1;
+    tlcdInfo->pressure = -1;
 
     while (1) //종료지점의 x, y좌표 입력
     {
         InputTouch(&tlcdInfo);
 
-        if (tlcdInfo.pressure == 0)
+        if (tlcdInfo->pressure == 0)
         {
-            endXpos = tlcdInfo.a * tlcdInfo.x + tlcdInfo.b * tlcdInfo.y + tlcdInfo.c;
-            endYpos = tlcdInfo.d * tlcdInfo.x + tlcdInfo.e * tlcdInfo.y + tlcdInfo.f;
+            endXpos = tlcdInfo->a * tlcdInfo->x + tlcdInfo->b * tlcdInfo->y + tlcdInfo->c;
+            endYpos = tlcdInfo->d * tlcdInfo->x + tlcdInfo->e * tlcdInfo->y + tlcdInfo->f;
 
             break;
         }
@@ -57,7 +57,7 @@ void DrawLine(TLCD tlcdInfo, Shape *shape)
         for (i = startXpos; i <= endXpos; i++)
         {
             offset = (int)(incline * i + yIntercept) * 320 + (i);
-            *(tlcdInfo.pfbdata + offset) = 0;
+            *(tlcdInfo->pfbdata + offset) = 0;
         }
     }
 
@@ -69,7 +69,7 @@ void DrawLine(TLCD tlcdInfo, Shape *shape)
         for (i = startXpos; i >= endXpos; i--)
         {
             offset = (int)(incline * i + yIntercept) * 320 + (i);
-            *(tlcdInfo.pfbdata + offset) = 0;
+            *(tlcdInfo->pfbdata + offset) = 0;
         }
     }
 }
@@ -82,7 +82,7 @@ void DrawLine(TLCD tlcdInfo, Shape *shape)
  *             -> 갱신했을시 이전에 그려진 Box를 지워줍니다 (시작할 때 집어주면 될듯?)
  *             -> ( 이 기능이 핵심적임 ) 
  */
-void DrawRectangle(TLCD tlcdInfo, Shape *shape)
+void DrawRectangle(TLCD *tlcdInfo, Shape *shape)
 {
     printf("DrawRectangle Executed\n");
 
@@ -105,19 +105,19 @@ void DrawRectangle(TLCD tlcdInfo, Shape *shape)
     for (i = shape->start.x; i < shape->end.x; i++)
     {
         offset = shape->start.y * 320 + i;
-        *(tlcdInfo.pfbdata + offset) = shape->outColor;
+        *(tlcdInfo->pfbdata + offset) = shape->outColor;
 
         offset = shape->end.y * 320 + i;
-        *(tlcdInfo.pfbdata + offset) = shape->outColor;
+        *(tlcdInfo->pfbdata + offset) = shape->outColor;
     }
 
     for (i = shape->start.y; i < shape->end.y; i++)
     {
         offset = i * 320 + shape->start.x;
-        *(tlcdInfo.pfbdata + offset) = shape->outColor;
+        *(tlcdInfo->pfbdata + offset) = shape->outColor;
 
         offset = i * 320 + shape->end.x;
-        *(tlcdInfo.pfbdata + offset) = shape->outColor;
+        *(tlcdInfo->pfbdata + offset) = shape->outColor;
     }
 }
 
@@ -129,48 +129,16 @@ void DrawRectangle(TLCD tlcdInfo, Shape *shape)
  *             -> 갱신했을시 이전에 그려진 Oval을 지워줍니다 (시작할 때 집어주면 될듯?)
  *             -> ( 이 기능이 핵심적임 )
  */
-void DrawOval(TLCD tlcdInfo, Shape *shape)
+void DrawOval(TLCD *tlcdInfo, Shape *shape)
 {
     /* TODO: Draw Oval */
     printf("DrawOval Executed\n");
-
-    int i, tmp, offset;
-
-    if (shape->start.x > shape->end.x)
-    {
-        tmp = shape->start.x;
-        shape->start.x = shape->end.x;
-        shape->end.x = tmp;
-    }
-
-    if (shape->start.y > shape->end.y)
-    {
-        tmp = shape->start.y;
-        shape->start.y = shape->end.y;
-        shape->end.y = tmp;
-    }
-
-    for (i = shape->start.x; i < shape->end.x; i++)
-    {
-        offset = shape->start.y * 320 + i;
-        *(tlcdInfo.pfbdata + offset) = shape->outColor;
-        offset = shape->end.y * 320 + i;
-        *(tlcdInfo.pfbdata + offset) = shape->outColor;
-    }
-
-    for (i = shape->start.y; i < shape->end.y; i++)
-    {
-        offset = i * 320 + shape->start.x;
-        *(tlcdInfo.pfbdata + offset) = shape->outColor;
-        offset = i * 320 + shape->end.x;
-        *(tlcdInfo.pfbdata + offset) = shape->outColor;
-    }
 }
 
 /*
  * This is Base Code for Making DrawFree Made by S.H Hong
  */
-void DrawFree(TLCD tlcdInfo, Shape *shape)
+void DrawFree(TLCD *tlcdInfo, Shape *shape)
 {
     /* 아직 미 구현된 상태임 */
     printf("DrawFree Executed\n");
@@ -185,20 +153,20 @@ void DrawFree(TLCD tlcdInfo, Shape *shape)
     }
 
     /* 터치 입력을 받음 */
-    InputTouch(&tlcdInfo);
-    InputTouch(&tlcdInfo);
+    InputTouch(tlcdInfo);
+    InputTouch(tlcdInfo);
     while (1)
     {
         /* 초기 값은 trash값이 나오므로 */
-        InputTouch(&tlcdInfo);
+        InputTouch(tlcdInfo);
         /*코드 구현*/
-        xpos = tlcdInfo.a * tlcdInfo.x + tlcdInfo.b * tlcdInfo.y + tlcdInfo.c;
-        ypos = tlcdInfo.d * tlcdInfo.x + tlcdInfo.e * tlcdInfo.y + tlcdInfo.f;
+        xpos = tlcdInfo->a * tlcdInfo->x + tlcdInfo->b * tlcdInfo->y + tlcdInfo->c;
+        ypos = tlcdInfo->d * tlcdInfo->x + tlcdInfo->e * tlcdInfo->y + tlcdInfo->f;
         shape->position[ypos - START_CANVAS_Y][xpos - START_CANVAS_X] = 1;
         offset = ypos * 320 + xpos;
         printf("xpos: %d\nypos: %d\n", xpos, ypos);
-        //*(tlcdInfo.pfbdata + offset) = BLACK;
-        for (i = -5; i < 5; i++)
+        //*(tlcdInfo->pfbdata + offset) = BLACK;
+        for (i = -3; i < 3; i++)
         {
             offset = (ypos + i) * tlcdInfo->fbvar.xres + xpos;
             *(tlcdInfo->pfbdata + offset) = BLACK;
@@ -207,13 +175,13 @@ void DrawFree(TLCD tlcdInfo, Shape *shape)
             *(tlcdInfo->pfbdata + offset) = BLACK;
         }
         offset = shape->end.y * 320 + i;
-        }
+    }
 }
 
 /*
  * TODO
  */
-void DrawSelect(TLCD tlcdInfo, Shape *shape)
+void DrawSelect(TLCD *tlcdInfo, Shape *shape)
 {
     printf("DrawSelect Executed\n");
 
@@ -223,7 +191,7 @@ void DrawSelect(TLCD tlcdInfo, Shape *shape)
 /*
  * TODO
  */
-void DrawErase(TLCD tlcdInfo, Shape *shape)
+void DrawErase(TLCD *tlcdInfo, Shape *shape)
 {
     printf("DrawErase Executed\n");
 
@@ -233,7 +201,7 @@ void DrawErase(TLCD tlcdInfo, Shape *shape)
 /*
  * TODO
  */
-void DrawClear(TLCD tlcdInfo, Shape *shape)
+void DrawClear(TLCD *tlcdInfo, Shape *shape)
 {
     printf("DrawClear Executed\n");
 
@@ -243,7 +211,7 @@ void DrawClear(TLCD tlcdInfo, Shape *shape)
 /*
  * TODO
  */
-void DrawPen(TLCD tlcdInfo, Shape *shape)
+void DrawPen(TLCD *tlcdInfo, Shape *shape)
 {
     printf("DrawPen Executed\n");
 
@@ -253,7 +221,7 @@ void DrawPen(TLCD tlcdInfo, Shape *shape)
 /*
  * TODO
  */
-void DrawFill(TLCD tlcdInfo, Shape *shape)
+void DrawFill(TLCD *tlcdInfo, Shape *shape)
 {
     printf("DrawFill Executed\n");
 

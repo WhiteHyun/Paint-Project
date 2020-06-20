@@ -45,5 +45,5 @@ inline void InputTouch(TLCD *tlcdInfo);
 int GetBtn(TLCD tlcdInfo, int xpos, int ypos);
 
 // TouchPos Get
-void SensingTouch(TLCD tlcdInfo);
+void SensingTouch(TLCD *tlcdInfo);
 #endif

@@ -138,7 +138,7 @@ void Run()
     // main code part
     for (;;)
     {
-        SensingTouch(tlcdInfo);
+        SensingTouch(&tlcdInfo);
     }
 
     close(tlcdInfo.fd);
