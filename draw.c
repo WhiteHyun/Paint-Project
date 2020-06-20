@@ -215,6 +215,12 @@ void DrawOval(TLCD *tlcdInfo, Shape *shape)
     shape->end.x = endX;
     shape->end.y = endY;
 
+    int matX, matY;
+    matX = endX - startX + 1;
+    matY = endY - startY + 1;
+
+    int Matrix[matY][matX];
+
     /* set Start and end X , Y */
     centerX = (startX + endX) / 2;
     centerY = (startY + endY) / 2;
@@ -227,22 +233,44 @@ void DrawOval(TLCD *tlcdInfo, Shape *shape)
         printf("error\n");
     }
 
-    // todo -> 현재 타원에 해당되는 부분을 전부 outBound 색상으로 처리해줌.맨끝부분의 컬러만 남기는 방안을 고려합시다.
+    // todo -> 현재 타원에 해당되는 부분을 전부 outBound 색상으로 처리해줌.맨끝부분의 컬러만 남기는 방안을 고려합시다. 해당부분을 matrix에 넣어봅시다.
     else
     {
-        for (i = startY; i < endY; i++)
+        for (i = startY; i <= endY; i++)
         {
-            for (j = startX; j < endX; j++)
+            for (j = startX; j <= endX; j++)
             {
                 x = (j - centerX);
                 y = (i - centerY);
 
                 if ((x * x) * ylen + (y * y) * xlen <= (xlen * ylen))
                 {
+                    Matrix[i - startY][j - startX] = 1;
                     offset = i * 320 + j;
                     *(tlcdInfo->pfbdata + offset) = shape->outColor;
                 }
+                else
+                {
+                    Matrix[i - startY][j - startX] = 0;
+                }
             }
+        }
+
+        /* 1사분면
+        for (i = centerY; i < endY; i++)
+        {
+            for (j = centerX; j > startX; i--)
+            {
+            }
+        }*/
+
+        for (i = 0; i < matY; i++)
+        {
+            for (j = 0; j < matX; j++)
+            {
+                printf("%d ", Matrix[i][j]);
+            }
+            printf("\n");
         }
     }
 }
