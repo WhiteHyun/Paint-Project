@@ -90,8 +90,20 @@ void DrawRectangle(TLCD *tlcdInfo, Shape *shape)
 
     int startX, startY, endX, endY;
 
-    startX = shape->start.x;
-    startY = shape->start.y;
+    while (1) //시작지점의 x, y좌표 입력
+    {
+        InputTouch(tlcdInfo);
+
+        if (tlcdInfo->pressure == 0)
+        {
+            startX = tlcdInfo->a * tlcdInfo->x + tlcdInfo->b * tlcdInfo->y + tlcdInfo->c;
+            startY = tlcdInfo->d * tlcdInfo->x + tlcdInfo->e * tlcdInfo->y + tlcdInfo->f;
+
+            break;
+        }
+    }
+
+    tlcdInfo->pressure = -1;
 
     while (1) //종료지점의 x, y좌표 입력
     {
@@ -99,44 +111,47 @@ void DrawRectangle(TLCD *tlcdInfo, Shape *shape)
 
         if (tlcdInfo->pressure == 0)
         {
-            tlcdInfo->pressure = -1;
+            endX = tlcdInfo->a * tlcdInfo->x + tlcdInfo->b * tlcdInfo->y + tlcdInfo->c;
+            endY = tlcdInfo->d * tlcdInfo->x + tlcdInfo->e * tlcdInfo->y + tlcdInfo->f;
+
             break;
         }
-        shape->end.x = tlcdInfo->a * tlcdInfo->x + tlcdInfo->b * tlcdInfo->y + tlcdInfo->c;
-        shape->end.y = tlcdInfo->d * tlcdInfo->x + tlcdInfo->e * tlcdInfo->y + tlcdInfo->f;
+    }
 
-        endX = shape->end.x;
-        endY = shape->end.y;
+    if (startX > endX)
+    {
+        tmp = startX;
+        startX = endX;
+        endX = tmp;
+    }
+    if (startY > endY)
+    {
+        tmp = startY;
+        startY = endY;
+        endY = tmp;
+    }
 
-        if (startX > endX)
-        {
-            tmp = startX;
-            startX = endX;
-            endX = tmp;
-        }
-        if (startY > endY)
-        {
-            tmp = startY;
-            startY = endY;
-            endY = tmp;
-        }
+    shape->start.x = startX;
+    shape->start.y = startY;
 
-        for (i = startX; i < endX; i++)
-        {
-            offset = shape->start.y * 320 + i;
-            *(tlcdInfo->pfbdata + offset) = shape->outColor;
+    shape->end.x = endX;
+    shape->end.y = endY;
 
-            offset = shape->end.y * 320 + i;
-            *(tlcdInfo->pfbdata + offset) = shape->outColor;
-        }
+    for (i = startX; i < endX; i++)
+    {
+        offset = shape->start.y * 320 + i;
+        *(tlcdInfo->pfbdata + offset) = shape->outColor;
 
-        for (i = startY; i < endY; i++)
-        {
-            offset = i * 320 + startX;
-            *(tlcdInfo->pfbdata + offset) = shape->outColor;
-            offset = i * 320 + endX;
-            *(tlcdInfo->pfbdata + offset) = shape->outColor;
-        }
+        offset = shape->end.y * 320 + i;
+        *(tlcdInfo->pfbdata + offset) = shape->outColor;
+    }
+
+    for (i = startY; i < endY; i++)
+    {
+        offset = i * 320 + startX;
+        *(tlcdInfo->pfbdata + offset) = shape->outColor;
+        offset = i * 320 + endX;
+        *(tlcdInfo->pfbdata + offset) = shape->outColor;
     }
 }
 /*
@@ -153,65 +168,79 @@ void DrawOval(TLCD *tlcdInfo, Shape *shape)
     int i, j, tmp, centerX, centerY, xlen, ylen, offset, x, y;
     int startX, startY, endX, endY;
 
-    startX = shape->start.x;
-    startY = shape->start.y;
-
-    while (1)
+    while (1) //시작지점의 x, y좌표 입력
     {
-        /* 터치 입력을 받음 */
         InputTouch(tlcdInfo);
+
         if (tlcdInfo->pressure == 0)
         {
-            tlcdInfo->pressure = -1;
+            startX = tlcdInfo->a * tlcdInfo->x + tlcdInfo->b * tlcdInfo->y + tlcdInfo->c;
+            startY = tlcdInfo->d * tlcdInfo->x + tlcdInfo->e * tlcdInfo->y + tlcdInfo->f;
+
             break;
         }
-        /*코드 구현*/
-        shape->end.x = tlcdInfo->a * tlcdInfo->x + tlcdInfo->b * tlcdInfo->y + tlcdInfo->c;
-        shape->end.y = tlcdInfo->d * tlcdInfo->x + tlcdInfo->e * tlcdInfo->y + tlcdInfo->f;
-        endX = shape->end.x;
-        endY = shape->end.y;
+    }
 
-        if (startX > endX)
+    tlcdInfo->pressure = -1;
+
+    while (1) //종료지점의 x, y좌표 입력
+    {
+        InputTouch(tlcdInfo);
+
+        if (tlcdInfo->pressure == 0)
         {
-            tmp = startX;
-            startX = endX;
-            endX = tmp;
+            endX = tlcdInfo->a * tlcdInfo->x + tlcdInfo->b * tlcdInfo->y + tlcdInfo->c;
+            endY = tlcdInfo->d * tlcdInfo->x + tlcdInfo->e * tlcdInfo->y + tlcdInfo->f;
+
+            break;
         }
-        if (startY > endY)
+    }
+
+    if (startX > endX)
+    {
+        tmp = startX;
+        startX = endX;
+        endX = tmp;
+    }
+    if (startY > endY)
+    {
+        tmp = startY;
+        startY = endY;
+        endY = tmp;
+    }
+
+    shape->start.x = startX;
+    shape->start.y = startY;
+
+    shape->end.x = endX;
+    shape->end.y = endY;
+
+    /* set Start and end X , Y */
+    centerX = (startX + endX) / 2;
+    centerY = (startY + endY) / 2;
+
+    xlen = (startX - centerX) * (startX - centerX); // 선 a의 길이
+    ylen = (startY - centerY) * (startY - centerY); // 선 b의 길이
+
+    if (xlen == 0 || ylen == 0)
+    {
+        printf("error\n");
+    }
+
+    // todo -> 현재 타원에 해당되는 부분을 전부 outBound 색상으로 처리해줌.맨끝부분의 컬러만 남기는 방안을 고려합시다.
+    else
+    {
+        for (i = startY; i < endY; i++)
         {
-            tmp = startY;
-            startY = endY;
-            endY = tmp;
-        }
-
-        /* set Start and end X , Y */
-
-        centerX = (startX + endX) / 2;
-        centerY = (startY + endY) / 2;
-
-        xlen = (startX - centerX) * (startX - centerX); // 선 a의 길이
-        ylen = (startY - centerY) * (startY - centerY); // 선 b의 길이
-
-        if (xlen == 0 || ylen == 0)
-        {
-            printf("error\n");
-        }
-
-        // 왜 5 만큼 더하고 빼지않으면 깔끔한 그림이 나오지 않는지 이해가 되지않음 . + 스무스한 모양이아닌 각진모양이나와서 매우마음에 들지않음. 추후 해결예정
-        else
-        {
-            for (i = startY - 5; i < endY + 5; i++)
+            for (j = startX; j < endX; j++)
             {
-                for (j = startX - 5; j < endX + 5; j++)
-                {
-                    x = (j - centerX);
-                    y = (i - centerY);
+                x = (j - centerX);
+                y = (i - centerY);
 
-                    if ((x * x) * ylen + (y * y) * xlen <= (xlen * ylen * 1.1) && (x * x) * ylen + (y * y) * xlen >= (xlen * ylen * 0.9))
-                    {
-                        offset = i * 320 + j;
-                        *(tlcdInfo->pfbdata + offset) = shape->outColor;
-                    }
+                if ((x * x) * ylen + (y * y) * xlen <= (xlen * ylen))
+                {
+                    offset = i * 320 + j;
+                    *(tlcdInfo->pfbdata + offset) = shape->outColor;
                 }
             }
         }
