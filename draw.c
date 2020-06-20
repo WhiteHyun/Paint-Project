@@ -156,11 +156,14 @@ void DrawFree(TLCD *tlcdInfo, Shape *shape)
     {
         /* 터치 입력을 받음 */
         InputTouch(tlcdInfo);
-
+        if (tlcdInfo->pressure == 0)
+        {
+            tlcdInfo->pressure = -1;
+            break;
+        }
         /*코드 구현*/
         xpos = tlcdInfo->a * tlcdInfo->x + tlcdInfo->b * tlcdInfo->y + tlcdInfo->c;
         ypos = tlcdInfo->d * tlcdInfo->x + tlcdInfo->e * tlcdInfo->y + tlcdInfo->f;
-        offset = ypos * 320 + xpos;
         // printf("xpos: %d\nypos: %d\n", xpos, ypos);
         //*(tlcdInfo->pfbdata + offset) = BLACK;
         for (i = -3; i < 3; i++)
