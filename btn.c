@@ -132,7 +132,9 @@ void SensingTouch(TLCD tlcdInfo)
     shape.position = NULL;
 
     InputTouch(&tlcdInfo);
-
+    InputTouch(&tlcdInfo);
+    InputTouch(&tlcdInfo);
+    printf("pressure = %d\n", tlcdInfo.pressure);
     // 보정을 넣은 lcd상의 x , y의 포지션
     xpos = tlcdInfo.a * tlcdInfo.x + tlcdInfo.b * tlcdInfo.y + tlcdInfo.c;
     ypos = tlcdInfo.d * tlcdInfo.x + tlcdInfo.e * tlcdInfo.y + tlcdInfo.f;
@@ -144,7 +146,7 @@ void SensingTouch(TLCD tlcdInfo)
     }
     else
     {
-        printf("shape.start: x(%d) y(%d)\nshape.end: x(%d) y(%d)\n", shape.start.x, shape.start.y, shape.end.x, shape.end.y);
+        //printf("shape.start: x(%d) y(%d)\nshape.end: x(%d) y(%d)\n", shape.start.x, shape.start.y, shape.end.x, shape.end.y);
         ret = -1;
     }
     switch (ret)
