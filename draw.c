@@ -21,7 +21,7 @@ struct Pixel
     unsigned short color;
 };
 
-struct Pixel sketchBook[220][200];
+struct Pixel sketchBook[SIZEOF_CANVAS_Y][SIZEOF_CANVAS_X];
 
 /*
  * This is Base Code for Making Line Made by D.S Kim
@@ -31,7 +31,7 @@ struct Pixel sketchBook[220][200];
  *             -> 갱신했을시 이전에 그려진 Line의 좌표를 특정하여 지워줍니다 (시작할 때 집어주면 될듯?)
  *             -> ( 이 기능이 핵심적임 )
  */
-void DrawLine(TLCD* tlcdInfo, Shape* shape)
+void DrawLine(TLCD *tlcdInfo, Shape *shape)
 {
     shape->type = TOUCH_LINE;
 
@@ -112,7 +112,7 @@ void DrawLine(TLCD* tlcdInfo, Shape* shape)
                     {
                         offset = (int)(incline * i + yIntercept) * 320 + (i);
                         *(tlcdInfo->pfbdata + offset) = WHITE;
-                    }                    
+                    }
                 }
             }
 
@@ -248,7 +248,7 @@ void DrawRectangle(TLCD *tlcdInfo, Shape *shape)
                         offset = i * 320 + j;
                         *(tlcdInfo->pfbdata + offset) = sketchBook[i - START_CANVAS_Y][j - START_CANVAS_X].color;
                     }
-                    
+
                     else
                     {
                         offset = i * 320 + j;
@@ -264,7 +264,7 @@ void DrawRectangle(TLCD *tlcdInfo, Shape *shape)
 
         endX = tlcdInfo->a * tlcdInfo->x + tlcdInfo->b * tlcdInfo->y + tlcdInfo->c;
         endY = tlcdInfo->d * tlcdInfo->x + tlcdInfo->e * tlcdInfo->y + tlcdInfo->f;
-        
+
         // CANVAS의 포지션이 벗어나면 continue
         if ((endX < START_CANVAS_X || endX > END_CANVAS_X) || (endY < START_CANVAS_Y || endY > END_CANVAS_Y))
         {
@@ -278,7 +278,7 @@ void DrawRectangle(TLCD *tlcdInfo, Shape *shape)
             tempX = endX;
             endX = tmp;
         }
-        
+
         if (tempY > endY)
         {
             tmp = tempY;
@@ -396,7 +396,7 @@ void DrawOval(TLCD *tlcdInfo, Shape *shape)
         startX = endX;
         endX = tmp;
     }
-    
+
     if (startY > endY)
     {
         tmp = startY;
@@ -441,12 +441,12 @@ void DrawOval(TLCD *tlcdInfo, Shape *shape)
 
         ++x;
         dx += (2 * bb);
-        
+
         if (d1 < 0)
         {
             d1 += (dx + bb);
         }
-        
+
         else
         {
             --y;
@@ -462,19 +462,19 @@ void DrawOval(TLCD *tlcdInfo, Shape *shape)
     dy = 2 * aa * y;
 
     int d2 = aa - (a * bb) + (0.25 * bb);
-    
+
     while (dx > dy)
     {
 
         offset = (y + centerY) * 320 + (x + centerX);
         *(tlcdInfo->pfbdata + offset) = shape->outColor;
-        
+
         offset = (y + centerY) * 320 + (-x + centerX);
         *(tlcdInfo->pfbdata + offset) = shape->outColor;
-        
+
         offset = (-y + centerY) * 320 + (x + centerX);
         *(tlcdInfo->pfbdata + offset) = shape->outColor;
-        
+
         offset = (-y + centerY) * 320 + (-x + centerX);
         *(tlcdInfo->pfbdata + offset) = shape->outColor;
 
@@ -485,7 +485,7 @@ void DrawOval(TLCD *tlcdInfo, Shape *shape)
         {
             d2 += (dy + aa);
         }
-        
+
         else
         {
             --x;
@@ -501,12 +501,12 @@ void DrawOval(TLCD *tlcdInfo, Shape *shape)
 void DrawFree(TLCD *tlcdInfo, Shape *shape)
 {
     shape->type = TOUCH_FREEDRAW;
-    int xpos, ypos, i, offset;
-    
+    int xpos, ypos, i, j, offset;
+
     //도형 크기 동적 할당
     shape->position = (int **)malloc(sizeof(int *) * SIZEOF_CANVAS_Y); //캔버스의 y크기: 220
-    
-    for (i = 0; i < 220; i++)
+
+    for (i = 0; i < SIZEOF_CANVAS_Y; i++)
     {
         shape->position[i] = (int *)malloc(sizeof(int) * SIZEOF_CANVAS_X); //캔버스의 x크기: 200
     }
@@ -515,26 +515,33 @@ void DrawFree(TLCD *tlcdInfo, Shape *shape)
     {
         /* 터치 입력을 받음 */
         InputTouch(tlcdInfo);
-        
+
         if (tlcdInfo->pressure == 0)
         {
             tlcdInfo->pressure = -1;
             break;
         }
-        
-        /*코드 구현*/
+
         xpos = tlcdInfo->a * tlcdInfo->x + tlcdInfo->b * tlcdInfo->y + tlcdInfo->c;
         ypos = tlcdInfo->d * tlcdInfo->x + tlcdInfo->e * tlcdInfo->y + tlcdInfo->f;
-        
+
+        //터치된 부분에서 3x3만큼 그려줌
         for (i = -1; i < 2; i++)
         {
-            offset = (ypos + 1) * tlcdInfo->fbvar.xres + xpos + i;
-            *(tlcdInfo->pfbdata + offset) = shape->outColor;
-            shape->position[ypos - START_CANVAS_Y + 1][xpos - START_CANVAS_X + i] = 1;
-
-            offset = ypos * tlcdInfo->fbvar.xres + xpos + i;
-            *(tlcdInfo->pfbdata + offset) = shape->outColor;
-            shape->position[ypos - START_CANVAS_Y][xpos - START_CANVAS_X + i] = 1;
+            for (j = -1; j < 2; j++)
+            {
+                offset = (ypos + j) * tlcdInfo->fbvar.xres + xpos + i;
+                //캠버스 화면을 벗어나는 경우
+                if (ypos - START_CANVAS_Y + j < 0 || ypos - START_CANVAS_Y + j > SIZEOF_CANVAS_Y ||
+                    xpos - START_CANVAS_X + i < 0 || xpos - START_CANVAS_X + i > SIZEOF_CANVAS_X)
+                {
+                    continue;
+                }
+                *(tlcdInfo->pfbdata + offset) = shape->outColor;
+                shape->position[ypos - START_CANVAS_Y + j][xpos - START_CANVAS_X + i] = 1;                //프리드로우 그려진 부분을 저장
+                sketchBook[ypos - START_CANVAS_Y + j][xpos - START_CANVAS_X + i].number = 1;              //스케치북에도 그려진 곳을 저장
+                sketchBook[ypos - START_CANVAS_Y + j][xpos - START_CANVAS_X + i].color = shape->outColor; //색깔도 저장
+            }
         }
     }
 }
@@ -579,7 +586,7 @@ void DrawClear(TLCD *tlcdInfo, Shape *shape)
             *(tlcdInfo->pfbdata + offset) = WHITE;
         }
     }
-    
+
     return;
 }
 
