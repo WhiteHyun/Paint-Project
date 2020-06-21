@@ -532,8 +532,8 @@ void DrawFree(TLCD *tlcdInfo, Shape *shape)
             {
                 offset = (ypos + j) * tlcdInfo->fbvar.xres + xpos + i;
                 //캠버스 화면을 벗어나는 경우
-                if (ypos - START_CANVAS_Y + j < 0 || ypos - START_CANVAS_Y + j > SIZEOF_CANVAS_Y ||
-                    xpos - START_CANVAS_X + i < 0 || xpos - START_CANVAS_X + i > SIZEOF_CANVAS_X)
+                if (ypos - START_CANVAS_Y + j < 0 || ypos - START_CANVAS_Y + j >= SIZEOF_CANVAS_Y ||
+                    xpos - START_CANVAS_X + i < 0 || xpos - START_CANVAS_X + i >= SIZEOF_CANVAS_X)
                 {
                     continue;
                 }
