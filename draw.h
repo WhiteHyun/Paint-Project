@@ -1,11 +1,14 @@
 #ifndef DRAW_H
 #define DRAW_H
+
 #include "set.h"
+
 typedef struct _Point
 {
     int x;
     int y;
 } Point;
+
 /* 
  * Shape infomation struct.
  * shape -> 0 is Pen , 1 is Line , 2 Rectangle , 3 Oval , 4 FreeDraw
@@ -47,7 +50,8 @@ void DrawFill(TLCD *tlcdInfo, Shape *shape);
 /*
  * 도형과 관련된 함수들의 테이블입니다.
  */
-static const drawList g_drawTable[] = {
+static const drawList g_drawTable[] = 
+{
     DrawLine,
     DrawRectangle,
     DrawOval,
@@ -56,5 +60,7 @@ static const drawList g_drawTable[] = {
     DrawErase,
     DrawClear,
     DrawPen,
-    DrawFill};
+    DrawFill
+};
+
 #endif
