@@ -9,6 +9,7 @@ extern struct List *g_List;
 void ClearLcd(TLCD tlcdInfo)
 {
     int i, j, offset;
+    
     for (i = 0; i < 240; i++)
     {
         for (j = 0; j < 320; j++)
@@ -83,6 +84,7 @@ void SetCalibration(TLCD *tlcdInfo)
             offset = yd[j] * tlcdInfo->fbvar.xres + xd[j] + i;
             *(tlcdInfo->pfbdata + offset) = color;
         }
+        
         while (1)
         {
             read(tlcdInfo->fd, &tlcdInfo->ie, sizeof(struct input_event));
@@ -102,6 +104,7 @@ void SetCalibration(TLCD *tlcdInfo)
                     break;
             }
         }
+        
         pressure = -1;
     }
 
