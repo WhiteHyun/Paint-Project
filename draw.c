@@ -268,7 +268,24 @@ void DrawRectangle(TLCD *tlcdInfo, Shape *shape)
         // CANVAS의 포지션이 벗어나면 continue
         if ((endX < START_CANVAS_X || endX > END_CANVAS_X) || (endY < START_CANVAS_Y || endY > END_CANVAS_Y))
         {
-            continue;
+            if (endX < START_CANVAS_X)
+            {
+                endX = START_CANVAS_X + 1;
+            }
+            else if (endX > END_CANVAS_X)
+            {
+                endX = END_CANVAS_X - 1;
+            }
+
+            if (endY < START_CANVAS_Y)
+            {
+                endY = START_CANVAS_Y + 1;
+            }
+
+            else if (endY > END_CANVAS_Y)
+            {
+                endY = END_CANVAS_Y - 1;
+            }
         }
 
         // start , end Pos Setting
@@ -382,9 +399,9 @@ void DrawOval(TLCD *tlcdInfo, Shape *shape)
         // 루프를 한번 돌았을때 값갱신전 초기화
         if (endX != -1 && endY != -1)
         {
-            for (i = tempY; i <= endY; i++)
+            for (i = tempY - 1; i <= endY; i++)
             {
-                for (j = tempX ; j <= endX; j++)
+                for (j = tempX - 1; j <= endX; j++)
                 {
                     if (sketchBook[i - START_CANVAS_Y][j - START_CANVAS_X].number >= 1)
                     {
@@ -410,7 +427,24 @@ void DrawOval(TLCD *tlcdInfo, Shape *shape)
         // CANVAS의 포지션이 벗어나면 continue
         if ((endX < START_CANVAS_X || endX > END_CANVAS_X) || (endY < START_CANVAS_Y || endY > END_CANVAS_Y))
         {
-            continue;
+            if (endX < START_CANVAS_X)
+            {
+                endX = START_CANVAS_X + 1;
+            }
+            else if (endX > END_CANVAS_X)
+            {
+                endX = END_CANVAS_X - 1;
+            }
+
+            if (endY < START_CANVAS_Y)
+            {
+                endY = START_CANVAS_Y + 1;
+            }
+
+            else if (endY > END_CANVAS_Y)
+            {
+                endY = END_CANVAS_Y - 1;
+            }
         }
 
         // start , end Pos Setting
