@@ -1,12 +1,15 @@
 #ifndef LIST_H
 #define LIST_H
+
 #include "draw.h"
+
 struct ListNode
 {
     struct ListNode *next; //다음 노드를 가리키는 포인터
     struct ListNode *prev; //이전 노드를 가리키는 포인터
     Shape shape;           //도형의 정보(data)
 };
+
 struct List
 {
     struct ListNode *peek;  //리스트의 가장 끝
