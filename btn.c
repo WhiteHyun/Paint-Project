@@ -177,8 +177,8 @@ void SensingTouch(TLCD *tlcdInfo)
         selectedColor = BLACK;
         break;
     case TOUCH_CLEAR: //클리어 모드
-        state = ret;
-        g_drawTable[state](tlcdInfo, &shape);
+        g_drawTable[ret](tlcdInfo, &shape);
+        mode = TOUCH_PEN; //화면 클리어 후 펜모드로 바꿈
         break;
     case TOUCH_CANVAS:
         //펜모드이면서 그림유형도 선택되어있는 경우 정상적인 그림 그리기
