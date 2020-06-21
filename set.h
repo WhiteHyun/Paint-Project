@@ -1,5 +1,6 @@
 #ifndef SET_H
 #define SET_H
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -9,6 +10,7 @@
 #include <sys/types.h>
 #include <linux/fb.h> /* for fb_var_screeninfo, FBIOGET_VSCREENINFO */
 #include <linux/input.h>
+
 #define FBDEVFILE "/dev/fb2"
 
 /* 
@@ -35,4 +37,5 @@ int Init_TLCD(TLCD *tlcdInfo);
 void SetCalibration(TLCD *tlcdInfo);
 
 void Run();
+
 #endif
