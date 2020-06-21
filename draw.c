@@ -104,7 +104,7 @@ void DrawRectangle(TLCD *tlcdInfo, Shape *shape)
     shape->type = TOUCH_RECT;
     int i, j, tmp, offset;
 
-    int startX, startY, endX, endY, isFirst;
+    int startX, startY, tempX, tempY, endX, endY, isFirst;
 
     isFirst = 1;
 
@@ -121,6 +121,9 @@ void DrawRectangle(TLCD *tlcdInfo, Shape *shape)
             isFirst = -1;
         }
 
+        tempX = startX;
+        tempY = startY;
+
         endX = tlcdInfo->a * tlcdInfo->x + tlcdInfo->b * tlcdInfo->y + tlcdInfo->c;
         endY = tlcdInfo->d * tlcdInfo->x + tlcdInfo->e * tlcdInfo->y + tlcdInfo->f;
         // CANVAS의 포지션이 벗어나면 continue
@@ -130,25 +133,25 @@ void DrawRectangle(TLCD *tlcdInfo, Shape *shape)
         }
 
         // start , end Pos Setting
-        if (startX > endX)
+        if (tempX > endX)
         {
-            tmp = startX;
-            startX = endX;
+            tmp = tempX;
+            tempX = endX;
             endX = tmp;
         }
-        if (startY > endY)
+        if (tempY > endY)
         {
-            tmp = startY;
-            startY = endY;
+            tmp = tempY;
+            tempY = endY;
             endY = tmp;
         }
 
         // 이전값으로 초기화시켜주는 부분.
-        for (i = startY; i <= END_CANVAS_Y; i++)
+        for (i = START_CANVAS_Y; i <= END_CANVAS_Y; i++)
         {
-            for (j = startX; j <= END_CANVAS_X; j++)
+            for (j = START_CANVAS_X; j <= END_CANVAS_X; j++)
             {
-                if (sketchBook[i - START_CANVAS_Y][j - START_CANVAS_X] >= 1)
+                if (sketchBook[i - START_CANVAS_Y][j - START_CANVAS_X].number >= 1)
                 {
                     offset = i * 320 + j;
                     *(tlcdInfo->pfbdata + offset) = sketchBook[i - START_CANVAS_Y][j - START_CANVAS_X].color;
@@ -162,18 +165,18 @@ void DrawRectangle(TLCD *tlcdInfo, Shape *shape)
         }
 
         //초기화후 보여주는부분
-        for (i = startX; i < endX; i++)
+        for (i = tempX; i < endX; i++)
         {
-            offset = startY * 320 + i;
+            offset = tempY * 320 + i;
             *(tlcdInfo->pfbdata + offset) = shape->outColor;
 
             offset = endY * 320 + i;
             *(tlcdInfo->pfbdata + offset) = shape->outColor;
         }
 
-        for (i = startY; i < endY; i++)
+        for (i = tempY; i < endY; i++)
         {
-            offset = i * 320 + startX;
+            offset = i * 320 + tempX;
             *(tlcdInfo->pfbdata + offset) = shape->outColor;
 
             offset = i * 320 + endX;
@@ -186,40 +189,40 @@ void DrawRectangle(TLCD *tlcdInfo, Shape *shape)
         }
     }
 
-    shape->start.x = startX;
-    shape->start.y = startY;
+    shape->start.x = tempX;
+    shape->start.y = tempY;
 
     shape->end.x = endX;
     shape->end.y = endY;
 
-    for (i = startX; i < endX; i++)
+    for (i = tempX; i < endX; i++)
     {
-        offset = startY * 320 + i;
+        offset = tempY * 320 + i;
         *(tlcdInfo->pfbdata + offset) = shape->outColor;
 
-        sketchBook[startY][i].number += 1;
-        sketchBook[startY][i].color += shape->outColor;
+        sketchBook[tempY - START_CANVAS_Y][i - START_CANVAS_X].number += 1;
+        sketchBook[tempY - START_CANVAS_Y][i - START_CANVAS_X].color += shape->outColor;
 
         offset = endY * 320 + i;
         *(tlcdInfo->pfbdata + offset) = shape->outColor;
 
-        sketchBook[endY][i].number += 1;
-        sketchBook[endY][i].color += shape->outColor;
+        sketchBook[endY - START_CANVAS_Y][i - START_CANVAS_X].number += 1;
+        sketchBook[endY - START_CANVAS_Y][i - START_CANVAS_X].color += shape->outColor;
     }
 
-    for (i = startY; i < endY; i++)
+    for (i = tempY; i < endY; i++)
     {
         offset = i * 320 + startX;
         *(tlcdInfo->pfbdata + offset) = shape->outColor;
 
-        sketchBook[i][startX].number += 1;
-        sketchBook[i][startX].color += shape->outColor;
+        sketchBook[i - START_CANVAS_Y][tempX - START_CANVAS_X].number += 1;
+        sketchBook[i - START_CANVAS_Y][tempX - START_CANVAS_X].color += shape->outColor;
 
         offset = i * 320 + endX;
         *(tlcdInfo->pfbdata + offset) = shape->outColor;
 
-        sketchBook[i][endX].number += 1;
-        sketchBook[i][endX].color += shape->outColor;
+        sketchBook[i - START_CANVAS_Y][endX - START_CANVAS_X].number += 1;
+        sketchBook[i - START_CANVAS_Y][endX - START_CANVAS_X].color += shape->outColor;
     }
 }
 /*
@@ -433,6 +436,9 @@ void DrawClear(TLCD *tlcdInfo, Shape *shape)
     {
         for (j = START_CANVAS_X; j < END_CANVAS_X; j++)
         {
+            sketchBook[i - START_CANVAS_Y][j - START_CANVAS_X].number = 0;
+            sketchBook[i - START_CANVAS_Y][j - START_CANVAS_X].color = WHITE;
+
             offset = i * 320 + j;
             *(tlcdInfo->pfbdata + offset) = WHITE;
         }
