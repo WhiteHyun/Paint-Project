@@ -382,9 +382,9 @@ void DrawOval(TLCD *tlcdInfo, Shape *shape)
         // 루프를 한번 돌았을때 값갱신전 초기화
         if (endX != -1 && endY != -1)
         {
-            for (i = tempY - 10; i <= endY; i++)
+            for (i = tempY; i <= endY; i++)
             {
-                for (j = tempX - 10; j <= endX; j++)
+                for (j = tempX ; j <= endX; j++)
                 {
                     if (sketchBook[i - START_CANVAS_Y][j - START_CANVAS_X].number >= 1)
                     {
