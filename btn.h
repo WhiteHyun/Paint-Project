@@ -1,7 +1,9 @@
 #ifndef BTN_H
 #define BTN_H
+
 #include "draw.h"
 #include "set.h"
+
 enum button_touch_state
 {
     TOUCH_LINE,     // 0
@@ -49,4 +51,5 @@ int GetBtn(int xpos, int ypos);
 
 // TouchPos Get
 void SensingTouch(TLCD *tlcdInfo);
+
 #endif
