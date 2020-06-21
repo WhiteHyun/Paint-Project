@@ -102,78 +102,135 @@ void DrawLine(TLCD *tlcdInfo, Shape *shape)
 void DrawRectangle(TLCD *tlcdInfo, Shape *shape)
 {
     shape->type = TOUCH_RECT;
-    int i, tmp, offset;
+    int i, j, tmp, offset;
 
-    int startX, startY, endX, endY;
+    int startX, startY, tempX, tempY, endX, endY, isFirst;
+
+    // first value
+    endX = -1;
+    endY = -1;
+
+    isFirst = 1;
 
     while (1) //시작지점의 x, y좌표 입력
     {
         InputTouch(tlcdInfo);
 
-        if (tlcdInfo->pressure == 0)
+        // 처음항인가? 밑에부분 한번에 합칠수있으면 좋겠음
+        if (isFirst == 1)
         {
             startX = tlcdInfo->a * tlcdInfo->x + tlcdInfo->b * tlcdInfo->y + tlcdInfo->c;
             startY = tlcdInfo->d * tlcdInfo->x + tlcdInfo->e * tlcdInfo->y + tlcdInfo->f;
 
-            break;
+            isFirst = -1;
         }
-    }
 
-    tlcdInfo->pressure = -1;
+        // 루프를 한번 돌았을때 값갱신전 초기화
+        if (endX != -1 && endY != -1)
+        {
+            for (i = tempY; i <= endY; i++)
+            {
+                for (j = tempX; j <= endX; j++)
+                {
+                    if (sketchBook[i - START_CANVAS_Y][j - START_CANVAS_X].number >= 1)
+                    {
+                        offset = i * 320 + j;
+                        *(tlcdInfo->pfbdata + offset) = sketchBook[i - START_CANVAS_Y][j - START_CANVAS_X].color;
+                    }
+                    else
+                    {
+                        offset = i * 320 + j;
+                        *(tlcdInfo->pfbdata + offset) = WHITE;
+                    }
+                }
+            }
+        }
 
-    while (1) //종료지점의 x, y좌표 입력
-    {
-        InputTouch(tlcdInfo);
+        //값갱신
+        tempX = startX;
+        tempY = startY;
+
+        endX = tlcdInfo->a * tlcdInfo->x + tlcdInfo->b * tlcdInfo->y + tlcdInfo->c;
+        endY = tlcdInfo->d * tlcdInfo->x + tlcdInfo->e * tlcdInfo->y + tlcdInfo->f;
+        // CANVAS의 포지션이 벗어나면 continue
+        if ((endX < START_CANVAS_X || endX > END_CANVAS_X) || (endY < START_CANVAS_Y || endY > END_CANVAS_Y))
+        {
+            continue;
+        }
+
+        // start , end Pos Setting
+        if (tempX > endX)
+        {
+            tmp = tempX;
+            tempX = endX;
+            endX = tmp;
+        }
+        if (tempY > endY)
+        {
+            tmp = tempY;
+            tempY = endY;
+            endY = tmp;
+        }
+
+        //초기화후 보여주는부분
+        for (i = tempX; i < endX; i++)
+        {
+            offset = tempY * 320 + i;
+            *(tlcdInfo->pfbdata + offset) = shape->outColor;
+
+            offset = endY * 320 + i;
+            *(tlcdInfo->pfbdata + offset) = shape->outColor;
+        }
+
+        for (i = tempY; i < endY; i++)
+        {
+            offset = i * 320 + tempX;
+            *(tlcdInfo->pfbdata + offset) = shape->outColor;
+
+            offset = i * 320 + endX;
+            *(tlcdInfo->pfbdata + offset) = shape->outColor;
+        }
 
         if (tlcdInfo->pressure == 0)
         {
-            endX = tlcdInfo->a * tlcdInfo->x + tlcdInfo->b * tlcdInfo->y + tlcdInfo->c;
-            endY = tlcdInfo->d * tlcdInfo->x + tlcdInfo->e * tlcdInfo->y + tlcdInfo->f;
-
             break;
         }
     }
 
-    if (startX > endX)
-    {
-        tmp = startX;
-        startX = endX;
-        endX = tmp;
-    }
-    if (startY > endY)
-    {
-        tmp = startY;
-        startY = endY;
-        endY = tmp;
-    }
-
-    shape->start.x = startX;
-    shape->start.y = startY;
+    shape->start.x = tempX;
+    shape->start.y = tempY;
 
     shape->end.x = endX;
     shape->end.y = endY;
 
-    for (i = startX; i < endX; i++)
+    for (i = tempX; i < endX; i++)
     {
-        offset = shape->start.y * 320 + i;
+        offset = tempY * 320 + i;
         *(tlcdInfo->pfbdata + offset) = shape->outColor;
 
-        sketchBook[startY][i].number += 1;
-        sketchBook[startY][i].color += shape->outColor;
+        sketchBook[tempY - START_CANVAS_Y][i - START_CANVAS_X].number += 1;
+        sketchBook[tempY - START_CANVAS_Y][i - START_CANVAS_X].color += shape->outColor;
 
-        offset = shape->end.y * 320 + i;
+        offset = endY * 320 + i;
         *(tlcdInfo->pfbdata + offset) = shape->outColor;
 
-        sketchBook[endY][i].number += 1;
-        sketchBook[endY][i].color += shape->outColor;
+        sketchBook[endY - START_CANVAS_Y][i - START_CANVAS_X].number += 1;
+        sketchBook[endY - START_CANVAS_Y][i - START_CANVAS_X].color += shape->outColor;
     }
 
-    for (i = startY; i < endY; i++)
+    for (i = tempY; i < endY; i++)
     {
         offset = i * 320 + startX;
         *(tlcdInfo->pfbdata + offset) = shape->outColor;
+
+        sketchBook[i - START_CANVAS_Y][tempX - START_CANVAS_X].number += 1;
+        sketchBook[i - START_CANVAS_Y][tempX - START_CANVAS_X].color += shape->outColor;
+
         offset = i * 320 + endX;
         *(tlcdInfo->pfbdata + offset) = shape->outColor;
+
+        sketchBook[i - START_CANVAS_Y][endX - START_CANVAS_X].number += 1;
+        sketchBook[i - START_CANVAS_Y][endX - START_CANVAS_X].color += shape->outColor;
     }
 }
 /*
@@ -387,6 +444,9 @@ void DrawClear(TLCD *tlcdInfo, Shape *shape)
     {
         for (j = START_CANVAS_X; j < END_CANVAS_X; j++)
         {
+            sketchBook[i - START_CANVAS_Y][j - START_CANVAS_X].number = 0;
+            sketchBook[i - START_CANVAS_Y][j - START_CANVAS_X].color = WHITE;
+
             offset = i * 320 + j;
             *(tlcdInfo->pfbdata + offset) = WHITE;
         }
