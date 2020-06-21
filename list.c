@@ -13,12 +13,14 @@ struct ListNode *CreateNode(Shape shape)
         node->prev = NULL;
         node->shape = shape;
     }
+    
     return node;
 }
 
 void DeleteNode(struct ListNode *removeNode)
 {
     int i;
+    
     //노드에 메모리가 할당되어있는 경우 해제해줍니다.
     if (removeNode != NULL)
     {
@@ -29,8 +31,10 @@ void DeleteNode(struct ListNode *removeNode)
             {
                 free(removeNode->shape.position[i]);
             }
+            
             free(removeNode->shape.position);
         }
+        
         free(removeNode);
     }
 }
@@ -40,6 +44,7 @@ void InitList()
     if (g_List == NULL)
     {
         g_List = (struct List *)malloc(sizeof(struct List));
+        
         if (g_List != NULL)
         {
             g_List->peek = NULL;
@@ -55,12 +60,14 @@ void Append(struct ListNode *newNode)
     /*
      * 리스트의 사이즈에 따라 넣는 방식이 달라지므로 나눕니다.
      */
+    
     if (g_List->size == 0)
     {
         g_List->peek = newNode;
         g_List->start = newNode;
         g_List->size++;
     }
+    
     else if (g_List->size > 0)
     {
         tempNode = g_List->peek;
@@ -80,6 +87,7 @@ struct ListNode *Pop()
     {
         printf("Pop(), Stack is Empty\n");
     }
+    
     //when stack is not empty
     else
     {
@@ -94,11 +102,13 @@ struct ListNode *Pop()
 struct ListNode *IndexPop(int index)
 {
     struct ListNode *tempNode = NULL;
+    
     //when List is Empty
     if (g_List->size == 0)
     {
         printf("Error, Pop(%d), Stack is Empty\n", index);
     }
+    
     //when stack is not empty
     else
     {
@@ -113,10 +123,12 @@ struct ListNode *IndexPop(int index)
         {
             return Pop();
         }
+        
         else
         {
             tempNode = g_List->start;
             //index에 해당하는 노드까지 이동
+            
             while (index != 0)
             {
                 tempNode = tempNode->next;
@@ -147,6 +159,7 @@ void ListClear()
 {
     int count = g_List->size;
     int i;
+    
     struct ListNode *tempNode;
 
     for (i = 0; i < count; i++)
@@ -154,6 +167,7 @@ void ListClear()
         tempNode = Pop();
         DeleteNode(tempNode);
     }
+    
     g_List->peek = NULL;
     g_List->start = NULL;
     g_List->size = 0;
