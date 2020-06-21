@@ -106,13 +106,17 @@ void DrawRectangle(TLCD *tlcdInfo, Shape *shape)
 
     int startX, startY, tempX, tempY, endX, endY, isFirst;
 
+    // first value
+    endX = -1;
+    endY = -1;
+
     isFirst = 1;
 
     while (1) //시작지점의 x, y좌표 입력
     {
         InputTouch(tlcdInfo);
 
-        // 처음항인가?
+        // 처음항인가? 밑에부분 한번에 합칠수있으면 좋겠음
         if (isFirst == 1)
         {
             startX = tlcdInfo->a * tlcdInfo->x + tlcdInfo->b * tlcdInfo->y + tlcdInfo->c;
@@ -121,6 +125,28 @@ void DrawRectangle(TLCD *tlcdInfo, Shape *shape)
             isFirst = -1;
         }
 
+        // 루프를 한번 돌았을때 값갱신전 초기화
+        if (endX != -1 && endY != -1)
+        {
+            for (i = tempY; i <= endY; i++)
+            {
+                for (j = tempX; j <= endX; j++)
+                {
+                    if (sketchBook[i - START_CANVAS_Y][j - START_CANVAS_X].number >= 1)
+                    {
+                        offset = i * 320 + j;
+                        *(tlcdInfo->pfbdata + offset) = sketchBook[i - START_CANVAS_Y][j - START_CANVAS_X].color;
+                    }
+                    else
+                    {
+                        offset = i * 320 + j;
+                        *(tlcdInfo->pfbdata + offset) = WHITE;
+                    }
+                }
+            }
+        }
+
+        //값갱신
         tempX = startX;
         tempY = startY;
 
@@ -144,24 +170,6 @@ void DrawRectangle(TLCD *tlcdInfo, Shape *shape)
             tmp = tempY;
             tempY = endY;
             endY = tmp;
-        }
-
-        // 이전값으로 초기화시켜주는 부분.
-        for (i = START_CANVAS_Y; i <= END_CANVAS_Y; i++)
-        {
-            for (j = START_CANVAS_X; j <= END_CANVAS_X; j++)
-            {
-                if (sketchBook[i - START_CANVAS_Y][j - START_CANVAS_X].number >= 1)
-                {
-                    offset = i * 320 + j;
-                    *(tlcdInfo->pfbdata + offset) = sketchBook[i - START_CANVAS_Y][j - START_CANVAS_X].color;
-                }
-                else
-                {
-                    offset = i * 320 + j;
-                    *(tlcdInfo->pfbdata + offset) = WHITE;
-                }
-            }
         }
 
         //초기화후 보여주는부분
