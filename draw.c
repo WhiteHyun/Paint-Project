@@ -102,49 +102,88 @@ void DrawLine(TLCD *tlcdInfo, Shape *shape)
 void DrawRectangle(TLCD *tlcdInfo, Shape *shape)
 {
     shape->type = TOUCH_RECT;
-    int i, tmp, offset;
+    int i, j, tmp, offset;
 
-    int startX, startY, endX, endY;
+    int startX, startY, endX, endY, isFirst;
+
+    isFirst = 1;
 
     while (1) //시작지점의 x, y좌표 입력
     {
         InputTouch(tlcdInfo);
 
-        if (tlcdInfo->pressure == 0)
+        // 처음항인가?
+        if (isFirst == 1)
         {
             startX = tlcdInfo->a * tlcdInfo->x + tlcdInfo->b * tlcdInfo->y + tlcdInfo->c;
             startY = tlcdInfo->d * tlcdInfo->x + tlcdInfo->e * tlcdInfo->y + tlcdInfo->f;
 
-            break;
+            isFirst = -1;
         }
-    }
 
-    tlcdInfo->pressure = -1;
+        endX = tlcdInfo->a * tlcdInfo->x + tlcdInfo->b * tlcdInfo->y + tlcdInfo->c;
+        endY = tlcdInfo->d * tlcdInfo->x + tlcdInfo->e * tlcdInfo->y + tlcdInfo->f;
+        // CANVAS의 포지션이 벗어나면 continue
+        if ((endX < START_CANVAS_X || endX > END_CANVAS_X) || (endY < START_CANVAS_Y || endY > END_CANVAS_Y))
+        {
+            continue;
+        }
 
-    while (1) //종료지점의 x, y좌표 입력
-    {
-        InputTouch(tlcdInfo);
+        // start , end Pos Setting
+        if (startX > endX)
+        {
+            tmp = startX;
+            startX = endX;
+            endX = tmp;
+        }
+        if (startY > endY)
+        {
+            tmp = startY;
+            startY = endY;
+            endY = tmp;
+        }
+
+        // 이전값으로 초기화시켜주는 부분.
+        for (i = startY; i <= END_CANVAS_Y; i++)
+        {
+            for (j = startX; j <= END_CANVAS_X; j++)
+            {
+                if (sketchBook[i - START_CANVAS_Y][j - START_CANVAS_X] >= 1)
+                {
+                    offset = i * 320 + j;
+                    *(tlcdInfo->pfbdata + offset) = sketchBook[i - START_CANVAS_Y][j - START_CANVAS_X].color;
+                }
+                else
+                {
+                    offset = i * 320 + j;
+                    *(tlcdInfo->pfbdata + offset) = WHITE;
+                }
+            }
+        }
+
+        //초기화후 보여주는부분
+        for (i = startX; i < endX; i++)
+        {
+            offset = startY * 320 + i;
+            *(tlcdInfo->pfbdata + offset) = shape->outColor;
+
+            offset = endY * 320 + i;
+            *(tlcdInfo->pfbdata + offset) = shape->outColor;
+        }
+
+        for (i = startY; i < endY; i++)
+        {
+            offset = i * 320 + startX;
+            *(tlcdInfo->pfbdata + offset) = shape->outColor;
+
+            offset = i * 320 + endX;
+            *(tlcdInfo->pfbdata + offset) = shape->outColor;
+        }
 
         if (tlcdInfo->pressure == 0)
         {
-            endX = tlcdInfo->a * tlcdInfo->x + tlcdInfo->b * tlcdInfo->y + tlcdInfo->c;
-            endY = tlcdInfo->d * tlcdInfo->x + tlcdInfo->e * tlcdInfo->y + tlcdInfo->f;
-
             break;
         }
-    }
-
-    if (startX > endX)
-    {
-        tmp = startX;
-        startX = endX;
-        endX = tmp;
-    }
-    if (startY > endY)
-    {
-        tmp = startY;
-        startY = endY;
-        endY = tmp;
     }
 
     shape->start.x = startX;
@@ -155,13 +194,13 @@ void DrawRectangle(TLCD *tlcdInfo, Shape *shape)
 
     for (i = startX; i < endX; i++)
     {
-        offset = shape->start.y * 320 + i;
+        offset = startY * 320 + i;
         *(tlcdInfo->pfbdata + offset) = shape->outColor;
 
         sketchBook[startY][i].number += 1;
         sketchBook[startY][i].color += shape->outColor;
 
-        offset = shape->end.y * 320 + i;
+        offset = endY * 320 + i;
         *(tlcdInfo->pfbdata + offset) = shape->outColor;
 
         sketchBook[endY][i].number += 1;
@@ -172,8 +211,15 @@ void DrawRectangle(TLCD *tlcdInfo, Shape *shape)
     {
         offset = i * 320 + startX;
         *(tlcdInfo->pfbdata + offset) = shape->outColor;
+
+        sketchBook[i][startX].number += 1;
+        sketchBook[i][startX].color += shape->outColor;
+
         offset = i * 320 + endX;
         *(tlcdInfo->pfbdata + offset) = shape->outColor;
+
+        sketchBook[i][endX].number += 1;
+        sketchBook[i][endX].color += shape->outColor;
     }
 }
 /*
