@@ -30,19 +30,22 @@ struct Pixel sketchBook[220][200];
  *             -> 갱신했을시 이전에 그려진 Line의 좌표를 특정하여 지워줍니다 (시작할 때 집어주면 될듯?)
  *             -> ( 이 기능이 핵심적임 )
  */
-void DrawLine(TLCD *tlcdInfo, Shape *shape)
+void DrawLine(TLCD* tlcdInfo, Shape* shape)
 {
     shape->type = TOUCH_LINE;
+
     int i, offset;
     int startX, startY;
     int endX, endY;
+    int tempX, tempY;
     double incline;    //기울기
     double yIntercept; //y절편
-    while (1)          //시작지점의 x, y좌표 입력
+
+    while (1) //시작지점의 x, y좌표 입력
     {
         InputTouch(tlcdInfo);
 
-        if (tlcdInfo->pressure == 0)
+        if (tlcdInfo->pressure != 0)
         {
             startX = tlcdInfo->a * tlcdInfo->x + tlcdInfo->b * tlcdInfo->y + tlcdInfo->c;
             startY = tlcdInfo->d * tlcdInfo->x + tlcdInfo->e * tlcdInfo->y + tlcdInfo->f;
@@ -53,19 +56,120 @@ void DrawLine(TLCD *tlcdInfo, Shape *shape)
 
     tlcdInfo->pressure = -1;
 
-    while (1) //종료지점의 x, y좌표 입력
+    tempX = startX;
+    tempY = startY;
+
+    while (1) //Line Rubber Band 구현
     {
         InputTouch(tlcdInfo);
 
-        if (tlcdInfo->pressure == 0)
+        if (tempX != startX || tempY != startY)
+        {
+            tempX = endX;
+            tempY = endY;
+        }
+
+        endX = tlcdInfo->a * tlcdInfo->x + tlcdInfo->b * tlcdInfo->y + tlcdInfo->c;
+        endY = tlcdInfo->d * tlcdInfo->x + tlcdInfo->e * tlcdInfo->y + tlcdInfo->f;
+
+        if (tempX == startX && tempY == startY)
+        {
+            tempX = endX;
+            tempY = endY;
+        }
+
+        if ((endX < START_CANVAS_X || endX > END_CANVAS_X) || (endY < START_CANVAS_Y || endY > END_CANVAS_Y)) //캔버스 범위 안에 없을 시
+        {
+            break;
+        }
+
+        else if (tlcdInfo->pressure == 0)
         {
             endX = tlcdInfo->a * tlcdInfo->x + tlcdInfo->b * tlcdInfo->y + tlcdInfo->c;
             endY = tlcdInfo->d * tlcdInfo->x + tlcdInfo->e * tlcdInfo->y + tlcdInfo->f;
 
             break;
         }
+
+        else
+        {
+            //기존에 있던 흔적 제거
+            if (startX < tempX) //1, 4 사분면
+            {
+                incline = (double)((double)(tempY - startY) / (double)(tempX - startX)); //기울기 = y증가량 / x증가량
+                yIntercept = (double)(tempY - incline * tempX);                          //y절편 = y - 기울기 * x
+
+                for (i = startX; i <= tempX; i++)
+                {
+                    if (sketchBook[(int)(incline * i + yIntercept) - START_CANVAS_Y][i - START_CANVAS_X].number >= 1)
+                    {
+                        offset = (int)(incline * i + yIntercept) * 320 + (i);
+                        *(tlcdInfo->pfbdata + offset) = sketchBook[(int)(incline * i + yIntercept) - START_CANVAS_Y][i - START_CANVAS_X].color;
+                    }
+
+                    else
+                    {
+                        offset = (int)(incline * i + yIntercept) * 320 + (i);
+                        *(tlcdInfo->pfbdata + offset) = WHITE;
+                    }                    
+                }
+            }
+
+            else //2, 3 사분면
+            {
+                incline = (double)((double)(tempY - startY) / (double)(tempX - startX));
+                yIntercept = (double)(tempY - incline * tempX);
+
+                for (i = startX; i >= tempX; i--)
+                {
+                    if (sketchBook[(int)(incline * i + yIntercept) - START_CANVAS_Y][i - START_CANVAS_X].number == 1)
+                    {
+                        offset = (int)(incline * i + yIntercept) * 320 + (i);
+                        *(tlcdInfo->pfbdata + offset) = sketchBook[(int)(incline * i + yIntercept) - START_CANVAS_Y][i - START_CANVAS_X].color;
+                    }
+
+                    else
+                    {
+                        offset = (int)(incline * i + yIntercept) * 320 + (i);
+                        *(tlcdInfo->pfbdata + offset) = WHITE;
+                    }
+                }
+            }
+            //흔적 제거 끝
+
+            endX = tlcdInfo->a * tlcdInfo->x + tlcdInfo->b * tlcdInfo->y + tlcdInfo->c;
+            endY = tlcdInfo->d * tlcdInfo->x + tlcdInfo->e * tlcdInfo->y + tlcdInfo->f;
+        }
+
+        {
+            //새로운 Line 그리기
+            if (startX < endX) //1, 4 사분면
+            {
+                incline = (double)((double)(endY - startY) / (double)(endX - startX)); //기울기 = y증가량 / x증가량
+                yIntercept = (double)(endY - incline * endX);                          //y절편 = y - 기울기 * x
+
+                for (i = startX; i <= endX; i++)
+                {
+                    offset = (int)(incline * i + yIntercept) * 320 + (i);
+                    *(tlcdInfo->pfbdata + offset) = shape->outColor;
+                }
+            }
+
+            else //2, 3 사분면
+            {
+                incline = (double)((double)(endY - startY) / (double)(endX - startX));
+                yIntercept = (double)(endY - incline * endX);
+
+                for (i = startX; i >= endX; i--)
+                {
+                    offset = (int)(incline * i + yIntercept) * 320 + (i);
+                    *(tlcdInfo->pfbdata + offset) = shape->outColor;
+                }
+            }
+        }
     }
 
+    //sketchBook에 추가
     if (startX < endX) //1, 4 사분면
     {
         incline = (double)((double)(endY - startY) / (double)(endX - startX)); //기울기 = y증가량 / x증가량
@@ -73,8 +177,8 @@ void DrawLine(TLCD *tlcdInfo, Shape *shape)
 
         for (i = startX; i <= endX; i++)
         {
-            offset = (int)(incline * i + yIntercept) * 320 + (i);
-            *(tlcdInfo->pfbdata + offset) = shape->outColor;
+            sketchBook[(int)(incline * i + yIntercept) - START_CANVAS_Y][i - START_CANVAS_X].number += 1;
+            sketchBook[(int)(incline * i + yIntercept) - START_CANVAS_Y][i - START_CANVAS_X].color += shape->outColor;
         }
     }
 
@@ -85,12 +189,17 @@ void DrawLine(TLCD *tlcdInfo, Shape *shape)
 
         for (i = startX; i >= endX; i--)
         {
-            offset = (int)(incline * i + yIntercept) * 320 + (i);
-            *(tlcdInfo->pfbdata + offset) = shape->outColor;
+            sketchBook[(int)(incline * i + yIntercept) - START_CANVAS_Y][i - START_CANVAS_X].number += 1;
+            sketchBook[(int)(incline * i + yIntercept) - START_CANVAS_Y][i - START_CANVAS_X].color += shape->outColor;
         }
     }
-}
 
+    shape->start.x = startX;
+    shape->start.y = startY;
+
+    shape->end.x = endX;
+    shape->end.y = endY;
+}
 /*
  * This is Base Code for Making Rectangle Made by T.H Kim
  * Make start x , y -> end x , y Rectange
