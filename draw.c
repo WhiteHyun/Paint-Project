@@ -20,6 +20,7 @@ struct Pixel
     int number;
     unsigned short color;
 };
+
 struct Pixel sketchBook[220][200];
 
 /*
@@ -200,6 +201,7 @@ void DrawLine(TLCD* tlcdInfo, Shape* shape)
     shape->end.x = endX;
     shape->end.y = endY;
 }
+
 /*
  * This is Base Code for Making Rectangle Made by T.H Kim
  * Make start x , y -> end x , y Rectange
@@ -246,6 +248,7 @@ void DrawRectangle(TLCD *tlcdInfo, Shape *shape)
                         offset = i * 320 + j;
                         *(tlcdInfo->pfbdata + offset) = sketchBook[i - START_CANVAS_Y][j - START_CANVAS_X].color;
                     }
+                    
                     else
                     {
                         offset = i * 320 + j;
@@ -261,6 +264,7 @@ void DrawRectangle(TLCD *tlcdInfo, Shape *shape)
 
         endX = tlcdInfo->a * tlcdInfo->x + tlcdInfo->b * tlcdInfo->y + tlcdInfo->c;
         endY = tlcdInfo->d * tlcdInfo->x + tlcdInfo->e * tlcdInfo->y + tlcdInfo->f;
+        
         // CANVAS의 포지션이 벗어나면 continue
         if ((endX < START_CANVAS_X || endX > END_CANVAS_X) || (endY < START_CANVAS_Y || endY > END_CANVAS_Y))
         {
@@ -274,6 +278,7 @@ void DrawRectangle(TLCD *tlcdInfo, Shape *shape)
             tempX = endX;
             endX = tmp;
         }
+        
         if (tempY > endY)
         {
             tmp = tempY;
@@ -342,6 +347,7 @@ void DrawRectangle(TLCD *tlcdInfo, Shape *shape)
         sketchBook[i - START_CANVAS_Y][endX - START_CANVAS_X].color += shape->outColor;
     }
 }
+
 /*
  * This is Base Code for Making Oval Made by D.E Kim
  * Make start x , y -> end x , y Oval
@@ -390,6 +396,7 @@ void DrawOval(TLCD *tlcdInfo, Shape *shape)
         startX = endX;
         endX = tmp;
     }
+    
     if (startY > endY)
     {
         tmp = startY;
@@ -434,10 +441,12 @@ void DrawOval(TLCD *tlcdInfo, Shape *shape)
 
         ++x;
         dx += (2 * bb);
+        
         if (d1 < 0)
         {
             d1 += (dx + bb);
         }
+        
         else
         {
             --y;
@@ -453,15 +462,19 @@ void DrawOval(TLCD *tlcdInfo, Shape *shape)
     dy = 2 * aa * y;
 
     int d2 = aa - (a * bb) + (0.25 * bb);
+    
     while (dx > dy)
     {
 
         offset = (y + centerY) * 320 + (x + centerX);
         *(tlcdInfo->pfbdata + offset) = shape->outColor;
+        
         offset = (y + centerY) * 320 + (-x + centerX);
         *(tlcdInfo->pfbdata + offset) = shape->outColor;
+        
         offset = (-y + centerY) * 320 + (x + centerX);
         *(tlcdInfo->pfbdata + offset) = shape->outColor;
+        
         offset = (-y + centerY) * 320 + (-x + centerX);
         *(tlcdInfo->pfbdata + offset) = shape->outColor;
 
@@ -472,6 +485,7 @@ void DrawOval(TLCD *tlcdInfo, Shape *shape)
         {
             d2 += (dy + aa);
         }
+        
         else
         {
             --x;
@@ -488,8 +502,10 @@ void DrawFree(TLCD *tlcdInfo, Shape *shape)
 {
     shape->type = TOUCH_FREEDRAW;
     int xpos, ypos, i, offset;
+    
     //도형 크기 동적 할당
     shape->position = (int **)malloc(sizeof(int *) * SIZEOF_CANVAS_Y); //캔버스의 y크기: 220
+    
     for (i = 0; i < 220; i++)
     {
         shape->position[i] = (int *)malloc(sizeof(int) * SIZEOF_CANVAS_X); //캔버스의 x크기: 200
@@ -499,14 +515,17 @@ void DrawFree(TLCD *tlcdInfo, Shape *shape)
     {
         /* 터치 입력을 받음 */
         InputTouch(tlcdInfo);
+        
         if (tlcdInfo->pressure == 0)
         {
             tlcdInfo->pressure = -1;
             break;
         }
+        
         /*코드 구현*/
         xpos = tlcdInfo->a * tlcdInfo->x + tlcdInfo->b * tlcdInfo->y + tlcdInfo->c;
         ypos = tlcdInfo->d * tlcdInfo->x + tlcdInfo->e * tlcdInfo->y + tlcdInfo->f;
+        
         for (i = -1; i < 2; i++)
         {
             offset = (ypos + 1) * tlcdInfo->fbvar.xres + xpos + i;
@@ -560,6 +579,7 @@ void DrawClear(TLCD *tlcdInfo, Shape *shape)
             *(tlcdInfo->pfbdata + offset) = WHITE;
         }
     }
+    
     return;
 }
 
