@@ -164,10 +164,22 @@ struct ListNode *SearchShape(int touchX, int touchY)
     while (tempNode != NULL)
     {
         //만약 해당 위치에 도형이 있다면
-        if (tempNode->shape.position[touchY][touchX] == 1)
+        if (tempNode->shape.type != TOUCH_FREEDRAW)
         {
-            break;
+
+            if (tempNode->shape.start.x <= touchX && tempNode->shape.start.y <= touchY && tempNode->shape.end.x >= touchX && tempNode->shape.end.y >= touchY)
+            {
+                break;
+            }
         }
+        else
+        {
+            if (tempNode->shape.position[touchY][touchX] == 1)
+            {
+                break;
+            }
+        }
+
         //도형을 찾지 못했다면 이전 노드로 이동
         tempNode = tempNode->prev;
     }
