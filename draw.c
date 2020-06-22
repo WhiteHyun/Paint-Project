@@ -756,11 +756,11 @@ void DrawSelect(TLCD *tlcdInfo, Shape *shape)
         {
             printf("SKETCH ERASE QUOTE START\n");
             /* set Start and end X , Y */
-            centerX = (tempX + endX) / 2 + node->shape.moveX; //평행이동된 값까지 더함
-            centerY = (tempY + endY) / 2 + node->shape.moveY; //평행이동된 값까지 더함
+            centerX = (startX + endX) / 2;
+            centerY = (startY + endY) / 2;
 
-            a = (endX + node->shape.moveX - centerX); // 선 a의 길이
-            b = (endY + node->shape.moveY - centerY); // 선 b의 길이
+            a = (endX - centerX); // 선 a의 길이
+            b = (endY - centerY); // 선 b의 길이
             aa = a * a;
             bb = b * b;
 
@@ -779,21 +779,24 @@ void DrawSelect(TLCD *tlcdInfo, Shape *shape)
                 sketchBook[y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X].number -= 1;
                 sketchBook[y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X].color = shape->outColor;
                 shape->position[y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X] = 1;
-
+                printf("FIRST VALUE IN\n");
                 *(tlcdInfo->pfbdata + offset) = shape->outColor;
                 sketchBook[y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X].number -= 1;
                 sketchBook[y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X].color = shape->outColor;
                 shape->position[y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X] = 1;
 
+                printf("SECOND VALUE IN\n");
                 *(tlcdInfo->pfbdata + offset) = shape->outColor;
                 sketchBook[-y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X].number -= 1;
                 sketchBook[-y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X].color = shape->outColor;
                 shape->position[-y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X] = 1;
+                printf("THIRD VALUE IN\n");
 
                 *(tlcdInfo->pfbdata + offset) = shape->outColor;
                 sketchBook[-y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X].number -= 1;
                 sketchBook[-y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X].color = shape->outColor;
                 shape->position[-y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X] = 1;
+                printf("FOURTH VALUE IN\n");
 
                 ++x;
                 dx += (2 * bb);
