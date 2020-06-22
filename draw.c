@@ -40,14 +40,6 @@ void DrawLine(TLCD *tlcdInfo, Shape *shape)
     double incline;    //기울기
     double yIntercept; //y절편
 
-    //도형 크기 동적 할당
-    shape->position = (int **)malloc(sizeof(int *) * SIZEOF_CANVAS_Y); //캔버스의 y크기: 220
-
-    for (i = 0; i < SIZEOF_CANVAS_Y; i++)
-    {
-        shape->position[i] = (int *)malloc(sizeof(int) * SIZEOF_CANVAS_X); //캔버스의 x크기: 200
-    }
-
     while (1) //시작지점의 x, y좌표 입력
     {
         InputTouch(tlcdInfo);
@@ -186,7 +178,6 @@ void DrawLine(TLCD *tlcdInfo, Shape *shape)
         {
             sketchBook[(int)(incline * i + yIntercept) - START_CANVAS_Y][i - START_CANVAS_X].number += 1;
             sketchBook[(int)(incline * i + yIntercept) - START_CANVAS_Y][i - START_CANVAS_X].color += shape->outColor;
-            shape->position[(int)(incline * i + yIntercept) - START_CANVAS_Y][i - START_CANVAS_X] = 1;
         }
     }
 
@@ -199,7 +190,6 @@ void DrawLine(TLCD *tlcdInfo, Shape *shape)
         {
             sketchBook[(int)(incline * i + yIntercept) - START_CANVAS_Y][i - START_CANVAS_X].number += 1;
             sketchBook[(int)(incline * i + yIntercept) - START_CANVAS_Y][i - START_CANVAS_X].color += shape->outColor;
-            shape->position[(int)(incline * i + yIntercept) - START_CANVAS_Y][i - START_CANVAS_X] = 1;
         }
     }
 
@@ -224,14 +214,6 @@ void DrawRectangle(TLCD *tlcdInfo, Shape *shape)
     int i, j, tmp, offset;
 
     int startX, startY, tempX, tempY, endX, endY, isFirst;
-
-    //도형 크기 동적 할당
-    shape->position = (int **)malloc(sizeof(int *) * SIZEOF_CANVAS_Y); //캔버스의 y크기: 220
-
-    for (i = 0; i < SIZEOF_CANVAS_Y; i++)
-    {
-        shape->position[i] = (int *)malloc(sizeof(int) * SIZEOF_CANVAS_X); //캔버스의 x크기: 200
-    }
 
     // first value
     endX = -1;
@@ -357,14 +339,12 @@ void DrawRectangle(TLCD *tlcdInfo, Shape *shape)
 
         sketchBook[tempY - START_CANVAS_Y][i - START_CANVAS_X].number += 1;
         sketchBook[tempY - START_CANVAS_Y][i - START_CANVAS_X].color += shape->outColor;
-        shape->position[tempY - START_CANVAS_Y][i - START_CANVAS_X] = 1;
 
         offset = endY * 320 + i;
         *(tlcdInfo->pfbdata + offset) = shape->outColor;
 
         sketchBook[endY - START_CANVAS_Y][i - START_CANVAS_X].number += 1;
         sketchBook[endY - START_CANVAS_Y][i - START_CANVAS_X].color += shape->outColor;
-        shape->position[endY - START_CANVAS_Y][i - START_CANVAS_X] = 1;
     }
 
     for (i = tempY; i < endY; i++)
@@ -374,14 +354,12 @@ void DrawRectangle(TLCD *tlcdInfo, Shape *shape)
 
         sketchBook[i - START_CANVAS_Y][tempX - START_CANVAS_X].number += 1;
         sketchBook[i - START_CANVAS_Y][tempX - START_CANVAS_X].color += shape->outColor;
-        shape->position[i - START_CANVAS_Y][tempX - START_CANVAS_X] = 1;
 
         offset = i * 320 + endX;
         *(tlcdInfo->pfbdata + offset) = shape->outColor;
 
         sketchBook[i - START_CANVAS_Y][endX - START_CANVAS_X].number += 1;
         sketchBook[i - START_CANVAS_Y][endX - START_CANVAS_X].color += shape->outColor;
-        shape->position[i - START_CANVAS_Y][endX - START_CANVAS_X] = 1;
     }
 }
 
@@ -404,13 +382,6 @@ void DrawOval(TLCD *tlcdInfo, Shape *shape)
 
     endX = -1;
     endY = -1;
-    //도형 크기 동적 할당
-    shape->position = (int **)malloc(sizeof(int *) * SIZEOF_CANVAS_Y); //캔버스의 y크기: 220
-
-    for (i = 0; i < SIZEOF_CANVAS_Y; i++)
-    {
-        shape->position[i] = (int *)malloc(sizeof(int) * SIZEOF_CANVAS_X); //캔버스의 x크기: 200
-    }
 
     while (1) //시작지점의 x, y좌표 입력
     {
@@ -610,26 +581,22 @@ void DrawOval(TLCD *tlcdInfo, Shape *shape)
         offset = (y + centerY) * 320 + (x + centerX);
         *(tlcdInfo->pfbdata + offset) = shape->outColor;
         sketchBook[y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X].number += 1;
-        sketchBook[y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X].color += shape->outColor;
-        shape->position[y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X] = 1;
+        sketchBook[y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X].color = shape->outColor;
 
         offset = (y + centerY) * 320 + (-x + centerX);
         *(tlcdInfo->pfbdata + offset) = shape->outColor;
         sketchBook[y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X].number += 1;
-        sketchBook[y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X].color += shape->outColor;
-        shape->position[y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X] = 1;
+        sketchBook[y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X].color = shape->outColor;
 
         offset = (-y + centerY) * 320 + (x + centerX);
         *(tlcdInfo->pfbdata + offset) = shape->outColor;
         sketchBook[-y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X].number += 1;
-        sketchBook[-y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X].color += shape->outColor;
-        shape->position[-y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X] = 1;
+        sketchBook[-y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X].color = shape->outColor;
 
         offset = (-y + centerY) * 320 + (-x + centerX);
         *(tlcdInfo->pfbdata + offset) = shape->outColor;
         sketchBook[-y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X].number += 1;
-        sketchBook[-y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X].color += shape->outColor;
-        shape->position[-y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X] = 1;
+        sketchBook[-y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X].color = shape->outColor;
 
         ++x;
         dx += (2 * bb);
@@ -661,26 +628,22 @@ void DrawOval(TLCD *tlcdInfo, Shape *shape)
         offset = (y + centerY) * 320 + (x + centerX);
         *(tlcdInfo->pfbdata + offset) = shape->outColor;
         sketchBook[y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X].number += 1;
-        sketchBook[y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X].color += shape->outColor;
-        shape->position[y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X] = 1;
+        sketchBook[y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X].color = shape->outColor;
 
         offset = (y + centerY) * 320 + (-x + centerX);
         *(tlcdInfo->pfbdata + offset) = shape->outColor;
         sketchBook[y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X].number += 1;
-        sketchBook[y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X].color += shape->outColor;
-        shape->position[y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X] = 1;
+        sketchBook[y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X].color = shape->outColor;
 
         offset = (-y + centerY) * 320 + (x + centerX);
         *(tlcdInfo->pfbdata + offset) = shape->outColor;
         sketchBook[-y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X].number += 1;
-        sketchBook[-y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X].color += shape->outColor;
-        shape->position[-y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X] = 1;
+        sketchBook[-y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X].color = shape->outColor;
 
         offset = (-y + centerY) * 320 + (-x + centerX);
         *(tlcdInfo->pfbdata + offset) = shape->outColor;
         sketchBook[-y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X].number += 1;
-        sketchBook[-y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X].color += shape->outColor;
-        shape->position[-y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X] = 1;
+        sketchBook[-y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X].color = shape->outColor;
 
         ++y;
         dy += (2 * aa);
@@ -751,15 +714,381 @@ void DrawFree(TLCD *tlcdInfo, Shape *shape)
 }
 
 /*
- * TODO
+ * This is Base Code for Making DrawSelect Made by S.H Hong
  */
 void DrawSelect(TLCD *tlcdInfo, Shape *shape)
 {
-    struct ListNode *node = SearchShape();
+    struct ListNode *node = SearchShape(shape->start.x, shape->start.y);
+    int startX, startY;
+    int endX, endY;
+    int offset, i, j, tempX, tempY, tmp;
+
+    //Oval 전용 변수들
+    int centerX, centerY, a, b, aa, bb, x, y, dx, dy, d1, d2;
+
+    /* touchedPointX, Y = 초반에 눌려진 좌표 
+     * shape->moveX, shape->moveY = 갱신되어 눌려진 좌표
+     * node->moveX, node->moveY = shape->moveX - touchedPointX, shape->moveY - touchedPointY 와 같음
+     */
+    int touchedPointX = shape->start.x;
+    int touchedPointY = shape->start.y;
+    shape->moveX = -1;
+    shape->moveY = -1;
 
     //도형을 찾았을 경우
     if (node != NULL)
     {
+        //처음 터치 된 x,y 좌표 값을 할당
+        startX = node->shape.start.x;
+        startY = node->shape.start.y;
+        endX = node->shape.end.x;
+        endY = node->shape.end.y;
+        /*
+         * 해당 도형에 따른 스케치북 값을 -1 해줘야 함
+         */
+        if (node->shape.type == TOUCH_LINE)
+        {
+        }
+        else if (node->shape.type == TOUCH_RECT)
+        {
+        }
+        else if (node->shape.type == TOUCH_OVAL)
+        {
+            /* set Start and end X , Y */
+            centerX = (startX + endX) / 2;
+            centerY = (startY + endY) / 2;
+
+            a = (endX - centerX); // 선 a의 길이
+            b = (endY - centerY); // 선 b의 길이
+
+            aa = a * a;
+            bb = b * b;
+
+            x = 0;
+            y = b;
+
+            dx = 2 * bb * x;
+            dy = 2 * aa * y;
+
+            d1 = bb - (b * aa) + (0.25 * aa);
+
+            while (dx < dy)
+            {
+                offset = (y + centerY) * 320 + (x + centerX);
+                *(tlcdInfo->pfbdata + offset) = shape->outColor;
+                sketchBook[y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X].number -= 1;
+                sketchBook[y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X].color = shape->outColor;
+                shape->position[y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X] = 1;
+
+                *(tlcdInfo->pfbdata + offset) = shape->outColor;
+                sketchBook[y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X].number -= 1;
+                sketchBook[y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X].color = shape->outColor;
+                shape->position[y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X] = 1;
+
+                *(tlcdInfo->pfbdata + offset) = shape->outColor;
+                sketchBook[-y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X].number -= 1;
+                sketchBook[-y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X].color = shape->outColor;
+                shape->position[-y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X] = 1;
+
+                *(tlcdInfo->pfbdata + offset) = shape->outColor;
+                sketchBook[-y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X].number -= 1;
+                sketchBook[-y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X].color = shape->outColor;
+                shape->position[-y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X] = 1;
+
+                ++x;
+                dx += (2 * bb);
+
+                if (d1 < 0)
+                {
+                    d1 += (dx + bb);
+                }
+
+                else
+                {
+                    --y;
+                    dy -= (2 * aa);
+                    d1 += (dx - dy + bb);
+                }
+            }
+
+            x = a;
+            y = 0;
+
+            dx = 2 * bb * x;
+            dy = 2 * aa * y;
+
+            d2 = aa - (a * bb) + (0.25 * bb);
+
+            while (dx > dy)
+            {
+
+                *(tlcdInfo->pfbdata + offset) = shape->outColor;
+                sketchBook[y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X].number -= 1;
+                sketchBook[y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X].color = shape->outColor;
+                shape->position[y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X] = 1;
+
+                *(tlcdInfo->pfbdata + offset) = shape->outColor;
+                sketchBook[y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X].number -= 1;
+                sketchBook[y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X].color = shape->outColor;
+                shape->position[y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X] = 1;
+
+                *(tlcdInfo->pfbdata + offset) = shape->outColor;
+                sketchBook[-y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X].number -= 1;
+                sketchBook[-y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X].color = shape->outColor;
+                shape->position[-y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X] = 1;
+
+                *(tlcdInfo->pfbdata + offset) = shape->outColor;
+                sketchBook[-y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X].number -= 1;
+                sketchBook[-y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X].color = shape->outColor;
+                shape->position[-y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X] = 1;
+
+                ++y;
+                dy += (2 * aa);
+
+                if (d2 < 0)
+                {
+                    d2 += (dy + aa);
+                }
+
+                else
+                {
+                    --x;
+                    dx -= (2 * bb);
+                    d2 += (dy - dx + aa);
+                }
+            }
+        }
+        else if (node->shape.type == TOUCH_FREEDRAW)
+        {
+        }
+        while (1)
+        {
+            InputTouch(tlcdInfo);
+
+            // 루프를 한번 돌았을때 값갱신전 초기화
+            if (shape->moveX != -1 && shape->moveY != -1)
+            {
+                for (i = tempY; i <= endY; i++)
+                {
+                    for (j = tempX; j <= endX; j++)
+                    {
+                        if (sketchBook[i - START_CANVAS_Y][j - START_CANVAS_X].number >= 1)
+                        {
+                            offset = i * 320 + j;
+                            *(tlcdInfo->pfbdata + offset) = sketchBook[i - START_CANVAS_Y][j - START_CANVAS_X].color;
+                        }
+
+                        else
+                        {
+                            offset = i * 320 + j;
+                            *(tlcdInfo->pfbdata + offset) = WHITE;
+                        }
+                    }
+                }
+            }
+
+            //값갱신
+            tempX = startX;
+            tempY = startY;
+
+            //움직이는 값 구함
+            shape->moveX = tlcdInfo->a * tlcdInfo->x + tlcdInfo->b * tlcdInfo->y + tlcdInfo->c;
+            shape->moveY = tlcdInfo->d * tlcdInfo->x + tlcdInfo->e * tlcdInfo->y + tlcdInfo->f;
+
+            //기존 도형에서 이동한 크기 구함
+            node->shape.moveX = shape->moveX - touchedPointX;
+            node->shape.moveY = shape->moveY - touchedPointY;
+
+            if (node->shape.type == TOUCH_LINE)
+            {
+            }
+            else if (node->shape.type == TOUCH_RECT)
+            {
+            }
+
+            else if (node->shape.type == TOUCH_OVAL)
+            {
+
+                //타원 그려주기만 함
+                centerX = (tempX + endX) / 2 + node->shape.moveX; //평행이동된 값까지 더함
+                centerY = (tempY + endY) / 2 + node->shape.moveY; //평행이동된 값까지 더함
+
+                a = (endX + node->shape.moveX - centerX); // 선 a의 길이
+                b = (endY + node->shape.moveY - centerY); // 선 b의 길이
+                aa = a * a;
+                bb = b * b;
+
+                x = 0;
+                y = b;
+
+                dx = 2 * bb * x;
+                dy = 2 * aa * y;
+
+                d1 = bb - (b * aa) + (0.25 * aa);
+
+                while (dx < dy)
+                {
+                    offset = (y + centerY) * 320 + (x + centerX);
+                    *(tlcdInfo->pfbdata + offset) = shape->outColor;
+
+                    offset = (y + centerY) * 320 + (-x + centerX);
+                    *(tlcdInfo->pfbdata + offset) = shape->outColor;
+
+                    offset = (-y + centerY) * 320 + (x + centerX);
+                    *(tlcdInfo->pfbdata + offset) = shape->outColor;
+
+                    offset = (-y + centerY) * 320 + (-x + centerX);
+                    *(tlcdInfo->pfbdata + offset) = shape->outColor;
+
+                    ++x;
+                    dx += (2 * bb);
+
+                    if (d1 < 0)
+                    {
+                        d1 += (dx + bb);
+                    }
+
+                    else
+                    {
+                        --y;
+                        dy -= (2 * aa);
+                        d1 += (dx - dy + bb);
+                    }
+                }
+
+                x = a;
+                y = 0;
+
+                dx = 2 * bb * x;
+                dy = 2 * aa * y;
+
+                d2 = aa - (a * bb) + (0.25 * bb);
+
+                while (dx > dy)
+                {
+
+                    offset = (y + centerY) * 320 + (x + centerX);
+                    *(tlcdInfo->pfbdata + offset) = shape->outColor;
+
+                    offset = (y + centerY) * 320 + (-x + centerX);
+                    *(tlcdInfo->pfbdata + offset) = shape->outColor;
+
+                    offset = (-y + centerY) * 320 + (x + centerX);
+                    *(tlcdInfo->pfbdata + offset) = shape->outColor;
+
+                    offset = (-y + centerY) * 320 + (-x + centerX);
+                    *(tlcdInfo->pfbdata + offset) = shape->outColor;
+
+                    ++y;
+                    dy += (2 * aa);
+
+                    if (d2 < 0)
+                    {
+                        d2 += (dy + aa);
+                    }
+
+                    else
+                    {
+                        --x;
+                        dx -= (2 * bb);
+                        d2 += (dy - dx + aa);
+                    }
+                }
+                if (tlcdInfo->pressure == 0)
+                {
+                    //타원 그려주기만 함
+                    centerX = (tempX + endX) / 2 + node->shape.moveX; //평행이동된 값까지 더함
+                    centerY = (tempY + endY) / 2 + node->shape.moveY; //평행이동된 값까지 더함
+
+                    a = (endX + node->shape.moveX - centerX); // 선 a의 길이
+                    b = (endY + node->shape.moveY - centerY); // 선 b의 길이
+                    aa = a * a;
+                    bb = b * b;
+
+                    x = 0;
+                    y = b;
+
+                    dx = 2 * bb * x;
+                    dy = 2 * aa * y;
+
+                    d1 = bb - (b * aa) + (0.25 * aa);
+
+                    while (dx < dy)
+                    {
+                        offset = (y + centerY) * 320 + (x + centerX);
+                        *(tlcdInfo->pfbdata + offset) = shape->outColor;
+
+                        offset = (y + centerY) * 320 + (-x + centerX);
+                        *(tlcdInfo->pfbdata + offset) = shape->outColor;
+
+                        offset = (-y + centerY) * 320 + (x + centerX);
+                        *(tlcdInfo->pfbdata + offset) = shape->outColor;
+
+                        offset = (-y + centerY) * 320 + (-x + centerX);
+                        *(tlcdInfo->pfbdata + offset) = shape->outColor;
+
+                        ++x;
+                        dx += (2 * bb);
+
+                        if (d1 < 0)
+                        {
+                            d1 += (dx + bb);
+                        }
+
+                        else
+                        {
+                            --y;
+                            dy -= (2 * aa);
+                            d1 += (dx - dy + bb);
+                        }
+                    }
+
+                    x = a;
+                    y = 0;
+
+                    dx = 2 * bb * x;
+                    dy = 2 * aa * y;
+
+                    d2 = aa - (a * bb) + (0.25 * bb);
+
+                    while (dx > dy)
+                    {
+
+                        offset = (y + centerY) * 320 + (x + centerX);
+                        *(tlcdInfo->pfbdata + offset) = shape->outColor;
+
+                        offset = (y + centerY) * 320 + (-x + centerX);
+                        *(tlcdInfo->pfbdata + offset) = shape->outColor;
+
+                        offset = (-y + centerY) * 320 + (x + centerX);
+                        *(tlcdInfo->pfbdata + offset) = shape->outColor;
+
+                        offset = (-y + centerY) * 320 + (-x + centerX);
+                        *(tlcdInfo->pfbdata + offset) = shape->outColor;
+
+                        ++y;
+                        dy += (2 * aa);
+
+                        if (d2 < 0)
+                        {
+                            d2 += (dy + aa);
+                        }
+
+                        else
+                        {
+                            --x;
+                            dx -= (2 * bb);
+                            d2 += (dy - dx + aa);
+                        }
+                    }
+                    break;
+                }
+            }
+
+            else if (node->shape.type == TOUCH_FREEDRAW)
+            {
+            }
+        }
     }
 
     return;
@@ -776,7 +1105,7 @@ void DrawErase(TLCD *tlcdInfo, Shape *shape)
 }
 
 /*
- * TODO
+ * This is Base Code for Making DrawClear Made by S.H Hong
  */
 void DrawClear(TLCD *tlcdInfo, Shape *shape)
 {
