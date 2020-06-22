@@ -24,6 +24,9 @@ typedef struct _Shape
     unsigned short inColor;  // inBound Color
     unsigned short outColor; // outBound Color
     int **position;          //FreeDraw array
+
+    int moveX; //parallel translation variable
+    int moveY; //parallel translation variable
 } Shape;
 
 typedef void (*drawList)(TLCD *, Shape *);
@@ -50,17 +53,16 @@ void DrawFill(TLCD *tlcdInfo, Shape *shape);
 /*
  * 도형과 관련된 함수들의 테이블입니다.
  */
-static const drawList g_drawTable[] = 
-{
-    DrawLine,
-    DrawRectangle,
-    DrawOval,
-    DrawFree,
-    DrawSelect,
-    DrawErase,
-    DrawClear,
-    DrawPen,
-    DrawFill
-};
+static const drawList g_drawTable[] =
+    {
+        DrawLine,
+        DrawRectangle,
+        DrawOval,
+        DrawFree,
+        DrawSelect,
+        DrawErase,
+        DrawClear,
+        DrawPen,
+        DrawFill};
 
 #endif
