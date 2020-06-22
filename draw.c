@@ -744,7 +744,7 @@ void DrawSelect(TLCD *tlcdInfo, Shape *shape)
         endX = node->shape.end.x;
         endY = node->shape.end.y;
         /*
-         * 해당 도형에 따른 스케치북 값을 -1 해줘야 함
+         * 해당 도형에 따른 스케치북 값을 -1 해줘야 함(이동시킬 것이기 때문)
          */
         if (node->shape.type == TOUCH_LINE)
         {
@@ -754,7 +754,6 @@ void DrawSelect(TLCD *tlcdInfo, Shape *shape)
         }
         else if (node->shape.type == TOUCH_OVAL)
         {
-            printf("SKETCH ERASE QUOTE START\n");
             /* set Start and end X , Y */
             centerX = (startX + endX) / 2;
             centerY = (startY + endY) / 2;
@@ -771,32 +770,24 @@ void DrawSelect(TLCD *tlcdInfo, Shape *shape)
             dy = 2 * aa * y;
 
             d1 = bb - (b * aa) + (0.25 * aa);
-            printf("centerX=%d\ncenterY=%d\na=%d\nb=%d\naa=%d\nbb=%d\nx=%d\ny=%d\ndx=%d\ndy=%d\nd1=%d\n", centerX, centerY, a, b, aa, bb, x, y, dx, dy, d1);
             while (dx < dy)
             {
                 offset = (y + centerY) * 320 + (x + centerX);
                 *(tlcdInfo->pfbdata + offset) = node->shape.outColor;
                 sketchBook[y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X].number -= 1;
                 sketchBook[y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X].color = node->shape.outColor;
-                shape->position[y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X] = 1;
-                printf("FIRST VALUE IN\n");
+
                 *(tlcdInfo->pfbdata + offset) = node->shape.outColor;
                 sketchBook[y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X].number -= 1;
                 sketchBook[y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X].color = node->shape.outColor;
-                shape->position[y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X] = 1;
 
-                printf("SECOND VALUE IN\n");
                 *(tlcdInfo->pfbdata + offset) = node->shape.outColor;
                 sketchBook[-y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X].number -= 1;
                 sketchBook[-y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X].color = node->shape.outColor;
-                shape->position[-y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X] = 1;
-                printf("THIRD VALUE IN\n");
 
                 *(tlcdInfo->pfbdata + offset) = node->shape.outColor;
                 sketchBook[-y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X].number -= 1;
                 sketchBook[-y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X].color = node->shape.outColor;
-                shape->position[-y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X] = 1;
-                printf("FOURTH VALUE IN\n");
 
                 ++x;
                 dx += (2 * bb);
@@ -828,22 +819,18 @@ void DrawSelect(TLCD *tlcdInfo, Shape *shape)
                 *(tlcdInfo->pfbdata + offset) = node->shape.outColor;
                 sketchBook[y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X].number -= 1;
                 sketchBook[y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X].color = node->shape.outColor;
-                shape->position[y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X] = 1;
 
                 *(tlcdInfo->pfbdata + offset) = node->shape.outColor;
                 sketchBook[y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X].number -= 1;
                 sketchBook[y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X].color = node->shape.outColor;
-                shape->position[y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X] = 1;
 
                 *(tlcdInfo->pfbdata + offset) = node->shape.outColor;
                 sketchBook[-y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X].number -= 1;
                 sketchBook[-y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X].color = node->shape.outColor;
-                shape->position[-y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X] = 1;
 
                 *(tlcdInfo->pfbdata + offset) = node->shape.outColor;
                 sketchBook[-y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X].number -= 1;
                 sketchBook[-y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X].color = node->shape.outColor;
-                shape->position[-y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X] = 1;
 
                 ++y;
                 dy += (2 * aa);
@@ -864,12 +851,10 @@ void DrawSelect(TLCD *tlcdInfo, Shape *shape)
         else if (node->shape.type == TOUCH_FREEDRAW)
         {
         }
-        printf("SKETCH ERASE QUOTE DONE\n");
-        printf("WHILE START\n");
+
         while (1)
         {
             InputTouch(tlcdInfo);
-            printf("INPUT!\n");
             // 루프를 한번 돌았을때 값갱신전 초기화
             if (shape->moveX != -1 && shape->moveY != -1)
             {
