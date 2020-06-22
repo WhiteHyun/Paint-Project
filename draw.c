@@ -775,26 +775,26 @@ void DrawSelect(TLCD *tlcdInfo, Shape *shape)
             while (dx < dy)
             {
                 offset = (y + centerY) * 320 + (x + centerX);
-                *(tlcdInfo->pfbdata + offset) = shape->outColor;
+                *(tlcdInfo->pfbdata + offset) = node->shape.outColor;
                 sketchBook[y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X].number -= 1;
-                sketchBook[y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X].color = shape->outColor;
+                sketchBook[y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X].color = node->shape.outColor;
                 shape->position[y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X] = 1;
                 printf("FIRST VALUE IN\n");
-                *(tlcdInfo->pfbdata + offset) = shape->outColor;
+                *(tlcdInfo->pfbdata + offset) = node->shape.outColor;
                 sketchBook[y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X].number -= 1;
-                sketchBook[y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X].color = shape->outColor;
+                sketchBook[y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X].color = node->shape.outColor;
                 shape->position[y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X] = 1;
 
                 printf("SECOND VALUE IN\n");
-                *(tlcdInfo->pfbdata + offset) = shape->outColor;
+                *(tlcdInfo->pfbdata + offset) = node->shape.outColor;
                 sketchBook[-y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X].number -= 1;
-                sketchBook[-y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X].color = shape->outColor;
+                sketchBook[-y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X].color = node->shape.outColor;
                 shape->position[-y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X] = 1;
                 printf("THIRD VALUE IN\n");
 
-                *(tlcdInfo->pfbdata + offset) = shape->outColor;
+                *(tlcdInfo->pfbdata + offset) = node->shape.outColor;
                 sketchBook[-y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X].number -= 1;
-                sketchBook[-y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X].color = shape->outColor;
+                sketchBook[-y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X].color = node->shape.outColor;
                 shape->position[-y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X] = 1;
                 printf("FOURTH VALUE IN\n");
 
@@ -825,24 +825,24 @@ void DrawSelect(TLCD *tlcdInfo, Shape *shape)
             while (dx > dy)
             {
 
-                *(tlcdInfo->pfbdata + offset) = shape->outColor;
+                *(tlcdInfo->pfbdata + offset) = node->shape.outColor;
                 sketchBook[y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X].number -= 1;
-                sketchBook[y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X].color = shape->outColor;
+                sketchBook[y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X].color = node->shape.outColor;
                 shape->position[y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X] = 1;
 
-                *(tlcdInfo->pfbdata + offset) = shape->outColor;
+                *(tlcdInfo->pfbdata + offset) = node->shape.outColor;
                 sketchBook[y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X].number -= 1;
-                sketchBook[y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X].color = shape->outColor;
+                sketchBook[y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X].color = node->shape.outColor;
                 shape->position[y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X] = 1;
 
-                *(tlcdInfo->pfbdata + offset) = shape->outColor;
+                *(tlcdInfo->pfbdata + offset) = node->shape.outColor;
                 sketchBook[-y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X].number -= 1;
-                sketchBook[-y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X].color = shape->outColor;
+                sketchBook[-y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X].color = node->shape.outColor;
                 shape->position[-y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X] = 1;
 
-                *(tlcdInfo->pfbdata + offset) = shape->outColor;
+                *(tlcdInfo->pfbdata + offset) = node->shape.outColor;
                 sketchBook[-y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X].number -= 1;
-                sketchBook[-y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X].color = shape->outColor;
+                sketchBook[-y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X].color = node->shape.outColor;
                 shape->position[-y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X] = 1;
 
                 ++y;
@@ -935,16 +935,16 @@ void DrawSelect(TLCD *tlcdInfo, Shape *shape)
                 while (dx < dy)
                 {
                     offset = (y + centerY) * 320 + (x + centerX);
-                    *(tlcdInfo->pfbdata + offset) = shape->outColor;
+                    *(tlcdInfo->pfbdata + offset) = node->shape.outColor;
 
                     offset = (y + centerY) * 320 + (-x + centerX);
-                    *(tlcdInfo->pfbdata + offset) = shape->outColor;
+                    *(tlcdInfo->pfbdata + offset) = node->shape.outColor;
 
                     offset = (-y + centerY) * 320 + (x + centerX);
-                    *(tlcdInfo->pfbdata + offset) = shape->outColor;
+                    *(tlcdInfo->pfbdata + offset) = node->shape.outColor;
 
                     offset = (-y + centerY) * 320 + (-x + centerX);
-                    *(tlcdInfo->pfbdata + offset) = shape->outColor;
+                    *(tlcdInfo->pfbdata + offset) = node->shape.outColor;
 
                     ++x;
                     dx += (2 * bb);
@@ -974,16 +974,16 @@ void DrawSelect(TLCD *tlcdInfo, Shape *shape)
                 {
 
                     offset = (y + centerY) * 320 + (x + centerX);
-                    *(tlcdInfo->pfbdata + offset) = shape->outColor;
+                    *(tlcdInfo->pfbdata + offset) = node->shape.outColor;
 
                     offset = (y + centerY) * 320 + (-x + centerX);
-                    *(tlcdInfo->pfbdata + offset) = shape->outColor;
+                    *(tlcdInfo->pfbdata + offset) = node->shape.outColor;
 
                     offset = (-y + centerY) * 320 + (x + centerX);
-                    *(tlcdInfo->pfbdata + offset) = shape->outColor;
+                    *(tlcdInfo->pfbdata + offset) = node->shape.outColor;
 
                     offset = (-y + centerY) * 320 + (-x + centerX);
-                    *(tlcdInfo->pfbdata + offset) = shape->outColor;
+                    *(tlcdInfo->pfbdata + offset) = node->shape.outColor;
 
                     ++y;
                     dy += (2 * aa);
@@ -1022,16 +1022,16 @@ void DrawSelect(TLCD *tlcdInfo, Shape *shape)
                     while (dx < dy)
                     {
                         offset = (y + centerY) * 320 + (x + centerX);
-                        *(tlcdInfo->pfbdata + offset) = shape->outColor;
+                        *(tlcdInfo->pfbdata + offset) = node->shape.outColor;
 
                         offset = (y + centerY) * 320 + (-x + centerX);
-                        *(tlcdInfo->pfbdata + offset) = shape->outColor;
+                        *(tlcdInfo->pfbdata + offset) = node->shape.outColor;
 
                         offset = (-y + centerY) * 320 + (x + centerX);
-                        *(tlcdInfo->pfbdata + offset) = shape->outColor;
+                        *(tlcdInfo->pfbdata + offset) = node->shape.outColor;
 
                         offset = (-y + centerY) * 320 + (-x + centerX);
-                        *(tlcdInfo->pfbdata + offset) = shape->outColor;
+                        *(tlcdInfo->pfbdata + offset) = node->shape.outColor;
 
                         ++x;
                         dx += (2 * bb);
@@ -1061,16 +1061,16 @@ void DrawSelect(TLCD *tlcdInfo, Shape *shape)
                     {
 
                         offset = (y + centerY) * 320 + (x + centerX);
-                        *(tlcdInfo->pfbdata + offset) = shape->outColor;
+                        *(tlcdInfo->pfbdata + offset) = node->shape.outColor;
 
                         offset = (y + centerY) * 320 + (-x + centerX);
-                        *(tlcdInfo->pfbdata + offset) = shape->outColor;
+                        *(tlcdInfo->pfbdata + offset) = node->shape.outColor;
 
                         offset = (-y + centerY) * 320 + (x + centerX);
-                        *(tlcdInfo->pfbdata + offset) = shape->outColor;
+                        *(tlcdInfo->pfbdata + offset) = node->shape.outColor;
 
                         offset = (-y + centerY) * 320 + (-x + centerX);
-                        *(tlcdInfo->pfbdata + offset) = shape->outColor;
+                        *(tlcdInfo->pfbdata + offset) = node->shape.outColor;
 
                         ++y;
                         dy += (2 * aa);
