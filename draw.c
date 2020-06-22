@@ -755,12 +755,11 @@ void DrawSelect(TLCD *tlcdInfo, Shape *shape)
         {
             printf("SKETCH ERASE QUOTE START\n");
             /* set Start and end X , Y */
-            centerX = (startX + endX) / 2;
-            centerY = (startY + endY) / 2;
+            centerX = (tempX + endX) / 2 + node->shape.moveX; //평행이동된 값까지 더함
+            centerY = (tempY + endY) / 2 + node->shape.moveY; //평행이동된 값까지 더함
 
-            a = (endX - centerX); // 선 a의 길이
-            b = (endY - centerY); // 선 b의 길이
-
+            a = (endX + node->shape.moveX - centerX); // 선 a의 길이
+            b = (endY + node->shape.moveY - centerY); // 선 b의 길이
             aa = a * a;
             bb = b * b;
 
