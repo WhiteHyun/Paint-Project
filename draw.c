@@ -770,7 +770,7 @@ void DrawSelect(TLCD *tlcdInfo, Shape *shape)
             dy = 2 * aa * y;
 
             d1 = bb - (b * aa) + (0.25 * aa);
-
+            printf("centerX=%d\ncenterY=%d\na=%d\nb=%d\naa=%d\nbb=%d\nx=%d\ny=%d\ndx=%d\ndy=%d\nd1=%d\n", centerX, centerY, a, b, aa, bb, x, y, dx, dy, d1);
             while (dx < dy)
             {
                 offset = (y + centerY) * 320 + (x + centerX);
