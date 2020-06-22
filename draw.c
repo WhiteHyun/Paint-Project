@@ -734,7 +734,6 @@ void DrawSelect(TLCD *tlcdInfo, Shape *shape)
     int touchedPointY = shape->start.y;
     shape->moveX = -1;
     shape->moveY = -1;
-
     //도형을 찾았을 경우
     if (node != NULL)
     {
@@ -754,6 +753,7 @@ void DrawSelect(TLCD *tlcdInfo, Shape *shape)
         }
         else if (node->shape.type == TOUCH_OVAL)
         {
+            printf("SKETCH ERASE QUOTE START\n");
             /* set Start and end X , Y */
             centerX = (startX + endX) / 2;
             centerY = (startY + endY) / 2;
@@ -861,16 +861,18 @@ void DrawSelect(TLCD *tlcdInfo, Shape *shape)
         else if (node->shape.type == TOUCH_FREEDRAW)
         {
         }
+        printf("SKETCH ERASE QUOTE DONE\n");
+        printf("WHILE START\n");
         while (1)
         {
             InputTouch(tlcdInfo);
-
+            printf("INPUT!\n");
             // 루프를 한번 돌았을때 값갱신전 초기화
             if (shape->moveX != -1 && shape->moveY != -1)
             {
-                for (i = tempY; i <= endY; i++)
+                for (i = tempY + node->shape.moveY; i <= endY + node->shape.moveY; i++)
                 {
-                    for (j = tempX; j <= endX; j++)
+                    for (j = tempX + node->shape.moveX; j <= endX + node->shape.moveX; j++)
                     {
                         if (sketchBook[i - START_CANVAS_Y][j - START_CANVAS_X].number >= 1)
                         {
@@ -908,6 +910,7 @@ void DrawSelect(TLCD *tlcdInfo, Shape *shape)
 
             else if (node->shape.type == TOUCH_OVAL)
             {
+                printf("START WHILE OVAL\n");
 
                 //타원 그려주기만 함
                 centerX = (tempX + endX) / 2 + node->shape.moveX; //평행이동된 값까지 더함
@@ -996,7 +999,7 @@ void DrawSelect(TLCD *tlcdInfo, Shape *shape)
                 }
                 if (tlcdInfo->pressure == 0)
                 {
-                    //타원 그려주기만 함
+                    printf("PRESSURE == 0 QUOTE START\n");
                     centerX = (tempX + endX) / 2 + node->shape.moveX; //평행이동된 값까지 더함
                     centerY = (tempY + endY) / 2 + node->shape.moveY; //평행이동된 값까지 더함
 
@@ -1082,6 +1085,7 @@ void DrawSelect(TLCD *tlcdInfo, Shape *shape)
                         }
                     }
                     break;
+                    printf("PRESSURE == 0 QUOTE END\n");
                 }
             }
 
