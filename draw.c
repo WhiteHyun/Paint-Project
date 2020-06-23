@@ -87,7 +87,7 @@ void DrawLine(TLCD *tlcdInfo, Shape *shape)
         }
 
         // CANVAS의 포지션이 벗어나면 continue
-        if ((endX < START_CANVAS_X || endX > END_CANVAS_X) || (endY < START_CANVAS_Y || endY > END_CANVAS_Y))
+        /*if ((endX < START_CANVAS_X || endX > END_CANVAS_X) || (endY < START_CANVAS_Y || endY > END_CANVAS_Y))
         {
             if (endX < START_CANVAS_X)
             {
@@ -107,12 +107,37 @@ void DrawLine(TLCD *tlcdInfo, Shape *shape)
             {
                 endY = END_CANVAS_Y - 1;
             }
-        }
 
-        else if (tlcdInfo->pressure == 0)
+            continue;
+        }*/
+
+        if (tlcdInfo->pressure == 0)
         {
+
             endX = tlcdInfo->a * tlcdInfo->x + tlcdInfo->b * tlcdInfo->y + tlcdInfo->c;
             endY = tlcdInfo->d * tlcdInfo->x + tlcdInfo->e * tlcdInfo->y + tlcdInfo->f;
+
+            if ((endX < START_CANVAS_X || endX > END_CANVAS_X) || (endY < START_CANVAS_Y || endY > END_CANVAS_Y))
+            {
+                if (endX < START_CANVAS_X)
+                {
+                    endX = START_CANVAS_X + 1;
+                }
+                else if (endX > END_CANVAS_X)
+                {
+                    endX = END_CANVAS_X - 1;
+                }
+
+                if (endY < START_CANVAS_Y)
+                {
+                    endY = START_CANVAS_Y + 1;
+                }
+
+                else if (endY > END_CANVAS_Y)
+                {
+                    endY = END_CANVAS_Y - 1;
+                }
+            }
 
             break;
         }
@@ -239,10 +264,33 @@ void DrawLine(TLCD *tlcdInfo, Shape *shape)
                     }
                 }
             }
+
             //흔적 제거 끝
 
             endX = tlcdInfo->a * tlcdInfo->x + tlcdInfo->b * tlcdInfo->y + tlcdInfo->c;
             endY = tlcdInfo->d * tlcdInfo->x + tlcdInfo->e * tlcdInfo->y + tlcdInfo->f;
+
+            if ((endX < START_CANVAS_X || endX > END_CANVAS_X) || (endY < START_CANVAS_Y || endY > END_CANVAS_Y))
+            {
+                if (endX < START_CANVAS_X)
+                {
+                    endX = START_CANVAS_X + 1;
+                }
+                else if (endX > END_CANVAS_X)
+                {
+                    endX = END_CANVAS_X - 1;
+                }
+
+                if (endY < START_CANVAS_Y)
+                {
+                    endY = START_CANVAS_Y + 1;
+                }
+
+                else if (endY > END_CANVAS_Y)
+                {
+                    endY = END_CANVAS_Y - 1;
+                }
+            }
         }
 
         {                      //새로운 Line 그리기
@@ -943,6 +991,7 @@ void DrawClear(TLCD *tlcdInfo, Shape *shape)
             *(tlcdInfo->pfbdata + offset) = WHITE;
         }
     }
+    sketchBook[SIZEOF_CANVAS_Y][SIZEOF_CANVAS_X];
 
     return;
 }
