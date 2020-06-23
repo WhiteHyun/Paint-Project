@@ -755,11 +755,11 @@ void DrawSelect(TLCD *tlcdInfo, Shape *shape)
         else if (node->shape.type == TOUCH_OVAL)
         {
             /* set Start and end X , Y */
-            centerX = (startX + endX) / 2;
-            centerY = (startY + endY) / 2;
+            centerX = (startX + endX) / 2 + node->shape.moveX;
+            centerY = (startY + endY) / 2 + node->shape.moveY;
 
-            a = (endX - centerX); // 선 a의 길이
-            b = (endY - centerY); // 선 b의 길이
+            a = (endX + node->shape.moveX - centerX); // 선 a의 길이
+            b = (endY + node->shape.moveY - centerY); // 선 b의 길이
             aa = a * a;
             bb = b * b;
 
