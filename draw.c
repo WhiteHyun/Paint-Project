@@ -575,7 +575,6 @@ void DrawOval(TLCD *tlcdInfo, Shape *shape)
     dy = 2 * aa * y;
 
     d1 = bb - (b * aa) + (0.25 * aa);
-    printf("centerX=%d\ncenterY=%d\na=%d\nb=%d\naa=%d\nbb=%d\nx=%d\ny=%d\ndx=%d\ndy=%d\nd1=%d\n", centerX, centerY, a, b, aa, bb, x, y, dx, dy, d1);
 
     while (dx < dy)
     {
@@ -746,12 +745,15 @@ void DrawSelect(TLCD *tlcdInfo, Shape *shape)
         /*
          * 해당 도형에 따른 스케치북 값을 -1 해줘야 함(이동시킬 것이기 때문)
          */
+        //선택된 도형(선)의 sketchBook 값을 -1로 줄여 값을 없앰
         if (node->shape.type == TOUCH_LINE)
         {
         }
+        //선택된 도형(사각형)의 sketchBook 값을 -1로 줄여 값을 없앰
         else if (node->shape.type == TOUCH_RECT)
         {
         }
+        //선택된 도형(타원)의 sketchBook 값을 -1로 줄여 값을 없앰
         else if (node->shape.type == TOUCH_OVAL)
         {
             /* set Start and end X , Y */
@@ -1008,15 +1010,23 @@ void DrawSelect(TLCD *tlcdInfo, Shape *shape)
                     {
                         offset = (y + centerY) * 320 + (x + centerX);
                         *(tlcdInfo->pfbdata + offset) = node->shape.outColor;
+                        sketchBook[y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X].number += 1;
+                        sketchBook[y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X].color = shape->outColor;
 
                         offset = (y + centerY) * 320 + (-x + centerX);
                         *(tlcdInfo->pfbdata + offset) = node->shape.outColor;
+                        sketchBook[y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X].number += 1;
+                        sketchBook[y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X].color = shape->outColor;
 
                         offset = (-y + centerY) * 320 + (x + centerX);
                         *(tlcdInfo->pfbdata + offset) = node->shape.outColor;
+                        sketchBook[-y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X].number += 1;
+                        sketchBook[-y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X].color = shape->outColor;
 
                         offset = (-y + centerY) * 320 + (-x + centerX);
                         *(tlcdInfo->pfbdata + offset) = node->shape.outColor;
+                        sketchBook[-y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X].number += 1;
+                        sketchBook[-y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X].color = shape->outColor;
 
                         ++x;
                         dx += (2 * bb);
@@ -1047,15 +1057,23 @@ void DrawSelect(TLCD *tlcdInfo, Shape *shape)
 
                         offset = (y + centerY) * 320 + (x + centerX);
                         *(tlcdInfo->pfbdata + offset) = node->shape.outColor;
+                        sketchBook[y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X].number += 1;
+                        sketchBook[y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X].color = shape->outColor;
 
                         offset = (y + centerY) * 320 + (-x + centerX);
                         *(tlcdInfo->pfbdata + offset) = node->shape.outColor;
+                        sketchBook[y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X].number += 1;
+                        sketchBook[y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X].color = shape->outColor;
 
                         offset = (-y + centerY) * 320 + (x + centerX);
                         *(tlcdInfo->pfbdata + offset) = node->shape.outColor;
+                        sketchBook[-y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X].number += 1;
+                        sketchBook[-y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X].color = shape->outColor;
 
                         offset = (-y + centerY) * 320 + (-x + centerX);
                         *(tlcdInfo->pfbdata + offset) = node->shape.outColor;
+                        sketchBook[-y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X].number += 1;
+                        sketchBook[-y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X].color = shape->outColor;
 
                         ++y;
                         dy += (2 * aa);
