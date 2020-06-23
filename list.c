@@ -88,7 +88,7 @@ struct ListNode *Pop()
         printf("Pop(), Stack is Empty\n");
     }
 
-    //when stack is not empty
+    //when List is not empty
     else
     {
         tempNode = g_List->peek;
@@ -109,7 +109,7 @@ struct ListNode *IndexPop(int index)
         printf("Error, Pop(%d), Stack is Empty\n", index);
     }
 
-    //when stack is not empty
+    //when List is not empty
     else
     {
         //out of index 에러 사전방지
@@ -118,17 +118,18 @@ struct ListNode *IndexPop(int index)
             printf("Error, IndexPop(%d), Out of Index.\n", index);
         }
 
-        //리스트의 하나의 노드밖에 없거나 맨 뒤의 값을 꺼내오는 경우 일반 Pop 함수를 불러 처리합니다
+        //리스트에 하나의 노드밖에 없거나 맨 뒤의 값을 꺼내오는 경우 일반 Pop 함수를 불러 처리합니다
         else if ((index == 0 && g_List->size == 1) || index == g_List->size - 1)
         {
             return Pop();
         }
 
+        //중간 노드를 팝하는 경우
         else
         {
             tempNode = g_List->start;
-            //index에 해당하는 노드까지 이동
 
+            //index에 해당하는 노드까지 이동
             while (index != 0)
             {
                 tempNode = tempNode->next;
@@ -157,7 +158,7 @@ struct ListNode *IndexPop(int index)
 
 struct ListNode *SearchShape(int touchX, int touchY)
 {
-    int i;
+    int index = g_List->size; //선택된 도형의 노드인덱스를 구하기 위해 index 선언
     struct ListNode *tempNode = g_List->peek;
 
     //도형이 발견될 때 까지 노드들을 전부 방문
@@ -167,7 +168,8 @@ struct ListNode *SearchShape(int touchX, int touchY)
         if (tempNode->shape.type != TOUCH_FREEDRAW)
         {
 
-            if (tempNode->shape.start.x <= touchX && tempNode->shape.start.y <= touchY && tempNode->shape.end.x >= touchX && tempNode->shape.end.y >= touchY)
+            if (tempNode->shape.start.x + tempNode->shape.moveX <= touchX && tempNode->shape.start.y + tempNode->shape.moveY <= touchY &&
+                tempNode->shape.end.x + tempNode->shape.moveX >= touchX && tempNode->shape.end.y + tempNode->shape.moveY >= touchY)
             {
                 break;
             }
@@ -180,8 +182,14 @@ struct ListNode *SearchShape(int touchX, int touchY)
             }
         }
 
-        //도형을 찾지 못했다면 이전 노드로 이동
-        tempNode = tempNode->prev;
+        tempNode = tempNode->prev; //도형을 찾지 못했다면 이전 노드로 이동
+        --index;                   //인덱스도 감소
+    }
+
+    //만약 도형을 찾았다면
+    if (tempNode != NULL)
+    {
+        Append(IndexPop(index)); //선택된 도형을 가장 끝노드로 옮깁니다.
     }
     return tempNode;
 }
