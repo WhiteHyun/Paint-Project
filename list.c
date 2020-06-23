@@ -158,7 +158,11 @@ struct ListNode *IndexPop(int index)
 
 struct ListNode *SearchShape(int touchX, int touchY)
 {
-    int index = g_List->size; //선택된 도형의 노드인덱스를 구하기 위해 index 선언
+    /*
+     * 선택된 도형의 노드인덱스를 구하기 위해 index 선언
+     * -1한 이유는 인덱스는 0~ size-1까지 있기 때문
+     */
+    int index = g_List->size - 1;
     struct ListNode *tempNode = g_List->peek;
 
     //도형이 발견될 때 까지 노드들을 전부 방문
