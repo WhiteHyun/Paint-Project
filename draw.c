@@ -720,10 +720,6 @@ void DrawFree(TLCD *tlcdInfo, Shape *shape)
 void DrawSelect(TLCD *tlcdInfo, Shape *shape)
 {
     struct ListNode *node = SearchShape(shape->start.x, shape->start.y);
-    if (node == NULL)
-    {
-        printf("Nothing happened")
-    }
     int startX, startY;
     int endX, endY;
     int offset, i, j, tempX, tempY, tmp;
