@@ -1742,5 +1742,11 @@ void DrawFill(TLCD *tlcdInfo, Shape *shape)
 {
     printf("DrawFill Executed\n");
 
+    // x , y position
+    int xpos, ypos;
+
+    xpos = tlcdInfo->a * tlcdInfo->x + tlcdInfo->b * tlcdInfo->y + tlcdInfo->c;
+    ypos = tlcdInfo->d * tlcdInfo->x + tlcdInfo->e * tlcdInfo->y + tlcdInfo->f;
+
     return;
 }
