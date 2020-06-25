@@ -524,15 +524,21 @@ void DrawRectangle(TLCD *tlcdInfo, Shape *shape)
             {
                 for (j = tempX; j <= endX; j++)
                 {
-                    if (sketchBook[i - START_CANVAS_Y][j - START_CANVAS_X].number >= 1)
+                    offset = i * 320 + j;
+
+                    if (i >= END_CANVAS_Y || j >= END_CANVAS_X)
                     {
-                        offset = i * 320 + j;
+                        *(tlcdInfo->pfbdata + offset) = CYAN;
+                        break;
+                    }
+
+                    else if (sketchBook[i - START_CANVAS_Y][j - START_CANVAS_X].number >= 1)
+                    {
                         *(tlcdInfo->pfbdata + offset) = sketchBook[i - START_CANVAS_Y][j - START_CANVAS_X].color;
                     }
 
                     else
                     {
-                        offset = i * 320 + j;
                         *(tlcdInfo->pfbdata + offset) = WHITE;
                     }
                 }
@@ -547,25 +553,25 @@ void DrawRectangle(TLCD *tlcdInfo, Shape *shape)
         endY = tlcdInfo->d * tlcdInfo->x + tlcdInfo->e * tlcdInfo->y + tlcdInfo->f;
 
         // CANVAS의 포지션이 벗어나면 continue
-        if ((endX < START_CANVAS_X || endX > END_CANVAS_X) || (endY < START_CANVAS_Y || endY > END_CANVAS_Y))
+        if ((endX <= START_CANVAS_X || endX >= END_CANVAS_X) || (endY <= START_CANVAS_Y || endY >= END_CANVAS_Y))
         {
-            if (endX < START_CANVAS_X)
+            if (endX <= START_CANVAS_X)
             {
                 endX = START_CANVAS_X + 1;
             }
-            else if (endX > END_CANVAS_X)
+            else if (endX >= END_CANVAS_X)
             {
-                endX = END_CANVAS_X - 1;
+                endX = END_CANVAS_X - 2;
             }
 
-            if (endY < START_CANVAS_Y)
+            if (endY <= START_CANVAS_Y)
             {
                 endY = START_CANVAS_Y + 1;
             }
 
-            else if (endY > END_CANVAS_Y)
+            else if (endY >= END_CANVAS_Y)
             {
-                endY = END_CANVAS_Y - 1;
+                endY = END_CANVAS_Y - 2;
             }
         }
 
