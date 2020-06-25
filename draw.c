@@ -1022,7 +1022,7 @@ void DrawPen(TLCD *tlcdInfo, Shape *shape)
  */
 void DrawFill(TLCD *tlcdInfo, Shape *shape)
 {
-    printf("DrawFill Executed\n");
+    //printf("DrawFill Executed\n");
 
     return;
 }

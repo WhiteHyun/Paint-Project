@@ -52,6 +52,12 @@ struct ListNode *Pop();
 struct ListNode *IndexPop(int index);
 
 /*
+ * 두 점에 해당하는 노드가 있는지를 확인하고 있다면 리턴합니다.
+ * 만약 아무 도형도 없는 경우 NULL을 리턴합니다.
+ */
+struct ListNode *SearchShape(int touchX, int touchY);
+
+/*
  * 리스트 내부의 노드(도형)들을 전부 없앱니다.
  */
 void ListClear();
