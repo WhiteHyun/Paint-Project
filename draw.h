@@ -18,7 +18,6 @@ typedef struct _Point
  */
 typedef struct _Shape
 {
-    int gackcheNumber;
     int type;
     Point start;
     Point end;
