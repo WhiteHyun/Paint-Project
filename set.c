@@ -5,11 +5,11 @@
 #include "list.h"
 
 extern struct List *g_List;
-
+extern struct Pixel sketchBook[SIZEOF_CANVAS_Y][SIZEOF_CANVAS_X];
 void ClearLcd(TLCD tlcdInfo)
 {
     int i, j, offset;
-    
+
     for (i = 0; i < 240; i++)
     {
         for (j = 0; j < 320; j++)
@@ -84,7 +84,7 @@ void SetCalibration(TLCD *tlcdInfo)
             offset = yd[j] * tlcdInfo->fbvar.xres + xd[j] + i;
             *(tlcdInfo->pfbdata + offset) = color;
         }
-        
+
         while (1)
         {
             read(tlcdInfo->fd, &tlcdInfo->ie, sizeof(struct input_event));
@@ -104,7 +104,7 @@ void SetCalibration(TLCD *tlcdInfo)
                     break;
             }
         }
-        
+
         pressure = -1;
     }
 
@@ -123,7 +123,19 @@ void SetCalibration(TLCD *tlcdInfo)
     tlcdInfo->e = tlcdInfo->e / tlcdInfo->k;
     tlcdInfo->f = tlcdInfo->f / tlcdInfo->k;
 }
-
+// ErrHandle For Fill
+void InitScreen()
+{
+    int i, j;
+    for (i = START_CANVAS_Y; i < END_CANVAS_Y; i++)
+    {
+        for (j = START_CANVAS_X; j < END_CANVAS_X; j++)
+        {
+            sketchBook[i - START_CANVAS_Y][j - START_CANVAS_X].number = 0;
+            sketchBook[i - START_CANVAS_Y][j - START_CANVAS_X].color = WHITE;
+        }
+    }
+}
 void Run()
 {
     TLCD tlcdInfo;
@@ -140,7 +152,7 @@ void Run()
     ClearLcd(tlcdInfo);
     InitList();
     DrawUI(tlcdInfo);
-
+    InitScreen();
     // main code part
     for (;;)
     {

@@ -18,28 +18,6 @@ struct Pixel
     unsigned short color;
 };
 
-struct Pixel sketchBook[SIZEOF_CANVAS_Y][SIZEOF_CANVAS_X];
-
-static int isInit;
-
-// ErrHandle For Fill
-void initScreen()
-{
-    int i, j;
-    if (isInit <= 0)
-    {
-        for (i = START_CANVAS_Y; i < END_CANVAS_Y; i++)
-        {
-            for (j = START_CANVAS_X; j < END_CANVAS_X; j++)
-            {
-                sketchBook[i - START_CANVAS_Y][j - START_CANVAS_X].number = 0;
-                sketchBook[i - START_CANVAS_Y][j - START_CANVAS_X].color = WHITE;
-            }
-        }
-        isInit = 1;
-    }
-}
-
 // For Line ErrHandle
 void DrawingOutsideCanvase(TLCD *tlcdInfo)
 {
