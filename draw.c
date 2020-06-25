@@ -509,13 +509,13 @@ void DrawRectangle(TLCD *tlcdInfo, Shape *shape)
     endX = -1;
     endY = -1;
 
-    isFirst = 1;//점이 처음 찍혔는지 알려주는 변수
+    isFirst = 1;//터치가 처음됬는지 알려주는 변수
 
     while (1) //시작지점의 x, y좌표 입력
     {
-        InputTouch(tlcdInfo);
+        InputTouch(tlcdInfo);//터치 이벤트 처리
 
-        // 점이 처음 찍혔을때 start값 갱신
+        // 터치가 처음 됬을 때 start값 갱신
         if (isFirst == 1)
         {
             startX = tlcdInfo->a * tlcdInfo->x + tlcdInfo->b * tlcdInfo->y + tlcdInfo->c;
@@ -525,7 +525,7 @@ void DrawRectangle(TLCD *tlcdInfo, Shape *shape)
         }
 
         // 루프를 한번 돌았을때 값갱신전 초기화
-        // 그전에 있던 사각형을 지움
+        // 스케치북과 비교하여 그전에 있던 흔적(사각형)을 제거
         if (endX != -1 && endY != -1)
         {
             for (i = tempY; i <= endY; i++)
@@ -599,7 +599,7 @@ void DrawRectangle(TLCD *tlcdInfo, Shape *shape)
             endY = tmp;
         }
 
-        //초기화후 보여주는부분
+        //초기화후 보여주는부분 사각형이 그려짐
         for (i = tempX; i < endX; i++)
         {
             offset = tempY * 320 + i;
@@ -623,7 +623,8 @@ void DrawRectangle(TLCD *tlcdInfo, Shape *shape)
             break;
         }
     }
-    //터치 스크린에서 펜을 떼었을 때
+    //터치 스크린에서 터치펜을 떼었을 때
+    //shape의 start값과 end값 갱신
     shape->start.x = tempX;
     shape->start.y = tempY;
 
