@@ -672,8 +672,10 @@ void DrawRectangle(TLCD *tlcdInfo, Shape *shape)
     {
         for (j = tempX - 1; j < endX - 1; j++)
         {
-            sketchBook[i - START_CANVAS_Y][j - START_CANVAS_X].number += 1;
-            sketchBook[i - START_CANVAS_Y][j - START_CANVAS_X].color = shape->inColor;
+            *(tlcdInfo->pfbdata + offset) = shape->inColor;
+
+            sketchBook[i - START_CANVAS_Y][endX - START_CANVAS_X].number += 1;
+            sketchBook[i - START_CANVAS_Y][endX - START_CANVAS_X].color = shape->inColor;
         }
     }
 }
@@ -691,7 +693,7 @@ void DrawOval(TLCD *tlcdInfo, Shape *shape)
     shape->type = TOUCH_OVAL;
     int i, j, tmp, centerX, centerY, a, b, offset, x, y, isFirst;
     int startX, startY, endX, endY, tempX, tempY;
-    int aa, bb, dx, dy, d1, d2;
+    int aa, bb, fill;
 
     isFirst = 1;
 
@@ -793,24 +795,42 @@ void DrawOval(TLCD *tlcdInfo, Shape *shape)
         for (i = tempX; i <= centerX; i++)
         {
             x = i - centerX;
+            fill = 0;
             for (j = tempY; j <= centerY; j++)
             {
                 y = j - centerY;
 
                 if (((x * x * bb) + (y * y * aa) <= aa * bb))
                 {
-                    offset = (y + centerY) * 320 + (x + centerX);
-                    *(tlcdInfo->pfbdata + offset) = shape->outColor;
+                    if (fill = 0)
+                    {
+                        offset = (y + centerY) * 320 + (x + centerX);
+                        *(tlcdInfo->pfbdata + offset) = shape->outColor;
 
-                    offset = (y + centerY) * 320 + (-x + centerX);
-                    *(tlcdInfo->pfbdata + offset) = shape->outColor;
+                        offset = (y + centerY) * 320 + (-x + centerX);
+                        *(tlcdInfo->pfbdata + offset) = shape->outColor;
 
-                    offset = (-y + centerY) * 320 + (x + centerX);
-                    *(tlcdInfo->pfbdata + offset) = shape->outColor;
+                        offset = (-y + centerY) * 320 + (x + centerX);
+                        *(tlcdInfo->pfbdata + offset) = shape->outColor;
 
-                    offset = (-y + centerY) * 320 + (-x + centerX);
-                    *(tlcdInfo->pfbdata + offset) = shape->outColor;
-                    break;
+                        offset = (-y + centerY) * 320 + (-x + centerX);
+                        *(tlcdInfo->pfbdata + offset) = shape->outColor;
+                        fill = 1;
+                    }
+                    else
+                    {
+                        offset = (y + centerY) * 320 + (x + centerX);
+                        *(tlcdInfo->pfbdata + offset) = shape->inColor;
+
+                        offset = (y + centerY) * 320 + (-x + centerX);
+                        *(tlcdInfo->pfbdata + offset) = shape->inColor;
+
+                        offset = (-y + centerY) * 320 + (x + centerX);
+                        *(tlcdInfo->pfbdata + offset) = shape->inColor;
+
+                        offset = (-y + centerY) * 320 + (-x + centerX);
+                        *(tlcdInfo->pfbdata + offset) = shape->inColor;
+                    }
                 }
             }
         }
@@ -821,21 +841,37 @@ void DrawOval(TLCD *tlcdInfo, Shape *shape)
             for (j = tempX; j <= centerX; j++)
             {
                 x = j - centerX;
-
+                fill = 0;
                 if (((x * x) * bb) + ((y * y) * aa) <= aa * bb)
                 {
-                    offset = (y + centerY) * 320 + (x + centerX);
-                    *(tlcdInfo->pfbdata + offset) = shape->outColor;
+                    if (fill == 0)
+                    {
+                        offset = (y + centerY) * 320 + (x + centerX);
+                        *(tlcdInfo->pfbdata + offset) = shape->outColor;
 
-                    offset = (y + centerY) * 320 + (-x + centerX);
-                    *(tlcdInfo->pfbdata + offset) = shape->outColor;
+                        offset = (y + centerY) * 320 + (-x + centerX);
+                        *(tlcdInfo->pfbdata + offset) = shape->outColor;
 
-                    offset = (-y + centerY) * 320 + (x + centerX);
-                    *(tlcdInfo->pfbdata + offset) = shape->outColor;
+                        offset = (-y + centerY) * 320 + (x + centerX);
+                        *(tlcdInfo->pfbdata + offset) = shape->outColor;
 
-                    offset = (-y + centerY) * 320 + (-x + centerX);
-                    *(tlcdInfo->pfbdata + offset) = shape->outColor;
-                    break;
+                        offset = (-y + centerY) * 320 + (-x + centerX);
+                        *(tlcdInfo->pfbdata + offset) = shape->outColor;
+                    }
+                    else
+                    {
+                        offset = (y + centerY) * 320 + (x + centerX);
+                        *(tlcdInfo->pfbdata + offset) = shape->inColor;
+
+                        offset = (y + centerY) * 320 + (-x + centerX);
+                        *(tlcdInfo->pfbdata + offset) = shape->inColor;
+
+                        offset = (-y + centerY) * 320 + (x + centerX);
+                        *(tlcdInfo->pfbdata + offset) = shape->inColor;
+
+                        offset = (-y + centerY) * 320 + (-x + centerX);
+                        *(tlcdInfo->pfbdata + offset) = shape->inColor;
+                    }
                 }
             }
         }
@@ -868,30 +904,56 @@ void DrawOval(TLCD *tlcdInfo, Shape *shape)
         for (j = tempY; j <= centerY; j++)
         {
             y = j - centerY;
-
+            fill = 0;
             if (((x * x * bb) + (y * y * aa) <= aa * bb))
             {
-                offset = (y + centerY) * 320 + (x + centerX);
-                *(tlcdInfo->pfbdata + offset) = shape->outColor;
-                sketchBook[y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X].number += 1;
-                sketchBook[y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X].color = shape->outColor;
+                if (fill == 0)
+                {
+                    offset = (y + centerY) * 320 + (x + centerX);
+                    *(tlcdInfo->pfbdata + offset) = shape->outColor;
+                    sketchBook[y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X].number += 1;
+                    sketchBook[y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X].color = shape->outColor;
 
-                offset = (y + centerY) * 320 + (-x + centerX);
-                *(tlcdInfo->pfbdata + offset) = shape->outColor;
-                sketchBook[y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X].number += 1;
-                sketchBook[y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X].color = shape->outColor;
+                    offset = (y + centerY) * 320 + (-x + centerX);
+                    *(tlcdInfo->pfbdata + offset) = shape->outColor;
+                    sketchBook[y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X].number += 1;
+                    sketchBook[y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X].color = shape->outColor;
 
-                offset = (-y + centerY) * 320 + (x + centerX);
-                *(tlcdInfo->pfbdata + offset) = shape->outColor;
-                sketchBook[-y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X].number += 1;
-                sketchBook[-y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X].color = shape->outColor;
+                    offset = (-y + centerY) * 320 + (x + centerX);
+                    *(tlcdInfo->pfbdata + offset) = shape->outColor;
+                    sketchBook[-y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X].number += 1;
+                    sketchBook[-y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X].color = shape->outColor;
 
-                offset = (-y + centerY) * 320 + (-x + centerX);
-                *(tlcdInfo->pfbdata + offset) = shape->outColor;
-                sketchBook[-y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X].number += 1;
-                sketchBook[-y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X].color = shape->outColor;
+                    offset = (-y + centerY) * 320 + (-x + centerX);
+                    *(tlcdInfo->pfbdata + offset) = shape->outColor;
+                    sketchBook[-y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X].number += 1;
+                    sketchBook[-y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X].color = shape->outColor;
 
-                break;
+                    fill = 1;
+                }
+
+                else
+                {
+                    offset = (y + centerY) * 320 + (x + centerX);
+                    *(tlcdInfo->pfbdata + offset) = shape->inColor;
+                    sketchBook[y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X].number += 1;
+                    sketchBook[y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X].color = shape->inColor;
+
+                    offset = (y + centerY) * 320 + (-x + centerX);
+                    *(tlcdInfo->pfbdata + offset) = shape->inColor;
+                    sketchBook[y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X].number += 1;
+                    sketchBook[y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X].color = shape->inColor;
+
+                    offset = (-y + centerY) * 320 + (x + centerX);
+                    *(tlcdInfo->pfbdata + offset) = shape->inColor;
+                    sketchBook[-y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X].number += 1;
+                    sketchBook[-y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X].color = shape->inColor;
+
+                    offset = (-y + centerY) * 320 + (-x + centerX);
+                    *(tlcdInfo->pfbdata + offset) = shape->inColor;
+                    sketchBook[-y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X].number += 1;
+                    sketchBook[-y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X].color = shape->inColor;
+                }
             }
         }
     }
@@ -902,30 +964,54 @@ void DrawOval(TLCD *tlcdInfo, Shape *shape)
         for (j = tempX; j <= centerX; j++)
         {
             x = j - centerX;
-
+            fill = 0;
             if (((x * x) * bb) + ((y * y) * aa) <= aa * bb)
             {
-                offset = (y + centerY) * 320 + (x + centerX);
-                *(tlcdInfo->pfbdata + offset) = shape->outColor;
-                sketchBook[y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X].number += 1;
-                sketchBook[y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X].color = shape->outColor;
+                if (fill == 0)
+                {
+                    offset = (y + centerY) * 320 + (x + centerX);
+                    *(tlcdInfo->pfbdata + offset) = shape->outColor;
+                    sketchBook[y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X].number += 1;
+                    sketchBook[y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X].color = shape->outColor;
 
-                offset = (y + centerY) * 320 + (-x + centerX);
-                *(tlcdInfo->pfbdata + offset) = shape->outColor;
-                sketchBook[y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X].number += 1;
-                sketchBook[y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X].color = shape->outColor;
+                    offset = (y + centerY) * 320 + (-x + centerX);
+                    *(tlcdInfo->pfbdata + offset) = shape->outColor;
+                    sketchBook[y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X].number += 1;
+                    sketchBook[y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X].color = shape->outColor;
 
-                offset = (-y + centerY) * 320 + (x + centerX);
-                *(tlcdInfo->pfbdata + offset) = shape->outColor;
-                sketchBook[-y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X].number += 1;
-                sketchBook[-y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X].color = shape->outColor;
+                    offset = (-y + centerY) * 320 + (x + centerX);
+                    *(tlcdInfo->pfbdata + offset) = shape->outColor;
+                    sketchBook[-y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X].number += 1;
+                    sketchBook[-y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X].color = shape->outColor;
 
-                offset = (-y + centerY) * 320 + (-x + centerX);
-                *(tlcdInfo->pfbdata + offset) = shape->outColor;
-                sketchBook[-y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X].number += 1;
-                sketchBook[-y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X].color = shape->outColor;
+                    offset = (-y + centerY) * 320 + (-x + centerX);
+                    *(tlcdInfo->pfbdata + offset) = shape->outColor;
+                    sketchBook[-y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X].number += 1;
+                    sketchBook[-y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X].color = shape->outColor;
+                    fill = 1;
+                }
+                else
+                {
+                    offset = (y + centerY) * 320 + (x + centerX);
+                    *(tlcdInfo->pfbdata + offset) = shape->inColor;
+                    sketchBook[y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X].number += 1;
+                    sketchBook[y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X].color = shape->inColor;
 
-                break;
+                    offset = (y + centerY) * 320 + (-x + centerX);
+                    *(tlcdInfo->pfbdata + offset) = shape->inColor;
+                    sketchBook[y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X].number += 1;
+                    sketchBook[y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X].color = shape->inColor;
+
+                    offset = (-y + centerY) * 320 + (x + centerX);
+                    *(tlcdInfo->pfbdata + offset) = shape->inColor;
+                    sketchBook[-y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X].number += 1;
+                    sketchBook[-y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X].color = shape->inColor;
+
+                    offset = (-y + centerY) * 320 + (-x + centerX);
+                    *(tlcdInfo->pfbdata + offset) = shape->inColor;
+                    sketchBook[-y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X].number += 1;
+                    sketchBook[-y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X].color = shape->inColor;
+                }
             }
         }
     }
