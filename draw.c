@@ -1699,10 +1699,18 @@ void DrawErase(TLCD *tlcdInfo, Shape *shape)
     printf("DrawErase Executed\n");
 
     struct ListNode *node = SearchShape(shape->start.x, shape->start.y);
-
     if (node == NULL)
     {
         return;
+    }
+    while (1)
+    {
+        InputTouch(tlcdInfo);
+        if (tlcdInfo->pressure == 0)
+        {
+            tlcdInfo->pressure = -1;
+            break;
+        }
     }
 
     double incline, yIntercept; //Line 전용 변수
