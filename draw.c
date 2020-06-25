@@ -21,6 +21,30 @@ struct Pixel
 
 struct Pixel sketchBook[SIZEOF_CANVAS_Y][SIZEOF_CANVAS_X];
 
+// For Line ErrHandle
+void DrawingOutsideCanvase(TLCD *tlcdInfo)
+{
+    int i, j, offset;
+
+    for (i = START_CANVAS_X - 1; i < END_CANVAS_X + 1; i++)
+    {
+        offset = (START_CANVAS_Y - 1) * 320 + i;
+        *(tlcdInfo->pfbdata + offset) = CYAN;
+
+        offset = (END_CANVAS_Y)*320 + i;
+        *(tlcdInfo->pfbdata + offset) = CYAN;
+    }
+
+    for (i = START_CANVAS_Y - 1; i < END_CANVAS_Y + 1; i++)
+    {
+        offset = i * 320 + START_CANVAS_X - 1;
+        *(tlcdInfo->pfbdata + offset) = CYAN;
+
+        offset = i * 320 + END_CANVAS_X;
+        *(tlcdInfo->pfbdata + offset) = CYAN;
+    }
+}
+
 /*
  * This is Base Code for Making Line Made by D.S Kim
  * Make start x , y -> end x , y Line
@@ -33,7 +57,7 @@ void DrawLine(TLCD *tlcdInfo, Shape *shape)
 {
     shape->type = TOUCH_LINE;
 
-    int i, offset;
+    int i, offset, isOver;
     int startX, startY;
     int endX, endY;
     int tempX, tempY;
@@ -66,6 +90,7 @@ void DrawLine(TLCD *tlcdInfo, Shape *shape)
     while (1) //Line Rubber Band 구현
     {
         InputTouch(tlcdInfo);
+        isOver = 0;
 
         if (tempX != startX || tempY != startY)
         {
@@ -108,6 +133,7 @@ void DrawLine(TLCD *tlcdInfo, Shape *shape)
                 {
                     endY = END_CANVAS_Y - 1;
                 }
+                isOver = 1;
             }
 
             break;
@@ -300,6 +326,7 @@ void DrawLine(TLCD *tlcdInfo, Shape *shape)
                 {
                     endY = END_CANVAS_Y - 1;
                 }
+                isOver = 1;
             }
         }
 
@@ -391,6 +418,11 @@ void DrawLine(TLCD *tlcdInfo, Shape *shape)
                 }
             }
         } //새로운 Line 그리기 끝
+        //바깥쪽 cyan 한줄
+        if (isOver == 1)
+        {
+            DrawingOutsideCanvase(tlcdInfo);
+        }
     }
 
     //sketchBook에 추가
