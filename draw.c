@@ -1285,19 +1285,18 @@ void DrawSelect(TLCD *tlcdInfo, Shape *shape)
                     {
                         offset = i * 320 + j;
 
-                        if (i >= END_CANVAS_Y || j >= END_CANVAS_X)
+                        if (sketchBook[i - START_CANVAS_Y][j - START_CANVAS_X].number >= 1)
                         {
-                            *(tlcdInfo->pfbdata + offset) = CYAN;
-                            break;
-                        }
-
-                        else if (sketchBook[i - START_CANVAS_Y][j - START_CANVAS_X].number >= 1)
-                        {
-                            *(tlcdInfo->pfbdata + offset) = sketchBook[i - START_CANVAS_Y][j - START_CANVAS_X].color;
+                            //캔버스 위치 안에서만 그려줌
+                            if (j > START_CANVAS_X && i > START_CANVAS_Y && j < END_CANVAS_X && i < END_CANVAS_Y)
+                            {
+                                *(tlcdInfo->pfbdata + offset) = sketchBook[i - START_CANVAS_Y][j - START_CANVAS_X].color;
+                            }
                         }
 
                         else
                         {
+                            //캔버스 위치 안에서만 그려줌
                             if (j > START_CANVAS_X && i > START_CANVAS_Y && j < END_CANVAS_X && i < END_CANVAS_Y)
                             {
                                 *(tlcdInfo->pfbdata + offset) = WHITE;
@@ -1420,14 +1419,13 @@ void DrawSelect(TLCD *tlcdInfo, Shape *shape)
                     {
                         offset = i * 320 + j;
 
-                        if (i >= END_CANVAS_Y || j >= END_CANVAS_X)
+                        if (sketchBook[i - START_CANVAS_Y][j - START_CANVAS_X].number >= 1)
                         {
-                            *(tlcdInfo->pfbdata + offset) = CYAN;
-                            break;
-                        }
-                        else if (sketchBook[i - START_CANVAS_Y][j - START_CANVAS_X].number >= 1)
-                        {
-                            *(tlcdInfo->pfbdata + offset) = sketchBook[i - START_CANVAS_Y][j - START_CANVAS_X].color;
+                            //캔버스 위치 안에서만 그려줌
+                            if (j > START_CANVAS_X && i > START_CANVAS_Y && j < END_CANVAS_X && i < END_CANVAS_Y)
+                            {
+                                *(tlcdInfo->pfbdata + offset) = sketchBook[i - START_CANVAS_Y][j - START_CANVAS_X].color;
+                            }
                         }
 
                         else
