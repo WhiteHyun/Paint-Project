@@ -56,7 +56,6 @@ void DrawLine(TLCD *tlcdInfo, Shape *shape)
     int tempX, tempY;
     double incline;    //기울기
     double yIntercept; //y절편
-    initScreen();
 
     while (1) //시작지점의 x, y좌표 입력
     {
@@ -527,13 +526,11 @@ void DrawRectangle(TLCD *tlcdInfo, Shape *shape)
     endX = -1;
     endY = -1;
 
-
     isFirst = 1;
-    initScreen();
 
     while (1) //시작지점의 x, y좌표 입력
     {
-        InputTouch(tlcdInfo);//터치 이벤트 처리
+        InputTouch(tlcdInfo); //터치 이벤트 처리
 
         // 터치가 처음 됬을 때 start값 갱신
         if (isFirst == 1)
@@ -697,7 +694,6 @@ void DrawOval(TLCD *tlcdInfo, Shape *shape)
 
     endX = -1;
     endY = -1;
-    initScreen();
 
     while (1) //시작지점의 x, y좌표 입력
     {
@@ -947,7 +943,6 @@ void DrawFree(TLCD *tlcdInfo, Shape *shape)
     {
         shape->position[i] = (int *)malloc(sizeof(int) * SIZEOF_CANVAS_X); //캔버스의 x크기: 200
     }
-    initScreen();
 
     while (1)
     {
