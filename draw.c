@@ -597,7 +597,7 @@ void DrawRectangle(TLCD *tlcdInfo, Shape *shape)
             endY = tmp;
         }
 
-        //초기화후 보여주는부분
+        // outBoundColor
         for (i = tempX; i < endX; i++)
         {
             offset = tempY * 320 + i;
@@ -614,6 +614,15 @@ void DrawRectangle(TLCD *tlcdInfo, Shape *shape)
 
             offset = i * 320 + endX;
             *(tlcdInfo->pfbdata + offset) = shape->outColor;
+        }
+
+        // InboundColor
+        for (i = tempY - 1; i < endY - 1; i++)
+        {
+            for (j = tempX - 1; j < endX - 1; j++)
+            {
+                *(tlcdInfo->pfbdata + offset) = shape->inColor;
+            }
         }
 
         if (tlcdInfo->pressure == 0)
@@ -656,6 +665,16 @@ void DrawRectangle(TLCD *tlcdInfo, Shape *shape)
 
         sketchBook[i - START_CANVAS_Y][endX - START_CANVAS_X].number += 1;
         sketchBook[i - START_CANVAS_Y][endX - START_CANVAS_X].color = shape->outColor;
+    }
+
+    // InboundColor
+    for (i = tempY - 1; i < endY - 1; i++)
+    {
+        for (j = tempX - 1; j < endX - 1; j++)
+        {
+            sketchBook[i - START_CANVAS_Y][j - START_CANVAS_X].number += 1;
+            sketchBook[i - START_CANVAS_Y][j - START_CANVAS_X].color = shape->inColor;
+        }
     }
 }
 
@@ -1023,10 +1042,34 @@ void DrawPen(TLCD *tlcdInfo, Shape *shape)
 void DrawFill(TLCD *tlcdInfo, Shape *shape)
 {
     //printf("DrawFill Executed\n");
-    struct ListNode *node = SearchShape(shape->start.x, shape->start.y);
+    /*struct ListNode *node = SearchShape(shape->start.x, shape->start.y);
     if (node != NULL)
     {
         printf("%d\n", node->shape.type);
+    }*/
+
+    int xpos, ypos, i, j;
+    unsigned short firstPosColor;
+
+    xpos = tlcdInfo->a * tlcdInfo->x + tlcdInfo->b * tlcdInfo->y + tlcdInfo->c;
+    ypos = tlcdInfo->d * tlcdInfo->x + tlcdInfo->e * tlcdInfo->y + tlcdInfo->f;
+
+    // 해당영역의 스케치북을 바꿔줍니당.
+    firstPosColor = sketchBook[ypos - START_CANVAS_Y][xpos - START_CANVAS_X].color;
+
+    /*
+     * 검색한 Shape의 outBoundColor를 검출해냄 
+     * 해당 값이 나올때까지 색칠.
+     */
+
+    i = xpos;
+    j = ypos;
+    while (1)
+    {
+        // Shape의 outBoundColor와 비교sketchBook[j - START_CANVAS_Y][i - START_CANVAS_X]
+        // 각 픽셀별 사각형으로 전개
+        // 해당 shape의 inColor를 변경해줌
     }
+
     return;
 }
