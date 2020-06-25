@@ -617,13 +617,14 @@ void DrawRectangle(TLCD *tlcdInfo, Shape *shape)
         }
 
         // InboundColor
-        for (i = tempY - 1; i < endY - 1; i++)
+        /*for (i = tempY + 1; i < endY; i++)
         {
-            for (j = tempX - 1; j < endX - 1; j++)
+            for (j = tempX + 1; j < endX; j++)
             {
+                offset = i * 320 + j;
                 *(tlcdInfo->pfbdata + offset) = shape->inColor;
             }
-        }
+        }*/
 
         if (tlcdInfo->pressure == 0)
         {
@@ -668,16 +669,17 @@ void DrawRectangle(TLCD *tlcdInfo, Shape *shape)
     }
 
     // InboundColor
-    for (i = tempY - 1; i < endY - 1; i++)
+    /*for (i = tempY + 1; i < endY; i++)
     {
-        for (j = tempX - 1; j < endX - 1; j++)
+        for (j = tempX + 1; j < endX; j++)
         {
+            offset = i * 320 + j;
             *(tlcdInfo->pfbdata + offset) = shape->inColor;
 
-            sketchBook[i - START_CANVAS_Y][endX - START_CANVAS_X].number += 1;
-            sketchBook[i - START_CANVAS_Y][endX - START_CANVAS_X].color = shape->inColor;
+            sketchBook[i - START_CANVAS_Y][j - START_CANVAS_X].number += 1;
+            sketchBook[i - START_CANVAS_Y][j - START_CANVAS_X].color = shape->inColor;
         }
-    }
+    }*/
 }
 
 /*
@@ -802,7 +804,7 @@ void DrawOval(TLCD *tlcdInfo, Shape *shape)
 
                 if (((x * x * bb) + (y * y * aa) <= aa * bb))
                 {
-                    if (fill = 0)
+                    if (fill == 0)
                     {
                         offset = (y + centerY) * 320 + (x + centerX);
                         *(tlcdInfo->pfbdata + offset) = shape->outColor;
@@ -816,8 +818,9 @@ void DrawOval(TLCD *tlcdInfo, Shape *shape)
                         offset = (-y + centerY) * 320 + (-x + centerX);
                         *(tlcdInfo->pfbdata + offset) = shape->outColor;
                         fill = 1;
+                        break;
                     }
-                    else
+                    /*else
                     {
                         offset = (y + centerY) * 320 + (x + centerX);
                         *(tlcdInfo->pfbdata + offset) = shape->inColor;
@@ -830,7 +833,8 @@ void DrawOval(TLCD *tlcdInfo, Shape *shape)
 
                         offset = (-y + centerY) * 320 + (-x + centerX);
                         *(tlcdInfo->pfbdata + offset) = shape->inColor;
-                    }
+                        fill = 1;
+                    }*/
                 }
             }
         }
@@ -857,8 +861,11 @@ void DrawOval(TLCD *tlcdInfo, Shape *shape)
 
                         offset = (-y + centerY) * 320 + (-x + centerX);
                         *(tlcdInfo->pfbdata + offset) = shape->outColor;
+                        fill = 1;
+
+                        break;
                     }
-                    else
+                    /*else
                     {
                         offset = (y + centerY) * 320 + (x + centerX);
                         *(tlcdInfo->pfbdata + offset) = shape->inColor;
@@ -871,7 +878,8 @@ void DrawOval(TLCD *tlcdInfo, Shape *shape)
 
                         offset = (-y + centerY) * 320 + (-x + centerX);
                         *(tlcdInfo->pfbdata + offset) = shape->inColor;
-                    }
+                        fill = 1;
+                    }*/
                 }
             }
         }
@@ -930,9 +938,10 @@ void DrawOval(TLCD *tlcdInfo, Shape *shape)
                     sketchBook[-y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X].color = shape->outColor;
 
                     fill = 1;
+                    break;
                 }
 
-                else
+                /*else
                 {
                     offset = (y + centerY) * 320 + (x + centerX);
                     *(tlcdInfo->pfbdata + offset) = shape->inColor;
@@ -953,7 +962,7 @@ void DrawOval(TLCD *tlcdInfo, Shape *shape)
                     *(tlcdInfo->pfbdata + offset) = shape->inColor;
                     sketchBook[-y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X].number += 1;
                     sketchBook[-y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X].color = shape->inColor;
-                }
+                }*/
             }
         }
     }
@@ -989,8 +998,9 @@ void DrawOval(TLCD *tlcdInfo, Shape *shape)
                     sketchBook[-y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X].number += 1;
                     sketchBook[-y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X].color = shape->outColor;
                     fill = 1;
+                    break;
                 }
-                else
+                /*else
                 {
                     offset = (y + centerY) * 320 + (x + centerX);
                     *(tlcdInfo->pfbdata + offset) = shape->inColor;
@@ -1011,7 +1021,7 @@ void DrawOval(TLCD *tlcdInfo, Shape *shape)
                     *(tlcdInfo->pfbdata + offset) = shape->inColor;
                     sketchBook[-y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X].number += 1;
                     sketchBook[-y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X].color = shape->inColor;
-                }
+                }*/
             }
         }
     }
