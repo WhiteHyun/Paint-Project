@@ -1,5 +1,6 @@
 #include "list.h"
 #include "btn.h"
+#include "ui.h"
 #include <stdlib.h>
 
 struct ListNode *CreateNode(Shape shape)
@@ -180,7 +181,7 @@ struct ListNode *SearchShape(int touchX, int touchY)
         }
         else
         {
-            if (tempNode->shape.position[touchY][touchX] == 1)
+            if (tempNode->shape.position[touchY - tempNode->shape.moveY][touchX - tempNode->shape.moveX] == 1)
             {
                 break;
             }
