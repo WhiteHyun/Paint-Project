@@ -504,12 +504,12 @@ void DrawUI(TLCD tlcdInfo)
         }
     }
 
-    startSpace = 60; //가운데 흰 사각형 출력
+    startSpace = 60; //캔버스 출력
     rectSpace = 10;  //흰 사각형의 범위 - 폭 60 ~ 260, 높이 10 ~ 230
 
-    for (i = 0; i < 220; i++) //색 버튼 한개의 높이 42
+    for (i = 0; i < 220; i++)
     {
-        for (j = 0; j < 200; j++) //색 버튼 한개의 폭 23
+        for (j = 0; j < 200; j++)
         {
             offset = (i + rectSpace) * 320 + (j + startSpace);
             *(tlcdInfo.pfbdata + offset) = WHITE;
