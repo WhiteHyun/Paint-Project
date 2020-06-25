@@ -2751,6 +2751,7 @@ void flood_fill(int x, int y, unsigned short firstColor, unsigned short targertC
         {
             offset = ((y + START_CANVAS_Y) * 320) + x + START_CANVAS_X;
             *(tlcdInfo->pfbdata + offset) = targertColor;
+            sketchBook[y][x].number += 1;
             sketchBook[y][x].color = targertColor;
 
             flood_fill(x - 1, y, firstColor, targertColor, tlcdInfo); // 순환호출(x-1번째 위치)
