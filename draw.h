@@ -9,7 +9,7 @@ typedef struct _Point
     int y;
 } Point;
 
-/* 
+/*
  * Shape infomation struct.
  * shape -> 0 is Pen , 1 is Line , 2 Rectangle , 3 Oval , 4 FreeDraw
  * Point start & end have each x , y pos
@@ -18,6 +18,7 @@ typedef struct _Point
  */
 typedef struct _Shape
 {
+    int gackcheNumber;
     int type;
     Point start;
     Point end;
@@ -29,40 +30,41 @@ typedef struct _Shape
     int moveY; //parallel translation variable
 } Shape;
 
-typedef void (*drawList)(TLCD *, Shape *);
+typedef void (*drawList)(TLCD*, Shape*);
 
-void DrawLine(TLCD *tlcdInfo, Shape *shape);
+void DrawLine(TLCD* tlcdInfo, Shape* shape);
 
 // make Rectangle Base Code
-void DrawRectangle(TLCD *tlcdInfo, Shape *shape);
+void DrawRectangle(TLCD* tlcdInfo, Shape* shape);
 
-void DrawOval(TLCD *tlcdInfo, Shape *shape);
+void DrawOval(TLCD* tlcdInfo, Shape* shape);
 
-void DrawFree(TLCD *tlcdInfo, Shape *shape);
+void DrawFree(TLCD* tlcdInfo, Shape* shape);
 
-void DrawSelect(TLCD *tlcdInfo, Shape *shape);
+void DrawSelect(TLCD* tlcdInfo, Shape* shape);
 
-void DrawErase(TLCD *tlcdInfo, Shape *shape);
+void DrawErase(TLCD* tlcdInfo, Shape* shape);
 
-void DrawClear(TLCD *tlcdInfo, Shape *shape);
+void DrawClear(TLCD* tlcdInfo, Shape* shape);
 
-void DrawPen(TLCD *tlcdInfo, Shape *shape);
+void DrawPen(TLCD* tlcdInfo, Shape* shape);
 
-void DrawFill(TLCD *tlcdInfo, Shape *shape);
+void DrawFill(TLCD* tlcdInfo, Shape* shape);
 
 /*
  * 도형과 관련된 함수들의 테이블입니다.
  */
 static const drawList g_drawTable[] =
-    {
-        DrawLine,
-        DrawRectangle,
-        DrawOval,
-        DrawFree,
-        DrawSelect,
-        DrawErase,
-        DrawClear,
-        DrawPen,
-        DrawFill};
+{
+    DrawLine,
+    DrawRectangle,
+    DrawOval,
+    DrawFree,
+    DrawSelect,
+    DrawErase,
+    DrawClear,
+    DrawPen,
+    DrawFill
+};
 
 #endif
