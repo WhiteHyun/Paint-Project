@@ -130,13 +130,6 @@ struct ListNode *IndexPop(int index)
         {
             tempNode = g_List->start;
 
-            //index에 해당하는 노드까지 이동
-            while (index != 0)
-            {
-                tempNode = tempNode->next;
-                index--;
-            }
-
             //맨 앞의 값을 Pop하고 싶은 경우 다음 값이 리스트의 첫번째가 됩니다.
             if (index == 0)
             {
@@ -146,6 +139,12 @@ struct ListNode *IndexPop(int index)
             //맨 앞의 값을 빼내는 것이 아니므로 NULL참조가 되지 않습니다. 실행해줘도 됩니다.
             else
             {
+                //index에 해당하는 노드까지 이동
+                while (index != 0)
+                {
+                    tempNode = tempNode->next;
+                    index--;
+                }
                 tempNode->prev->next = tempNode->next;
             }
 
