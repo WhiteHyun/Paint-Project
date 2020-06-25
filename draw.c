@@ -1023,6 +1023,10 @@ void DrawPen(TLCD *tlcdInfo, Shape *shape)
 void DrawFill(TLCD *tlcdInfo, Shape *shape)
 {
     //printf("DrawFill Executed\n");
-
+    struct ListNode *node = SearchShape(shape->start.x, shape->start.y);
+    if (node != NULL)
+    {
+        printf("%d\n", node->shape.type);
+    }
     return;
 }
