@@ -21,6 +21,26 @@ struct Pixel
 
 struct Pixel sketchBook[SIZEOF_CANVAS_Y][SIZEOF_CANVAS_X];
 
+static int isInit;
+
+// ErrHandle For Fill
+void initScreen()
+{
+    int i, j;
+    if (isInit <= 0)
+    {
+        for (i = START_CANVAS_Y; i < END_CANVAS_Y; i++)
+        {
+            for (j = START_CANVAS_X; j < END_CANVAS_X; j++)
+            {
+                sketchBook[i - START_CANVAS_Y][j - START_CANVAS_X].number = 0;
+                sketchBook[i - START_CANVAS_Y][j - START_CANVAS_X].color = WHITE;
+            }
+        }
+        isInit = 1;
+    }
+}
+
 // For Line ErrHandle
 void DrawingOutsideCanvase(TLCD *tlcdInfo)
 {
@@ -63,6 +83,7 @@ void DrawLine(TLCD *tlcdInfo, Shape *shape)
     int tempX, tempY;
     double incline;    //기울기
     double yIntercept; //y절편
+    initScreen();
 
     while (1) //시작지점의 x, y좌표 입력
     {
@@ -535,6 +556,7 @@ void DrawRectangle(TLCD *tlcdInfo, Shape *shape)
     endY = -1;
 
     isFirst = 1;
+    initScreen();
 
     while (1) //시작지점의 x, y좌표 입력
     {
@@ -703,6 +725,7 @@ void DrawOval(TLCD *tlcdInfo, Shape *shape)
 
     endX = -1;
     endY = -1;
+    initScreen();
 
     while (1) //시작지점의 x, y좌표 입력
     {
@@ -952,6 +975,7 @@ void DrawFree(TLCD *tlcdInfo, Shape *shape)
     {
         shape->position[i] = (int *)malloc(sizeof(int) * SIZEOF_CANVAS_X); //캔버스의 x크기: 200
     }
+    initScreen();
 
     while (1)
     {
@@ -1772,6 +1796,7 @@ void DrawPen(TLCD *tlcdInfo, Shape *shape)
  */
 
 void flood_fill(int x, int y, unsigned short firstColor, unsigned short targertColor, TLCD *tlcdInfo);
+
 void DrawFill(TLCD *tlcdInfo, Shape *shape)
 {
 
