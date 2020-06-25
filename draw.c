@@ -1736,11 +1736,55 @@ void DrawPen(TLCD *tlcdInfo, Shape *shape)
 }
 
 /*
- * TODO
+ * TODO shape.inColor -> color
  */
+
+void flood_fill(int x, int y, unsigned short firstColor, unsigned short targertColor, TLCD *tlcdInfo);
 void DrawFill(TLCD *tlcdInfo, Shape *shape)
 {
+
     printf("DrawFill Executed\n");
 
+    int xpos, ypos, i, j, offset;
+    unsigned short firstColor;
+    // x , y position
+
+    xpos = tlcdInfo->a * tlcdInfo->x + tlcdInfo->b * tlcdInfo->y + tlcdInfo->c;
+    ypos = tlcdInfo->d * tlcdInfo->x + tlcdInfo->e * tlcdInfo->y + tlcdInfo->f;
+
+    if (xpos > START_CANVAS_X && xpos < END_CANVAS_X && ypos > START_CANVAS_Y && ypos < END_CANVAS_Y)
+    {
+        if (sketchBook[ypos - START_CANVAS_Y][xpos - START_CANVAS_X].number >= 1)
+        {
+            firstColor = sketchBook[ypos - START_CANVAS_Y][xpos - START_CANVAS_X].color;
+        }
+        else
+        {
+            firstColor = WHITE;
+        }
+
+        // TODO COLOR
+        flood_fill(xpos - START_CANVAS_X, ypos - START_CANVAS_Y, firstColor, shape->inColor, tlcdInfo);
+    }
+
     return;
+}
+
+void flood_fill(int x, int y, unsigned short firstColor, unsigned short targertColor, TLCD *tlcdInfo)
+{
+    int offset;
+    if (x > 0 && x < 200 && y > 0 && y < 220)
+    {
+        if (sketchBook[y][x].color == firstColor) // read_pixel 함수 호출의 결과로 0을 발견하면
+        {
+            offset = ((y + START_CANVAS_Y) * 320) + x + START_CANVAS_X;
+            *(tlcdInfo->pfbdata + offset) = targertColor;
+            sketchBook[y][x].color = targertColor;
+
+            flood_fill(x - 1, y, firstColor, targertColor, tlcdInfo); // 순환호출(x-1번째 위치)
+            flood_fill(x + 1, y, firstColor, targertColor, tlcdInfo); // 순환호출(x+1번째 위치)
+            flood_fill(x, y - 1, firstColor, targertColor, tlcdInfo); // 순환호출(y-1번째 위치)
+            flood_fill(x, y + 1, firstColor, targertColor, tlcdInfo); // 순환호출(y+1번째 위치)
+        }
+    }
 }
