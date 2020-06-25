@@ -2,8 +2,6 @@
 #include "ui.h"
 #include "list.h"
 #include "btn.h"
-#include <stdio.h>
-#include <stdlib.h>
 
 extern struct List *g_List;
 
@@ -492,11 +490,6 @@ void DrawLine(TLCD *tlcdInfo, Shape *shape)
 
 /*
  * This is Base Code for Making Rectangle Made by T.H Kim
- * Make start x , y -> end x , y Rectange
- * 필요한기능  -> 입력받은 점이 처음 찍힌 점일경우 start x, y에 적립
- *             -> 아닐경우 end의 x,y좌표를 계속하여 갱신하여줍니다.
- *             -> 갱신했을시 이전에 그려진 Box를 지워줍니다 (시작할 때 집어주면 될듯?)
- *             -> ( 이 기능이 핵심적임 )
  */
 void DrawRectangle(TLCD *tlcdInfo, Shape *shape)
 {
@@ -956,7 +949,7 @@ void DrawFree(TLCD *tlcdInfo, Shape *shape)
                 }
                 *(tlcdInfo->pfbdata + offset) = shape->outColor;
                 shape->position[ypos - START_CANVAS_Y + j][xpos - START_CANVAS_X + i] = 1;                //프리드로우 그려진 부분을 저장
-                sketchBook[ypos - START_CANVAS_Y + j][xpos - START_CANVAS_X + i].number = 1;              //스케치북에도 그려진 곳을 저장
+                sketchBook[ypos - START_CANVAS_Y + j][xpos - START_CANVAS_X + i].number += 1;             //스케치북에도 그려진 곳을 저장
                 sketchBook[ypos - START_CANVAS_Y + j][xpos - START_CANVAS_X + i].color = shape->outColor; //색깔도 저장
             }
         }
@@ -964,11 +957,736 @@ void DrawFree(TLCD *tlcdInfo, Shape *shape)
 }
 
 /*
- * TODO
+ * This is Base Code for Making DrawSelect Made by S.H Hong
  */
 void DrawSelect(TLCD *tlcdInfo, Shape *shape)
 {
-    printf("DrawSelect Executed\n");
+    struct ListNode *node = SearchShape(shape->start.x, shape->start.y);
+    if (node == NULL)
+    {
+        return;
+    }
+    int startX, startY; //도형의 Point 시작점
+    int endX, endY;     //도형의 Point 끝점
+    int offset, i, j;
+
+    //Oval 전용 변수들
+    int centerX, centerY, a, b, aa, bb, x, y;
+
+    /* touchedPointX, Y = 초반에 눌려진 좌표 
+     * shape->moveX, shape->moveY = 갱신되어 눌려진 좌표
+     * node->moveX, node->moveY = shape->moveX - touchedPointX, shape->moveY - touchedPointY 와 같음
+     */
+    int touchedPointX = shape->start.x;
+    int touchedPointY = shape->start.y;
+    shape->moveX = -1;
+    shape->moveY = -1;
+
+    //처음 터치 된 x,y 좌표 값을 할당
+    startX = node->shape.start.x;
+    startY = node->shape.start.y;
+    endX = node->shape.end.x;
+    endY = node->shape.end.y;
+    /*
+         * 해당 도형에 따른 스케치북 값을 -1 해줘야 함(이동시킬 것이기 때문)
+         */
+    //선택된 도형(선)의 sketchBook 값을 -1로 줄여 값을 없앰
+    if (node->shape.type == TOUCH_LINE)
+    {
+    }
+
+    //선택된 도형(사각형)의 sketchBook 값을 -1로 줄여 값을 없앰
+    else if (node->shape.type == TOUCH_RECT)
+    {
+        //사각형 크기만큼 반복
+        for (i = startX; i < endX; i++)
+        {
+            //값이 캔버스 내에 존재하는 경우
+            if (i > START_CANVAS_X && i < END_CANVAS_X && startY > START_CANVAS_Y && startY < END_CANVAS_Y)
+            {
+                offset = startY * 320 + i;
+                *(tlcdInfo->pfbdata + offset) = WHITE;
+                sketchBook[startY - START_CANVAS_Y][i - START_CANVAS_X].number -= 1;
+                if (sketchBook[startY - START_CANVAS_Y][i - START_CANVAS_X].number == 0)
+                {
+                    sketchBook[startY - START_CANVAS_Y][i - START_CANVAS_X].color = WHITE;
+                }
+                else
+                {
+                    sketchBook[startY - START_CANVAS_Y][i - START_CANVAS_X].color = node->shape.outColor;
+                }
+            }
+            //값이 캔버스 내에 존재하는 경우
+            if (i > START_CANVAS_X && i < END_CANVAS_X && endY > START_CANVAS_Y && endY < END_CANVAS_Y)
+            {
+                offset = endY * 320 + i;
+                *(tlcdInfo->pfbdata + offset) = WHITE;
+                sketchBook[endY - START_CANVAS_Y][i - START_CANVAS_X].number -= 1;
+                if (sketchBook[endY - START_CANVAS_Y][i - START_CANVAS_X].number == 0) //만약 스케치북에 값이 존재하지 않으면
+                {
+                    sketchBook[endY - START_CANVAS_Y][i - START_CANVAS_X].color = WHITE; //캔버스 색에 맞춤
+                }
+                else //그 외 값이 존재한다면 현 노드의 outColor로 설정(분명 문제 있음, Oval도 이와 구현했음)
+                {
+                    sketchBook[endY - START_CANVAS_Y][i - START_CANVAS_X].color = node->shape.outColor;
+                }
+            }
+        }
+
+        //사각형 크기만큼 반복
+        for (i = startY; i < endY; i++)
+        {
+            //값이 캔버스 내에 존재하는 경우
+            if (startX > START_CANVAS_X && startX < END_CANVAS_X && i > START_CANVAS_Y && i < END_CANVAS_Y)
+            {
+                offset = i * 320 + startX;
+                *(tlcdInfo->pfbdata + offset) = WHITE;
+                sketchBook[i - START_CANVAS_Y][startX - START_CANVAS_X].number -= 1;
+                if (sketchBook[i - START_CANVAS_Y][startX - START_CANVAS_X].number == 0)
+                {
+                    sketchBook[i - START_CANVAS_Y][startX - START_CANVAS_X].color = WHITE;
+                }
+                else
+                {
+                    sketchBook[i - START_CANVAS_Y][startX - START_CANVAS_X].color = node->shape.outColor;
+                }
+            }
+
+            //값이 캔버스 내에 존재하는 경우
+            if (endX > START_CANVAS_X && endX < END_CANVAS_X && i > START_CANVAS_Y && i < END_CANVAS_Y)
+            {
+                offset = i * 320 + endX;
+                *(tlcdInfo->pfbdata + offset) = WHITE;
+                sketchBook[i - START_CANVAS_Y][endX - START_CANVAS_X].number -= 1;
+                if (sketchBook[i - START_CANVAS_Y][endX - START_CANVAS_X].number == 0)
+                {
+                    sketchBook[i - START_CANVAS_Y][endX - START_CANVAS_X].color = WHITE;
+                }
+                else
+                {
+                    sketchBook[i - START_CANVAS_Y][endX - START_CANVAS_X].color = node->shape.outColor;
+                }
+            }
+        }
+    }
+
+    //선택된 도형(타원)의 sketchBook 값을 -1로 줄여 값을 없앰
+    else if (node->shape.type == TOUCH_OVAL)
+    {
+        /* set Start and end X , Y */
+        centerX = (startX + endX) / 2;
+        centerY = (startY + endY) / 2;
+
+        a = (endX - centerX); // 선 a의 길이
+        b = (endY - centerY); // 선 b의 길이
+
+        aa = a * a;
+        bb = b * b;
+
+        for (i = startX; i <= centerX; i++)
+        {
+            x = i - centerX;
+            for (j = startY; j <= centerY; j++)
+            {
+                y = j - centerY;
+                if (((x * x * bb) + (y * y * aa) <= aa * bb))
+                {
+                    //캔버스 내에 그려져 있는 경우 그 밑 조건문도 마찬가지!
+                    if ((y + centerY) < END_CANVAS_Y && (y + centerY) > START_CANVAS_Y &&
+                        (x + centerX) < END_CANVAS_X && (x + centerX) > START_CANVAS_X)
+                    {
+                        offset = (y + centerY) * 320 + (x + centerX);
+                        *(tlcdInfo->pfbdata + offset) = WHITE;
+                        sketchBook[y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X].number -= 1;
+                        if (sketchBook[y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X].number == 0)
+                        {
+                            sketchBook[y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X].color = WHITE;
+                        }
+                        else
+                        {
+                            sketchBook[y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X].color = node->shape.outColor;
+                        }
+                    }
+
+                    if ((y + centerY) < END_CANVAS_Y && (y + centerY) > START_CANVAS_Y &&
+                        (-x + centerX) < END_CANVAS_X && (-x + centerX) > START_CANVAS_X)
+                    {
+                        offset = (y + centerY) * 320 + (-x + centerX);
+                        *(tlcdInfo->pfbdata + offset) = WHITE;
+                        sketchBook[y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X].number -= 1;
+                        if (sketchBook[y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X].number == 0)
+                        {
+                            sketchBook[y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X].color = WHITE;
+                        }
+                        else
+                        {
+                            sketchBook[y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X].color = node->shape.outColor;
+                        }
+                    }
+
+                    if ((-y + centerY) < END_CANVAS_Y && (-y + centerY) > START_CANVAS_Y &&
+                        (x + centerX) < END_CANVAS_X && (x + centerX) > START_CANVAS_X)
+                    {
+                        offset = (-y + centerY) * 320 + (x + centerX);
+                        *(tlcdInfo->pfbdata + offset) = WHITE;
+                        sketchBook[-y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X].number -= 1;
+                        if (sketchBook[-y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X].number == 0)
+                        {
+                            sketchBook[-y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X].color = WHITE;
+                        }
+                        else
+                        {
+                            sketchBook[-y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X].color = node->shape.outColor;
+                        }
+                    }
+
+                    if ((-y + centerY) < END_CANVAS_Y && (-y + centerY) > START_CANVAS_Y &&
+                        (-x + centerX) < END_CANVAS_X && (-x + centerX) > START_CANVAS_X)
+                    {
+                        offset = (-y + centerY) * 320 + (-x + centerX);
+                        *(tlcdInfo->pfbdata + offset) = WHITE;
+                        sketchBook[-y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X].number -= 1;
+                        if (sketchBook[-y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X].number == 0)
+                        {
+                            sketchBook[-y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X].color = WHITE;
+                        }
+                        else
+                        {
+                            sketchBook[-y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X].color = node->shape.outColor;
+                        }
+                    }
+
+                    break;
+                }
+            }
+        }
+
+        for (i = startY; i <= centerY; i++)
+        {
+            y = i - centerY;
+            for (j = startX; j <= centerX; j++)
+            {
+                x = j - centerX;
+
+                if (((x * x) * bb) + ((y * y) * aa) <= aa * bb)
+                {
+                    if ((y + centerY) < END_CANVAS_Y && (y + centerY) > START_CANVAS_Y &&
+                        (x + centerX) < END_CANVAS_X && (x + centerX) > START_CANVAS_X)
+                    {
+                        offset = (y + centerY) * 320 + (x + centerX);
+                        *(tlcdInfo->pfbdata + offset) = WHITE;
+                        sketchBook[y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X].number -= 1;
+                        if (sketchBook[y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X].number == 0) //만약 스케치북에 값이 존재하지 않으면
+                        {
+                            sketchBook[y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X].color = WHITE; //캔버스 색에 맞춤
+                        }
+                        else //그 외 값이 존재한다면 현 노드의 outColor로 설정(분명 문제 있음, Oval도 이와 구현했음)
+                        {
+                            sketchBook[y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X].color = node->shape.outColor;
+                        }
+                    }
+                    if ((y + centerY) < END_CANVAS_Y && (y + centerY) > START_CANVAS_Y &&
+                        (-x + centerX) < END_CANVAS_X && (-x + centerX) > START_CANVAS_X)
+                    {
+
+                        offset = (y + centerY) * 320 + (-x + centerX);
+                        *(tlcdInfo->pfbdata + offset) = WHITE;
+                        sketchBook[y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X].number -= 1;
+                        if (sketchBook[y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X].number == 0)
+                        {
+                            sketchBook[y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X].color = WHITE;
+                        }
+                        else
+                        {
+                            sketchBook[y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X].color = node->shape.outColor;
+                        }
+                    }
+
+                    if ((-y + centerY) < END_CANVAS_Y && (-y + centerY) > START_CANVAS_Y &&
+                        (x + centerX) < END_CANVAS_X && (x + centerX) > START_CANVAS_X)
+                    {
+                        offset = (-y + centerY) * 320 + (x + centerX);
+                        *(tlcdInfo->pfbdata + offset) = WHITE;
+                        sketchBook[-y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X].number -= 1;
+                        if (sketchBook[-y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X].number == 0)
+                        {
+                            sketchBook[-y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X].color = WHITE;
+                        }
+                        else
+                        {
+                            sketchBook[-y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X].color = node->shape.outColor;
+                        }
+                    }
+
+                    if ((-y + centerY) < END_CANVAS_Y && (-y + centerY) > START_CANVAS_Y &&
+                        (-x + centerX) < END_CANVAS_X && (-x + centerX) > START_CANVAS_X)
+                    {
+                        offset = (-y + centerY) * 320 + (-x + centerX);
+                        *(tlcdInfo->pfbdata + offset) = WHITE;
+                        sketchBook[-y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X].number -= 1;
+                        if (sketchBook[-y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X].number == 0)
+                        {
+                            sketchBook[-y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X].color = WHITE;
+                        }
+                        else
+                        {
+                            sketchBook[-y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X].color = node->shape.outColor;
+                        }
+                    }
+
+                    break;
+                }
+            }
+        }
+    }
+
+    else if (node->shape.type == TOUCH_FREEDRAW)
+    {
+        for (i = 0; i < SIZEOF_CANVAS_Y; i++)
+        {
+            for (j = 0; j < SIZEOF_CANVAS_X; j++)
+            {
+                if (node->shape.position[i][j] == 1)
+                {
+                    if (i + node->shape.moveY >= 0 && i + node->shape.moveY < SIZEOF_CANVAS_Y &&
+                        j + node->shape.moveX >= 0 && j + node->shape.moveY < SIZEOF_CANVAS_X)
+                    {
+                        --sketchBook[i + node->shape.moveY][j + node->shape.moveX].number;
+                        if (sketchBook[i + node->shape.moveY][j + node->shape.moveX].number == 0)
+                        {
+                            sketchBook[i + node->shape.moveY][j + node->shape.moveX].color = WHITE;
+                        }
+                        else
+                        {
+                            sketchBook[i + node->shape.moveY][j + node->shape.moveX].color = node->shape.outColor;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    while (1)
+    {
+        InputTouch(tlcdInfo);
+
+        if (node->shape.type == TOUCH_LINE)
+        {
+        }
+
+        else if (node->shape.type == TOUCH_RECT)
+        {
+            // 루프를 한번 돌았을때 값갱신전 초기화
+            if (shape->moveX != -1 && shape->moveY != -1)
+            {
+                for (i = startY + node->shape.moveY; i <= endY + node->shape.moveY; i++)
+                {
+                    for (j = startX + node->shape.moveX; j <= endX + node->shape.moveX; j++)
+                    {
+                        offset = i * 320 + j;
+
+                        if (sketchBook[i - START_CANVAS_Y][j - START_CANVAS_X].number >= 1)
+                        {
+                            //캔버스 위치 안에서만 그려줌
+                            if (j > START_CANVAS_X && i > START_CANVAS_Y && j < END_CANVAS_X && i < END_CANVAS_Y)
+                            {
+                                *(tlcdInfo->pfbdata + offset) = sketchBook[i - START_CANVAS_Y][j - START_CANVAS_X].color;
+                            }
+                        }
+
+                        else
+                        {
+                            //캔버스 위치 안에서만 그려줌
+                            if (j > START_CANVAS_X && i > START_CANVAS_Y && j < END_CANVAS_X && i < END_CANVAS_Y)
+                            {
+                                *(tlcdInfo->pfbdata + offset) = WHITE;
+                            }
+                        }
+                    }
+                }
+            }
+
+            //움직이는 값 구함
+            shape->moveX = tlcdInfo->a * tlcdInfo->x + tlcdInfo->b * tlcdInfo->y + tlcdInfo->c;
+            shape->moveY = tlcdInfo->d * tlcdInfo->x + tlcdInfo->e * tlcdInfo->y + tlcdInfo->f;
+
+            //기존 도형에서 이동한 크기 구함
+            node->shape.moveX = shape->moveX - touchedPointX;
+            node->shape.moveY = shape->moveY - touchedPointY;
+
+            //평행이동된 시작 주소값
+
+            //초기화후 보여주는부분
+            for (i = startX + node->shape.moveX; i < endX + node->shape.moveX; i++)
+            {
+                if (startY + node->shape.moveY > START_CANVAS_Y &&
+                    startY + node->shape.moveY < END_CANVAS_Y && i > START_CANVAS_X && i < END_CANVAS_X)
+                {
+
+                    offset = (startY + node->shape.moveY) * 320 + i;
+                    *(tlcdInfo->pfbdata + offset) = shape->outColor;
+                }
+
+                if (endY + node->shape.moveY > START_CANVAS_Y &&
+                    endY + node->shape.moveY < END_CANVAS_Y && i > START_CANVAS_X && i < END_CANVAS_X)
+                {
+                    offset = (endY + node->shape.moveY) * 320 + i;
+                    *(tlcdInfo->pfbdata + offset) = shape->outColor;
+                }
+            }
+
+            for (i = startY + node->shape.moveY; i < endY + node->shape.moveY; i++)
+            {
+                if (i > START_CANVAS_Y && i < END_CANVAS_Y &&
+                    startX + node->shape.moveX > START_CANVAS_X && startX + node->shape.moveX < END_CANVAS_X)
+                {
+                    offset = i * 320 + startX + node->shape.moveX;
+                    *(tlcdInfo->pfbdata + offset) = shape->outColor;
+                }
+                if (i > START_CANVAS_Y && i < END_CANVAS_Y &&
+                    endX + node->shape.moveX > START_CANVAS_X && endX + node->shape.moveX < END_CANVAS_X)
+                {
+                    offset = i * 320 + endX + node->shape.moveX;
+                    *(tlcdInfo->pfbdata + offset) = shape->outColor;
+                }
+            }
+            if (tlcdInfo->pressure == 0)
+            {
+                node->shape.start.x = startX + node->shape.moveX;
+                node->shape.start.y = startY + node->shape.moveY;
+
+                node->shape.end.x = endX + node->shape.moveX;
+                node->shape.end.y = endY + node->shape.moveY;
+
+                startX = node->shape.start.x;
+                startY = node->shape.start.y;
+
+                endX = node->shape.end.x;
+                endY = node->shape.end.y;
+
+                node->shape.moveX = 0;
+                node->shape.moveY = 0;
+
+                //값 저장
+                for (i = startX; i < endX; i++)
+                {
+                    if (i > START_CANVAS_X && i < END_CANVAS_X && startY > START_CANVAS_Y && startY < END_CANVAS_Y)
+                    {
+                        offset = startY * 320 + i;
+                        *(tlcdInfo->pfbdata + offset) = shape->outColor;
+                        sketchBook[startY - START_CANVAS_Y][i - START_CANVAS_X].number += 1;
+                        sketchBook[startY - START_CANVAS_Y][i - START_CANVAS_X].color = shape->outColor;
+                    }
+                    if (i > START_CANVAS_X && i < END_CANVAS_X && endY > START_CANVAS_Y && endY < END_CANVAS_Y)
+                    {
+                        offset = endY * 320 + i;
+                        *(tlcdInfo->pfbdata + offset) = shape->outColor;
+                        sketchBook[endY - START_CANVAS_Y][i - START_CANVAS_X].number += 1;
+                        sketchBook[endY - START_CANVAS_Y][i - START_CANVAS_X].color = shape->outColor;
+                    }
+                }
+
+                for (i = startY; i < endY; i++)
+                {
+                    if (startX > START_CANVAS_X && startX < END_CANVAS_X && i > START_CANVAS_Y && i < END_CANVAS_Y)
+                    {
+                        offset = i * 320 + startX;
+                        *(tlcdInfo->pfbdata + offset) = shape->outColor;
+                        sketchBook[i - START_CANVAS_Y][startX - START_CANVAS_X].number += 1;
+                        sketchBook[i - START_CANVAS_Y][startX - START_CANVAS_X].color = shape->outColor;
+                    }
+
+                    if (endX > START_CANVAS_X && endX < END_CANVAS_X && i > START_CANVAS_Y && i < END_CANVAS_Y)
+                    {
+                        offset = i * 320 + endX;
+                        *(tlcdInfo->pfbdata + offset) = shape->outColor;
+                        sketchBook[i - START_CANVAS_Y][endX - START_CANVAS_X].number += 1;
+                        sketchBook[i - START_CANVAS_Y][endX - START_CANVAS_X].color = shape->outColor;
+                    }
+                }
+                break;
+            }
+        }
+
+        else if (node->shape.type == TOUCH_OVAL)
+        {
+            // 루프를 한번 돌았을때 값갱신전 초기화
+            if (shape->moveX != -1 && shape->moveY != -1)
+            {
+                for (i = startY + node->shape.moveY; i <= endY + node->shape.moveY; i++)
+                {
+                    for (j = startX + node->shape.moveX; j <= endX + node->shape.moveX; j++)
+                    {
+                        offset = i * 320 + j;
+
+                        if (sketchBook[i - START_CANVAS_Y][j - START_CANVAS_X].number >= 1)
+                        {
+                            //캔버스 위치 안에서만 그려줌
+                            if (j > START_CANVAS_X && i > START_CANVAS_Y && j < END_CANVAS_X && i < END_CANVAS_Y)
+                            {
+                                *(tlcdInfo->pfbdata + offset) = sketchBook[i - START_CANVAS_Y][j - START_CANVAS_X].color;
+                            }
+                        }
+
+                        else
+                        {
+                            //캔버스 위치 안에서만 그려줌
+                            if (j > START_CANVAS_X && i > START_CANVAS_Y && j < END_CANVAS_X && i < END_CANVAS_Y)
+                            {
+                                *(tlcdInfo->pfbdata + offset) = WHITE;
+                            }
+                        }
+                    }
+                }
+            }
+
+            //움직이는 값 구함
+            shape->moveX = tlcdInfo->a * tlcdInfo->x + tlcdInfo->b * tlcdInfo->y + tlcdInfo->c;
+            shape->moveY = tlcdInfo->d * tlcdInfo->x + tlcdInfo->e * tlcdInfo->y + tlcdInfo->f;
+
+            //기존 도형에서 이동한 크기 구함
+            node->shape.moveX = shape->moveX - touchedPointX;
+            node->shape.moveY = shape->moveY - touchedPointY;
+
+            //타원 그려주기만 함
+            centerX = (startX + endX) / 2 + node->shape.moveX; //평행이동된 값까지 더함
+            centerY = (startY + endY) / 2 + node->shape.moveY; //평행이동된 값까지 더함
+
+            a = (endX + node->shape.moveX - centerX); // 선 a의 길이
+            b = (endY + node->shape.moveY - centerY); // 선 b의 길이
+
+            aa = a * a;
+            bb = b * b;
+
+            for (i = startX + node->shape.moveX; i <= centerX; i++)
+            {
+                x = i - centerX;
+                for (j = startY + node->shape.moveY; j <= centerY; j++)
+                {
+                    y = j - centerY;
+                    if (((x * x * bb) + (y * y * aa) <= aa * bb))
+                    {
+                        if ((y + centerY) < END_CANVAS_Y && (y + centerY) > START_CANVAS_Y &&
+                            (x + centerX) < END_CANVAS_X && (x + centerX) > START_CANVAS_X)
+                        {
+                            offset = (y + centerY) * 320 + (x + centerX);
+                            *(tlcdInfo->pfbdata + offset) = node->shape.outColor;
+                        }
+
+                        if ((y + centerY) < END_CANVAS_Y && (y + centerY) > START_CANVAS_Y &&
+                            (-x + centerX) < END_CANVAS_X && (-x + centerX) > START_CANVAS_X)
+                        {
+                            offset = (y + centerY) * 320 + (-x + centerX);
+                            *(tlcdInfo->pfbdata + offset) = node->shape.outColor;
+                        }
+
+                        if ((-y + centerY) < END_CANVAS_Y && (-y + centerY) > START_CANVAS_Y &&
+                            (x + centerX) < END_CANVAS_X && (x + centerX) > START_CANVAS_X)
+                        {
+                            offset = (-y + centerY) * 320 + (x + centerX);
+                            *(tlcdInfo->pfbdata + offset) = node->shape.outColor;
+                        }
+
+                        if ((-y + centerY) < END_CANVAS_Y && (-y + centerY) > START_CANVAS_Y &&
+                            (-x + centerX) < END_CANVAS_X && (-x + centerX) > START_CANVAS_X)
+                        {
+                            offset = (-y + centerY) * 320 + (-x + centerX);
+                            *(tlcdInfo->pfbdata + offset) = node->shape.outColor;
+                        }
+
+                        break;
+                    }
+                }
+            }
+
+            for (i = startY + node->shape.moveY; i <= centerY; i++)
+            {
+                y = i - centerY;
+                for (j = startX + node->shape.moveX; j <= centerX; j++)
+                {
+                    x = j - centerX;
+
+                    if (((x * x) * bb) + ((y * y) * aa) <= aa * bb)
+                    {
+                        if ((y + centerY) < END_CANVAS_Y && (y + centerY) > START_CANVAS_Y &&
+                            (x + centerX) < END_CANVAS_X && (x + centerX) > START_CANVAS_X)
+                        {
+                            offset = (y + centerY) * 320 + (x + centerX);
+                            *(tlcdInfo->pfbdata + offset) = node->shape.outColor;
+                        }
+
+                        if ((y + centerY) < END_CANVAS_Y && (y + centerY) > START_CANVAS_Y &&
+                            (-x + centerX) < END_CANVAS_X && (-x + centerX) > START_CANVAS_X)
+                        {
+                            offset = (y + centerY) * 320 + (-x + centerX);
+                            *(tlcdInfo->pfbdata + offset) = node->shape.outColor;
+                        }
+
+                        if ((-y + centerY) < END_CANVAS_Y && (-y + centerY) > START_CANVAS_Y &&
+                            (x + centerX) < END_CANVAS_X && (x + centerX) > START_CANVAS_X)
+                        {
+                            offset = (-y + centerY) * 320 + (x + centerX);
+                            *(tlcdInfo->pfbdata + offset) = node->shape.outColor;
+                        }
+
+                        if ((-y + centerY) < END_CANVAS_Y && (-y + centerY) > START_CANVAS_Y &&
+                            (-x + centerX) < END_CANVAS_X && (-x + centerX) > START_CANVAS_X)
+                        {
+                            offset = (-y + centerY) * 320 + (-x + centerX);
+                            *(tlcdInfo->pfbdata + offset) = node->shape.outColor;
+                        }
+
+                        break;
+                    }
+                }
+            }
+
+            if (tlcdInfo->pressure == 0)
+            {
+                printf("PRESSURE == 0 QUOTE START\n");
+
+                node->shape.start.x = startX + node->shape.moveX;
+                node->shape.start.y = startY + node->shape.moveY;
+
+                node->shape.end.x = endX + node->shape.moveX;
+                node->shape.end.y = endY + node->shape.moveY;
+
+                startX = node->shape.start.x;
+                startY = node->shape.start.y;
+
+                endX = node->shape.end.x;
+                endY = node->shape.end.y;
+
+                node->shape.moveX = 0;
+                node->shape.moveY = 0;
+
+                centerX = (startX + endX) / 2;
+                centerY = (startY + endY) / 2;
+
+                a = (endX - centerX); // 선 a의 길이
+                b = (endY - centerY); // 선 b의 길이
+
+                aa = a * a;
+                bb = b * b;
+
+                for (i = startX; i <= centerX; i++)
+                {
+                    x = i - centerX;
+                    for (j = startY; j <= centerY; j++)
+                    {
+                        y = j - centerY;
+                        if (((x * x * bb) + (y * y * aa) <= aa * bb))
+                        {
+                            if ((y + centerY) < END_CANVAS_Y && (y + centerY) > START_CANVAS_Y &&
+                                (x + centerX) < END_CANVAS_X && (x + centerX) > START_CANVAS_X)
+                            {
+                                offset = (y + centerY) * 320 + (x + centerX);
+                                *(tlcdInfo->pfbdata + offset) = node->shape.outColor;
+                                sketchBook[y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X].number += 1;
+                                sketchBook[y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X].color = shape->outColor;
+                            }
+                            if ((y + centerY) < END_CANVAS_Y && (y + centerY) > START_CANVAS_Y &&
+                                (-x + centerX) < END_CANVAS_X && (-x + centerX) > START_CANVAS_X)
+                            {
+                                offset = (y + centerY) * 320 + (-x + centerX);
+                                *(tlcdInfo->pfbdata + offset) = node->shape.outColor;
+                                sketchBook[y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X].number += 1;
+                                sketchBook[y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X].color = shape->outColor;
+                            }
+                            if ((-y + centerY) < END_CANVAS_Y && (-y + centerY) > START_CANVAS_Y &&
+                                (x + centerX) < END_CANVAS_X && (x + centerX) > START_CANVAS_X)
+                            {
+                                offset = (-y + centerY) * 320 + (x + centerX);
+                                *(tlcdInfo->pfbdata + offset) = node->shape.outColor;
+                                sketchBook[-y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X].number += 1;
+                                sketchBook[-y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X].color = shape->outColor;
+                            }
+                            if ((-y + centerY) < END_CANVAS_Y && (-y + centerY) > START_CANVAS_Y &&
+                                (-x + centerX) < END_CANVAS_X && (-x + centerX) > START_CANVAS_X)
+                            {
+                                offset = (-y + centerY) * 320 + (-x + centerX);
+                                *(tlcdInfo->pfbdata + offset) = node->shape.outColor;
+                                sketchBook[-y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X].number += 1;
+                                sketchBook[-y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X].color = shape->outColor;
+                            }
+
+                            break;
+                        }
+                    }
+                }
+                for (i = startX; i <= centerY; i++)
+                {
+                    y = i - centerY;
+                    for (j = startX; j <= centerX; j++)
+                    {
+                        x = j - centerX;
+                        if (((x * x) * bb) + ((y * y) * aa) <= aa * bb)
+                        {
+                            if ((y + centerY) < END_CANVAS_Y && (y + centerY) > START_CANVAS_Y &&
+                                (x + centerX) < END_CANVAS_X && (x + centerX) > START_CANVAS_X)
+                            {
+                                offset = (y + centerY) * 320 + (x + centerX);
+                                *(tlcdInfo->pfbdata + offset) = node->shape.outColor;
+                                sketchBook[y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X].number += 1;
+                                sketchBook[y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X].color = shape->outColor;
+                            }
+
+                            if ((y + centerY) < END_CANVAS_Y && (y + centerY) > START_CANVAS_Y &&
+                                (-x + centerX) < END_CANVAS_X && (-x + centerX) > START_CANVAS_X)
+                            {
+                                offset = (y + centerY) * 320 + (-x + centerX);
+                                *(tlcdInfo->pfbdata + offset) = node->shape.outColor;
+                                sketchBook[y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X].number += 1;
+                                sketchBook[y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X].color = shape->outColor;
+                            }
+
+                            if ((-y + centerY) < END_CANVAS_Y && (-y + centerY) > START_CANVAS_Y &&
+                                (x + centerX) < END_CANVAS_X && (x + centerX) > START_CANVAS_X)
+                            {
+                                offset = (-y + centerY) * 320 + (x + centerX);
+                                *(tlcdInfo->pfbdata + offset) = node->shape.outColor;
+                                sketchBook[-y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X].number += 1;
+                                sketchBook[-y + centerY - START_CANVAS_Y][x + centerX - START_CANVAS_X].color = shape->outColor;
+                            }
+
+                            if ((-y + centerY) < END_CANVAS_Y && (-y + centerY) > START_CANVAS_Y &&
+                                (-x + centerX) < END_CANVAS_X && (-x + centerX) > START_CANVAS_X)
+                            {
+                                offset = (-y + centerY) * 320 + (-x + centerX);
+                                *(tlcdInfo->pfbdata + offset) = node->shape.outColor;
+                                sketchBook[-y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X].number += 1;
+                                sketchBook[-y + centerY - START_CANVAS_Y][-x + centerX - START_CANVAS_X].color = shape->outColor;
+                            }
+
+                            break;
+                        }
+                    }
+                }
+
+                break;
+                printf("PRESSURE == 0 QUOTE END\n");
+            }
+        }
+
+        else if (node->shape.type == TOUCH_FREEDRAW)
+        {
+            for (i = node->shape.moveY; i < node->shape.moveY + SIZEOF_CANVAS_Y; i++)
+            {
+                for (j = node->shape.moveX; j < node->shape.moveX + SIZEOF_CANVAS_X; j++)
+                {
+                    if (i + node->shape.moveY >= 0 && i + node->shape.moveY < SIZEOF_CANVAS_Y &&
+                        j + node->shape.moveX >= 0 && j + node->shape.moveX < SIZEOF_CANVAS_X)
+                    {
+                        offset = (i + START_CANVAS_Y + node->shape.moveY) * 320 + i;
+                        if (sketchBook[i + node->shape.moveY][j + node->shape.moveX].number >= 1)
+
+                        {
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     return;
 }
@@ -984,7 +1702,7 @@ void DrawErase(TLCD *tlcdInfo, Shape *shape)
 }
 
 /*
- * TODO
+ * This is Base Code for Making DrawClear Made by S.H Hong
  */
 void DrawClear(TLCD *tlcdInfo, Shape *shape)
 {
