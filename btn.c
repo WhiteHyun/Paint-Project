@@ -30,18 +30,18 @@ inline void InputTouch(TLCD *tlcdInfo)
 
 int GetBtn(int xpos, int ypos)
 {
-    int inputBtnFlag = 0;
+    int inputBtnFlag = -1;
 
     if ((xpos >= 270 && xpos <= 320) && (ypos >= 175 && ypos <= 205))
     {
         inputBtnFlag = TOUCH_PEN;
     }
-    
+
     else if ((xpos >= 270 && xpos <= 320) && (ypos >= 210 && ypos <= 240))
     {
         inputBtnFlag = TOUCH_FILL;
     }
-    
+
     else if ((xpos >= 0 && xpos <= 50) && (ypos >= 0 && ypos <= 30))
     {
         inputBtnFlag = TOUCH_LINE;
@@ -130,8 +130,10 @@ void SensingTouch(TLCD *tlcdInfo)
     int xpos, ypos, ret;
     Shape shape;
     shape.position = NULL;
+    shape.moveX = 0;
+    shape.moveY = 0;
     InputTouch(tlcdInfo);
-    
+
     // 보정을 넣은 lcd상의 x , y의 포지션
     xpos = tlcdInfo->a * tlcdInfo->x + tlcdInfo->b * tlcdInfo->y + tlcdInfo->c;
     ypos = tlcdInfo->d * tlcdInfo->x + tlcdInfo->e * tlcdInfo->y + tlcdInfo->f;
@@ -141,95 +143,90 @@ void SensingTouch(TLCD *tlcdInfo)
     {
         ret = GetBtn(xpos, ypos);
     }
-    
+
     else
     {
         ret = -1;
     }
-    
+
     switch (ret)
     {
     case TOUCH_WHITE:
         printf("COLOR WHITE\n");
         selectedColor = WHITE;
         break;
-            
+
     case TOUCH_ORANGE:
         printf("COLOR ORANGE\n");
         selectedColor = ORANGE;
         break;
-            
+
     case TOUCH_RED:
         printf("COLOR RED\n");
         selectedColor = RED;
         break;
-            
+
     case TOUCH_GREEN:
         printf("COLOR GREEN\n");
         selectedColor = GREEN;
         break;
-            
+
     case TOUCH_YELLOW:
         printf("COLOR YELLOW\n");
         selectedColor = YELLOW;
         break;
-            
+
     case TOUCH_NAVY:
         printf("COLOR NAVY\n");
         selectedColor = NAVY;
         break;
-            
+
     case TOUCH_BLUE:
         printf("COLOR BLUE\n");
         selectedColor = BLUE;
         break;
-            
+
     case TOUCH_BLACK:
         printf("COLOR BLACK\n");
         selectedColor = BLACK;
         break;
-            
+
     case TOUCH_CLEAR: //클리어 모드
         g_drawTable[ret](tlcdInfo, &shape);
         mode = TOUCH_PEN; //화면 클리어 후 펜모드로 바꿈
         break;
-            
+
     case TOUCH_CANVAS:
+        // set Up Start x , y pos
+        shape.start.x = xpos;
+        shape.start.y = ypos;
+
         //펜모드이면서 그림유형도 선택되어있는 경우 정상적인 그림 그리기
         if (mode == TOUCH_PEN && state >= 0 && state < 4)
         {
             //Set color
             shape.inColor = WHITE;
             shape.outColor = selectedColor;
-            
-            // set Up Start x , y pos
-            shape.start.x = xpos;
-            shape.start.y = ypos;
-            
+
             g_drawTable[state](tlcdInfo, &shape);      //함수 불러짐
             struct ListNode *node = CreateNode(shape); //도형에 대한 노드를 만들어서
             Append(node);                              //리스트에 노드 저장
         }
-            
+
         //설정모드: 채우기 모드거나 선택 모드거나 지우기모드일 때
         else if (mode == TOUCH_FILL || mode == TOUCH_SEL || mode == TOUCH_ERASE)
         {
-            /* 여기서 shape를 파라미터로 넘기는데 사용되는 것은 Fill모드일 때 inColor를 사용하는 것 외에는 없음.
-             * 그럼 SEL모드랑 ERASE모드는 shape를 왜 파라미터로 전달하느냐?
-             * 각 함수의 테이블을 만드는데 파라미터도 똑같이 정의해줘야 했기 때문에 만든 것. 사용할 필요는 없어보임!
-             * 혹시 몰라서 사용하게 될 수도..?
-             */
-            shape.inColor = selectedColor; //FILL모드일 경우 inColor 속성을 가지고 파라미터로 전달함
+            //FILL모드일 경우 inColor 속성을 가지고 파라미터로 전달함
+            shape.inColor = selectedColor;
             g_drawTable[mode](tlcdInfo, &shape);
         }
-            
+
         break;
-            
+
     default:
-            
+
         /*
-         * 터치를 때면 ret이 -1이 되기 때문에
-         * 항상 -1이 들어오는 오류 방지
+         * 쓰레기 값이 들어오는 것을 방지
          */
         if (ret != -1)
         {
@@ -237,14 +234,14 @@ void SensingTouch(TLCD *tlcdInfo)
             {
                 mode = ret;
             }
-            
+
             else //그리기 설정
             {
                 state = ret;
                 mode = TOUCH_PEN; //그리기 설정을 했을 경우 모드는 펜으로 자동설정
             }
         }
-            
+
         break;
     }
 }

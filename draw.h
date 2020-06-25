@@ -18,13 +18,15 @@ typedef struct _Point
  */
 typedef struct _Shape
 {
-    int gackcheNumber;
     int type;
     Point start;
     Point end;
     unsigned short inColor;  // inBound Color
     unsigned short outColor; // outBound Color
-    int** position;          //FreeDraw array
+    int **position;          //FreeDraw array
+
+    int moveX; //parallel translation variable
+    int moveY; //parallel translation variable
 } Shape;
 
 typedef void (*drawList)(TLCD*, Shape*);
