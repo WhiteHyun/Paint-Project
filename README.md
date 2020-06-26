@@ -47,21 +47,15 @@
     1. 파일 분할 (set.c -> main , btn -> touch sense Events, draw -> Draw UI)
     2. 각 도형 이벤트 분할 ( 김대성 : Line , 김동언 : Oval , 김태현 : Rectangle)
     3. 위의 내용을 상기하여 19일 3시 회의 진행
-  - 논의결과
-    - TODO
 
 * 6월 26일 Zoom 발표 진행 예정
 
-### 개발 요구사항 (필수)
+### 개발 요구사항
 
 - 변수명 : addToList (`카멜 표기법`)
 - 함수명 : AddToList (`파스칼 표기법`)
 - 함수들의 경우 초반부에 역할에 따른 주석 표기
 - `if`, `for`문등의 경우 1줄이라도 중괄호`{}` 표기
-
-### 개발 요구사항 (선택)
-
-- TODO
 
 ### Role
 
@@ -72,11 +66,8 @@
 
 - Git
 - wiringPi
+- Git Kraken
 
 ### 개발언어
 
 - C
-
-### 기타사항
-
-- TODO
